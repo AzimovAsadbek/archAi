@@ -8,6 +8,7 @@ import { GLOBAL_RATE_LIMIT, RATE_LIMIT_TTL_MS } from './auth/auth.constants';
 import { AuthModule } from './auth/auth.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { AppConfigModule } from './config/app-config.module';
+import { ContentModule } from './content/content.module';
 import { validateEnv } from './config/env.schema';
 import { EstimatesModule } from './estimates/estimates.module';
 import { FloorPlansModule } from './floor-plans/floor-plans.module';
@@ -31,6 +32,7 @@ import { UsersModule } from './users/users.module';
     PdfModule,
     AiModule,
     AdminModule,
+    ContentModule,
     HealthModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

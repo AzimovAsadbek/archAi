@@ -1,3 +1,4 @@
+import path from 'node:path';
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
@@ -24,6 +25,13 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Self-contained production server (traced deps + minimal server.js), used by
+  // the Docker image. Standalone tracing creates symlinks, which Windows blocks
+  // without elevation — so it is opt-in via env (the Dockerfile sets it) and the
+  // local/CI build on any OS keeps the default output. Tracing root = repo root
+  // so workspace packages are bundled.
+  output: process.env.NEXT_OUTPUT_STANDALONE === 'true' ? 'standalone' : undefined,
+  outputFileTracingRoot: path.join(__dirname, '../..'),
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];
   },

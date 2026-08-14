@@ -44,9 +44,13 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
    plans → public-content slice (TODO below).
 10. **Public content & pricing** — TODO (pricing page — honest free-during-beta, no fake
     payments; blog + FAQ domains with admin CRUD; help/about; SEO metadata/sitemap)
-11. **Hardening** — IN_PROGRESS (independent security review running; then performance +
-    accessibility QA passes, CI activation once the token gets `workflow` scope, Docker
-    production images)
+11. **Hardening** — IN_PROGRESS
+    - Security: independent review done, all High/Med findings fixed + verified live
+      (pushed 8dc9a3b). Documented in docs/security.md.
+    - Docker production images: DONE — api + web multi-stage Dockerfiles +
+      docker-compose.prod.yml, both smoke-tested (boot + serve). docs/deployment.md.
+    - Remaining: performance + accessibility QA passes; CI activation (needs gh token
+      `workflow` scope — workflow lives in .github/workflows-pending/).
 
 ## Deferred decisions
 

@@ -22,5 +22,8 @@ import { AuditService } from './audit.service';
     AdminProjectsService,
     AdminEstimateRulesService,
   ],
+  // Reused by the public-content admin surface (ContentModule) so its /admin/*
+  // routes sit behind the same guard and write to the same audit trail.
+  exports: [AdminGuard, AuditService],
 })
 export class AdminModule {}

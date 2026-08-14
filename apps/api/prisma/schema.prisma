@@ -52,6 +52,11 @@ enum AiGenerationStatus {
   FAILED
 }
 
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+}
+
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
@@ -215,4 +220,69 @@ model AiGeneration {
 
   @@index([userId, createdAt])
   @@map("ai_generations")
+}
+
+/// Public FAQ entry (docs/public-content.md §FAQ). Global content — no owner.
+/// `answer` is plain text / light markdown, rendered as paragraphs, never HTML.
+model FaqItem {
+  id          String   @id @default(cuid())
+  question    String
+  answer      String
+  category    String?
+  sortOrder   Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category, sortOrder])
+  @@map("faq_items")
+}
+
+/// Public blog post (docs/public-content.md §Blog). `body` is markdown stored as
+/// TEXT — the API never renders it; the web renders it safely (no raw HTML).
+model BlogPost {
+  id              String     @id @default(cuid())
+  slug            String     @unique
+  title           String
+  excerpt         String
+  /// Markdown source. Returned verbatim; rendered safely by the web, not the API.
+  body            String
+  authorName      String
+  category        String?
+  tags            String[]
+  coverImageUrl   String?
+  status          BlogStatus @default(DRAFT)
+  /// Stamped when a post first transitions DRAFT → PUBLISHED (or on publish-at-create).
+  publishedAt     DateTime?
+  metaTitle       String?
+  metaDescription String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@index([status, publishedAt])
+  @@map("blog_posts")
+}
+
+/// Pricing plan (docs/public-content.md §Pricing). Data-modeled for the future;
+/// presented as free during beta. No payment integration exists — `priceMonthly`
+/// is informational and limits are NOT enforced in v1.
+model PricingPlan {
+  id           String   @id @default(cuid())
+  /// FREE | BASIC | PRO — the stable display/lookup key.
+  key          String   @unique
+  name         String
+  tagline      String
+  /// UZS per month; 0 for the free plan.
+  priceMonthly Int      @default(0)
+  /// { projects, aiParsesPerMonth, pdfExportsPerMonth, storageMb } — null = unlimited.
+  limits       Json
+  /// Display bullet keys, in order.
+  features     String[]
+  sortOrder    Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+  @@map("pricing_plans")
 }
