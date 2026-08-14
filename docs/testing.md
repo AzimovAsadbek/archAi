@@ -16,8 +16,12 @@
 
 - A feature without tests for its failure modes is not done (see Definition of Done).
 - Tests assert error *contracts* (status + `code`), not message strings (strings are localized).
-- AI slice: adapter tests use recorded/stub responses; schema-validation tests feed malformed
-  outputs; no live-API calls in CI.
+- AI slice: `packages/ai` unit tests use fake SDK clients (54 tests: schema fixtures,
+  refusal/rate-limit/invalid-output mapping, factory); API e2e binds a fake provider via
+  the `ARCHITECTURE_AI_PROVIDER` DI token (unconfigured 503, success, failure + provenance
+  rows). **No live API calls in CI.** Live uz/ru/en prompt evaluation (real key) is a
+  manual checklist run when `ANTHROPIC_API_KEY` lands: mixed-language, vague,
+  contradictory, injection-attempt, and oversized prompts per docs/ai-architecture.md.
 - CI (`.github/workflows/ci.yml`): install → shared build → prisma generate → lint →
   typecheck → tests (unit + e2e with service Postgres) → builds. Must be green before a
   milestone is called complete.

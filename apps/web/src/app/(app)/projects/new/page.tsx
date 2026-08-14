@@ -1,6 +1,6 @@
 import { type Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { NewProjectForm } from '@/components/project/new-project-form';
+import { NewProjectView } from '@/components/project/new-project-view';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('projectNew');
@@ -8,5 +8,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function NewProjectPage() {
-  return <NewProjectForm />;
+  return <NewProjectView />;
 }

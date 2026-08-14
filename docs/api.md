@@ -50,6 +50,12 @@ Base URL: `http://localhost:3001/api/v1`. JSON only. Swagger UI at `/docs` (non-
 
 | GET | `/projects/:id/floor-plan` | — | 200 `{ plan: FloorPlan, generatedAt }`. Deterministic engine output persisted in `floor_plans` (regenerated when config inputHash or engine version changes). 409 `PROJECT_NOT_CONFIGURED` when configuration incomplete; 422 `FLOOR_PLAN_UNAVAILABLE` `{ details: { issues } }` when the engine rejects the configuration. Full contract: docs/floor-plan-engine.md §Consumers. |
 
+### AI (`/ai`) — authenticated
+
+| Method | Path | Body | Response |
+|---|---|---|---|
+| POST | `/ai/parse-project` | `{ text: string (trim 5..2000), localeHint?: 'uz'\|'ru'\|'en' }` | 200 `AiParseProjectResponse { proposal, validation, provenance }` (shared types). Throttled 10/min/IP. Never creates/modifies projects — applying is the client's explicit follow-up via POST /projects + PATCH. Errors (ApiErrorShape): 503 `AI_NOT_CONFIGURED`, 429 `AI_RATE_LIMITED` (or `RATE_LIMITED` from the throttler), 502 `AI_PROVIDER_ERROR`/`AI_TIMEOUT`, 422 `AI_REFUSED`/`AI_INVALID_OUTPUT`, 400 `VALIDATION_ERROR` (keys `ai_text_min`/`ai_text_max`). Contract details: docs/ai-architecture.md. |
+
 ### Meta
 
 | GET | `/health` | — | 200 `{ status: 'ok', db: 'up' \| 'down' }` (no auth) |

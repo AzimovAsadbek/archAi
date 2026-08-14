@@ -3,6 +3,7 @@
 import { useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { LIMITS } from '@archai/shared';
+import { AI_TEXT_LIMITS } from './endpoints';
 import { ApiError } from './api';
 
 /**
@@ -38,6 +39,9 @@ const FIELD_ERROR_PARAMS: Record<string, FieldErrorParams> = {
   room_side_min: { min: LIMITS.rooms.minSideM, max: LIMITS.rooms.maxSideM },
   room_side_max: { min: LIMITS.rooms.minSideM, max: LIMITS.rooms.maxSideM },
   too_many_rooms: { min: 1, max: LIMITS.rooms.maxPerProject },
+  // AI request bounds come from the endpoint contract, not the domain.
+  ai_text_min: { min: AI_TEXT_LIMITS.min, max: AI_TEXT_LIMITS.max },
+  ai_text_max: { min: AI_TEXT_LIMITS.min, max: AI_TEXT_LIMITS.max },
 };
 
 const KEY_PATTERN = /^[a-z0-9_]+$/;

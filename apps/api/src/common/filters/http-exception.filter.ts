@@ -33,6 +33,26 @@ const INTERNAL_ERROR: ApiErrorShape = {
 };
 
 /**
+ * The only 5xx codes allowed through verbatim. They describe an upstream or
+ * deployment condition the client must react to (retry, or tell the user an
+ * administrator has to act) — not an internal failure worth hiding. Their
+ * messages are fixed strings written for clients, never raw internal text.
+ */
+const CLIENT_SAFE_5XX_CODES: ReadonlySet<string> = new Set<string>([
+  ERROR_CODES.AI_NOT_CONFIGURED,
+  ERROR_CODES.AI_PROVIDER_ERROR,
+  ERROR_CODES.AI_TIMEOUT,
+]);
+
+function isClientSafe5xx(payload: unknown): boolean {
+  return (
+    isRecord(payload) &&
+    typeof payload.code === 'string' &&
+    CLIENT_SAFE_5XX_CODES.has(payload.code)
+  );
+}
+
+/**
  * Catch-all filter that renders every failure as `ApiErrorShape`.
  * Internal errors are logged in full but never leak to the client.
  */
@@ -62,12 +82,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     const statusCode = exception.getStatus();
-    if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
+    const payload = exception.getResponse();
+    if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR && !isClientSafe5xx(payload)) {
       // Never surface internal messages, even for deliberate 5xx HttpExceptions.
       return { ...INTERNAL_ERROR, statusCode };
     }
 
-    const payload = exception.getResponse();
     const fallbackCode = STATUS_CODE_FALLBACK[statusCode] ?? ERROR_CODES.INTERNAL;
 
     const statusMessage = STATUS_MESSAGES[statusCode];

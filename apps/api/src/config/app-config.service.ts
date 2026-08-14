@@ -52,4 +52,13 @@ export class AppConfigService {
   get cookieSecure(): boolean {
     return this.env.COOKIE_SECURE;
   }
+
+  /** Undefined when AI is not configured — a supported deployment state. */
+  get anthropicApiKey(): string | undefined {
+    return this.env.ANTHROPIC_API_KEY;
+  }
+
+  get anthropicModel(): string | undefined {
+    return this.env.ANTHROPIC_MODEL;
+  }
 }

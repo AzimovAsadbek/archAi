@@ -1,5 +1,5 @@
 import { type INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
+import { Test, type TestingModuleBuilder } from '@nestjs/testing';
 import { type Server } from 'node:http';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
@@ -10,9 +10,13 @@ export const API = '/api/v1';
 
 export type Cookies = Record<string, string>;
 
+/** Swaps providers before the module compiles, e.g. to bind a fake AI provider. */
+export type ModuleCustomizer = (builder: TestingModuleBuilder) => TestingModuleBuilder;
+
 /** Boots Nest with exactly the same HTTP wiring as `main.ts`. */
-export async function createTestApp(): Promise<INestApplication> {
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+export async function createTestApp(customize?: ModuleCustomizer): Promise<INestApplication> {
+  const builder = Test.createTestingModule({ imports: [AppModule] });
+  const moduleRef = await (customize ? customize(builder) : builder).compile();
   const app = moduleRef.createNestApplication();
   configureApp(app);
   await app.init();
@@ -24,6 +28,7 @@ export function httpServer(app: INestApplication): Server {
 }
 
 export async function resetDatabase(prisma: PrismaService): Promise<void> {
+  await prisma.aiGeneration.deleteMany();
   await prisma.refreshToken.deleteMany();
   await prisma.floorPlan.deleteMany();
   await prisma.room.deleteMany();

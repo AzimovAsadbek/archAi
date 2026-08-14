@@ -1,5 +1,6 @@
 import type { FloorPlan } from '@archai/floor-plan-engine';
 import type {
+  AiParseProjectResponse,
   AuthResponse,
   CreateProjectInput,
   ListProjectsQuery,
@@ -94,4 +95,35 @@ export function getFloorPlan(
   signal?: AbortSignal,
 ): Promise<FloorPlanResponse> {
   return apiRequest<FloorPlanResponse>(`/projects/${projectId}/floor-plan`, { signal });
+}
+
+// ── AI ────────────────────────────────────────────────────────────────────
+
+/**
+ * Bounds of the free-text request, mirroring `AI_REQUEST_TEXT` on the API
+ * (docs/api.md → POST /ai/parse-project). They are part of the endpoint
+ * contract rather than the domain, so they do not live in `@archai/shared`;
+ * the server re-checks them and answers 400 with `ai_text_min`/`ai_text_max`.
+ */
+export const AI_TEXT_LIMITS = { min: 5, max: 2_000 } as const;
+
+export interface ParseProjectRequestBody {
+  /** Free-text request in the user's own words; trimmed 5..2000 characters. */
+  text: string;
+  localeHint?: 'uz' | 'ru' | 'en';
+}
+
+/**
+ * Turns free text into a reviewable proposal. Nothing is persisted: applying
+ * the proposal is an explicit POST /projects + PATCH /projects/:id afterwards.
+ */
+export function parseProjectRequest(
+  body: ParseProjectRequestBody,
+  signal?: AbortSignal,
+): Promise<AiParseProjectResponse> {
+  return apiRequest<AiParseProjectResponse>('/ai/parse-project', {
+    method: 'POST',
+    body,
+    signal,
+  });
 }

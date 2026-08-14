@@ -7,6 +7,15 @@ const envBoolean = z
   .union([z.boolean(), z.enum(['true', 'false', '1', '0'])])
   .transform((value) => value === true || value === 'true' || value === '1');
 
+/** Blank values in a .env file mean "not set", not "set to an empty string". */
+const optionalString = z
+  .string()
+  .optional()
+  .transform((value) => {
+    const trimmed = value?.trim() ?? '';
+    return trimmed.length > 0 ? trimmed : undefined;
+  });
+
 export const envSchema = z.object({
   NODE_ENV: z.enum(NODE_ENVS).default('development'),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
@@ -17,6 +26,13 @@ export const envSchema = z.object({
   JWT_ACCESS_TTL_SEC: z.coerce.number().int().positive().default(900),
   JWT_REFRESH_TTL_SEC: z.coerce.number().int().positive().default(2_592_000),
   COOKIE_SECURE: envBoolean.default(false),
+  /**
+   * Server-side only. Empty or missing is a supported state: the AI provider
+   * then answers `AI_NOT_CONFIGURED` (503) instead of the app refusing to boot.
+   */
+  ANTHROPIC_API_KEY: optionalString,
+  /** Model override; `@archai/ai` falls back to its own default. */
+  ANTHROPIC_MODEL: optionalString,
 });
 
 export type Env = z.infer<typeof envSchema>;

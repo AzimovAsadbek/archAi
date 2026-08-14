@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowRight, PencilLine } from 'lucide-react';
 import { createProjectSchema, type CreateProjectInput } from '@archai/shared';
 import { Alert } from '@/components/ui/alert';
 import { Button, buttonClasses } from '@/components/ui/button';
@@ -51,61 +51,54 @@ export function NewProjectForm() {
   });
 
   return (
-    <div className="mx-auto max-w-xl">
-      <Link
-        href="/dashboard"
-        className="inline-flex items-center gap-1.5 rounded-sm text-sm font-medium text-ink-faint transition-colors hover:text-ink"
+    <div className="rounded-md border border-line bg-surface p-6 shadow-card sm:p-8">
+      <h2 className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-ink">
+        <PencilLine className="size-5 text-ink-faint" aria-hidden="true" />
+        {t('formTitle')}
+      </h2>
+      <p className="mt-2 text-sm leading-relaxed text-ink-soft">{t('subtitle')}</p>
+
+      <form
+        noValidate
+        className="mt-7 flex flex-col gap-5"
+        onSubmit={handleSubmit((values) => mutation.mutate(values))}
       >
-        <ArrowLeft className="size-3.5" aria-hidden="true" />
-        {t('back')}
-      </Link>
+        {mutation.isError ? (
+          <Alert tone="danger" live>
+            {apiErrorMessage(mutation.error)}
+          </Alert>
+        ) : null}
 
-      <div className="mt-5 rounded-md border border-line bg-surface p-6 shadow-card sm:p-8">
-        <h1 className="text-2xl font-extrabold tracking-tight text-ink">{t('title')}</h1>
-        <p className="mt-2 text-sm leading-relaxed text-ink-soft">{t('subtitle')}</p>
+        <Field label={t('name')} error={fieldError(errors.name?.message)} required>
+          {(control) => (
+            <Input {...control} {...register('name')} placeholder={t('namePlaceholder')} />
+          )}
+        </Field>
 
-        <form
-          noValidate
-          className="mt-7 flex flex-col gap-5"
-          onSubmit={handleSubmit((values) => mutation.mutate(values))}
+        <Field
+          label={t('description')}
+          error={fieldError(errors.description?.message)}
+          hint={t('descriptionHint')}
         >
-          {mutation.isError ? (
-            <Alert tone="danger" live>
-              {apiErrorMessage(mutation.error)}
-            </Alert>
-          ) : null}
+          {(control) => (
+            <Textarea
+              {...control}
+              {...register('description')}
+              placeholder={t('descriptionPlaceholder')}
+            />
+          )}
+        </Field>
 
-          <Field label={t('name')} error={fieldError(errors.name?.message)} required>
-            {(control) => (
-              <Input {...control} {...register('name')} placeholder={t('namePlaceholder')} />
-            )}
-          </Field>
-
-          <Field
-            label={t('description')}
-            error={fieldError(errors.description?.message)}
-            hint={t('descriptionHint')}
-          >
-            {(control) => (
-              <Textarea
-                {...control}
-                {...register('description')}
-                placeholder={t('descriptionPlaceholder')}
-              />
-            )}
-          </Field>
-
-          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-            <Link href="/dashboard" className={buttonClasses('ghost', 'md')}>
-              {t('cancel')}
-            </Link>
-            <Button type="submit" variant="accent" loading={mutation.isPending}>
-              {t('submit')}
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </Button>
-          </div>
-        </form>
-      </div>
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <Link href="/dashboard" className={buttonClasses('ghost', 'md')}>
+            {t('cancel')}
+          </Link>
+          <Button type="submit" variant="accent" loading={mutation.isPending}>
+            {t('submit')}
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

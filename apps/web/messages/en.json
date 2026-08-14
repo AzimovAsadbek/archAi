@@ -258,6 +258,7 @@
   "projectNew": {
     "back": "Back to projects",
     "title": "New project",
+    "formTitle": "Start with a name",
     "subtitle": "Give the project a name — then we configure the land and the house together.",
     "name": "Project name",
     "namePlaceholder": "For example: House in Chilanzar",
@@ -266,6 +267,144 @@
     "descriptionHint": "Optional. You can change it at any time.",
     "submit": "Create and continue",
     "cancel": "Cancel"
+  },
+
+  "ai": {
+    "mode": {
+      "pageSubtitle": "Two ways in: fill the parameters yourself, or describe what you want in your own words.",
+      "legend": "How to create the project",
+      "simple": {
+        "label": "Manual",
+        "body": "Name the project and set the land, house and rooms step by step in the configurator."
+      },
+      "ai": {
+        "label": "With AI",
+        "body": "Describe your request in your own words — AI drafts a configuration proposal, you review and confirm it.",
+        "badge": "Faster way"
+      }
+    },
+    "input": {
+      "title": "Describe the project",
+      "subtitle": "Write whatever you know about the land, the house, floors, rooms and extras. AI only proposes — what gets saved is your call.",
+      "label": "Your request",
+      "hint": "Write in Uzbek, Russian or English. Concrete numbers (sotix, metres, floors, room counts) make the result better.",
+      "placeholder": "A 2-storey modern house with 4 rooms on 6 sotix, with a garage and a terrace",
+      "counter": "{count} / {max}",
+      "counterLabel": "Characters",
+      "exampleLabel": "For example",
+      "example": "A 2-storey modern house with 4 rooms on 6 sotix, with a garage and a terrace. Living room, kitchen and bathroom on the ground floor.",
+      "note": "Nothing is saved automatically — you see the proposal first.",
+      "submit": "Send to AI",
+      "pending": "AI is reading…",
+      "pendingLive": "AI is reading your request. This can take a few seconds.",
+      "readyLive": "The proposal is ready. Please review it."
+    },
+    "review": {
+      "title": "AI proposal",
+      "subtitle": "This is a proposal, not a project yet. Edit the name and description, then confirm.",
+      "detectedLanguage": "Detected language: {language}",
+      "languages": {
+        "uz": "Uzbek",
+        "ru": "Russian",
+        "en": "English",
+        "other": "other"
+      },
+      "nameLabel": "Project name",
+      "nameFallback": "AI project",
+      "descriptionLabel": "Description",
+      "descriptionHint": "Optional. You can change it at any time.",
+      "descriptionPlaceholder": "A short note about this project",
+      "notSet": "not mentioned",
+      "landTitle": "Land",
+      "landArea": "Area",
+      "landAreaValue": "{m2} m² ({sotix} sotix)",
+      "landDims": "Dimensions",
+      "dimsValue": "{width} × {length} m",
+      "houseTitle": "House",
+      "houseDims": "Dimensions",
+      "floors": "Floors",
+      "floorsValue": "{count, plural, one {# floor} other {# floors}}",
+      "footprint": "Footprint",
+      "totalArea": "Total floor area",
+      "coverage": "Land coverage",
+      "areaValue": "{area} m²",
+      "coverageValue": "{percent}%",
+      "roomsTitle": "Rooms",
+      "roomsEmpty": "No rooms mentioned.",
+      "floorGroup": "Floor {floor}",
+      "featuresTitle": "Extras",
+      "featureNo": "no",
+      "featureUnknown": "not mentioned",
+      "styleTitle": "Style",
+      "styleEmpty": "No style mentioned.",
+      "assumptionsTitle": "AI assumptions",
+      "assumptionsBody": "Things the text did not state outright and the AI filled in. Please check them.",
+      "assumptionsServerIntro": "System note:",
+      "unmappableTitle": "Requirements outside the schema",
+      "unmappableBody": "These cannot be stored as project data yet — they will not be saved. Discuss them separately with your builder or architect.",
+      "applyRejected": "The server rejected this configuration:",
+      "applyFailed": "The project could not be saved",
+      "createdTitle": "Project created",
+      "createdBody": "The project was created but the configuration was not saved. Open it and set it up manually.",
+      "createdOpen": "Open the project",
+      "applyHint": "On confirmation the project is created and the proposed configuration is saved.",
+      "applyBlocked": "The configuration has errors, so it cannot be saved as it is.",
+      "applyDropped": "Opening it in edit mode drops the failing part ({blocks}) and keeps the rest.",
+      "blocks": {
+        "land": "Land",
+        "house": "House",
+        "rooms": "Rooms"
+      },
+      "reset": "Start over",
+      "openInWizard": "Open in edit mode",
+      "apply": "Create the project",
+      "applying": "Creating…",
+      "provenance": "AI answer: {model} · prompt v{version}"
+    },
+    "errors": {
+      "AI_NOT_CONFIGURED": {
+        "title": "AI is not connected yet",
+        "body": "ANTHROPIC_API_KEY is not set on the server — an administrator has to do that. Until then you can create the project manually and configure it in the configurator."
+      },
+      "AI_RATE_LIMITED": {
+        "title": "Too many requests",
+        "body": "The number of requests is limited. Wait a moment and try again — your text is kept."
+      },
+      "AI_TIMEOUT": {
+        "title": "AI did not answer",
+        "body": "The request did not finish in time. Shorten the text and try again."
+      },
+      "AI_PROVIDER_ERROR": {
+        "title": "AI service error",
+        "body": "The request could not be completed. Please try again shortly."
+      },
+      "AI_REFUSED": {
+        "title": "AI declined to answer",
+        "body": "Rephrase it as a house request: land area, house dimensions, floors and rooms."
+      },
+      "AI_INVALID_OUTPUT": {
+        "title": "The answer could not be read",
+        "body": "The AI answer did not turn into project data. Describe the request more simply and try again."
+      },
+      "VALIDATION_ERROR": {
+        "title": "The text does not fit",
+        "body": "Check the length of your request and send it again."
+      },
+      "NETWORK_ERROR": {
+        "title": "No connection to the server",
+        "body": "Check your internet connection and try again."
+      },
+      "UNAUTHORIZED": {
+        "title": "Session expired",
+        "body": "Sign in again to continue."
+      },
+      "generic": {
+        "title": "Unexpected error",
+        "body": "The request could not be completed. Please try again."
+      },
+      "retry": "Try again",
+      "useSimple": "Switch to the manual way"
+    }
   },
 
   "wizard": {
@@ -517,6 +656,19 @@
     }
   },
 
+  "three": {
+    "floors": {
+      "label": "View",
+      "all": "Whole house",
+      "cutaway": "Cutaway at floor {floor}"
+    },
+    "resetView": "Reset view",
+    "canvasLabel": "Schematic 3D view of the house: {floors} floor(s), {width} × {length} m",
+    "disclaimerChip": "Schematic 3D view",
+    "disclaimerBody": "This is a schematic 3D view: the massing is generated from the same plan — wall heights, roof and stairs are indicative. It is not an architectural visualization or construction documentation.",
+    "hint": "Drag to orbit, scroll to zoom."
+  },
+
   "validation": {
     "errorsTitle": "Needs fixing",
     "warningsTitle": "Worth a look",
@@ -561,7 +713,9 @@
     "floors_max": "At most {max} floors.",
     "room_side_min": "Room side must be at least {min} m.",
     "room_side_max": "Room side must not exceed {max} m.",
-    "too_many_rooms": "You can add at most {max} rooms."
+    "too_many_rooms": "You can add at most {max} rooms.",
+    "ai_text_min": "The request must be at least {min} characters.",
+    "ai_text_max": "The request must not exceed {max} characters."
   },
 
   "errors": {

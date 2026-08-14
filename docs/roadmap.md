@@ -12,14 +12,23 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
    Auth → dashboard → configurator → workspace. 12 unit + 28 e2e tests, browser-QA'd
    (desktop+mobile). 3 defects found in QA and fixed (relativeTime now, 422 details
    shape, stale-closure room adds).
-3. **Slice 2: AI parsing** — BLOCKED (needs `ANTHROPIC_API_KEY` in apps/api/.env; provider
-   abstraction will be scaffolded with the 2D slice or when the key lands)
+3. **Slice 2: AI parsing** — DONE (code + tests); live-key evaluation PENDING
+   packages/ai (provider abstraction, claude-opus-5 structured outputs, versioned
+   injection-hardened prompt, 54 unit tests), POST /ai/parse-project (provenance rows,
+   full error contract, 11 e2e tests), AI creation path on /projects/new (review panel,
+   assumptions/unmappable, apply flow). Without `ANTHROPIC_API_KEY` the UI shows an honest
+   "not configured" panel (verified live). When the key lands: run the manual uz/ru/en
+   prompt evaluation checklist (docs/testing.md).
 4. **Slice 3: 2D floor-plan engine** — DONE
    Deterministic geometry engine (37 tests + 12k-config fuzz), persisted plans with
    inputHash/engineVersion provenance, GET floor-plan endpoint (8 e2e tests), SVG viewer
    (pan/zoom/floors/legend/dimension lines) live in the workspace 2D tab. All three API
    outcomes (200/409/422) verified in the browser. Spec: docs/floor-plan-engine.md.
-5. **Slice 4: 3D visualization** — TODO (React Three Fiber)
+5. **Slice 4: 3D visualization** — DONE
+   Pure scene-builder (plan→3D: split walls with openings, glass, stairs, gable roof,
+   land plate) + R3F viewer (demand frameloop, orbit, floor cutaway, async-chunked —
+   +3 kB route First Load). Live-verified: geometry AABBs match spec, unmount cleanup,
+   uz/ru/en. Workspace tabs now live: Umumiy | 2D | 3D.
 6. **Slice 5: Interior/exterior concepts** — TODO (image generation + asset storage)
 7. **Slice 6: Estimate engine** — TODO (deterministic rules, admin-configurable)
 8. **Slice 7: PDF export** — TODO

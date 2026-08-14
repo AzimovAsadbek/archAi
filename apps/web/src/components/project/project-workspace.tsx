@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { type ProjectDto, type RoomDto } from '@archai/shared';
 import { FloorPlanPanel } from '@/components/floor-plan/floor-plan-panel';
+import { ThreePanel } from '@/components/three/three-panel';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { buttonClasses } from '@/components/ui/button';
@@ -45,8 +46,8 @@ import { StatCard } from './stat-card';
 import { ValidationPanel } from './validation-panel';
 
 /** Tabs backed by a real panel today. */
-const LIVE_TABS = ['overview', 'plans2d'] as const;
-const ROADMAP_TABS = ['view3d', 'interior', 'exterior', 'estimate'] as const;
+const LIVE_TABS = ['overview', 'plans2d', 'view3d'] as const;
+const ROADMAP_TABS = ['interior', 'exterior', 'estimate'] as const;
 
 type LiveTab = (typeof LIVE_TABS)[number];
 type PendingAction = 'delete' | 'archive' | null;
@@ -338,7 +339,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
         </Alert>
       ) : null}
 
-      {/* Tabs — Overview and the 2D plan are real; the rest is roadmap. */}
+      {/* Tabs — Overview, the 2D plan and the 3D preview are real; the rest is roadmap. */}
       <div className="mt-7 overflow-x-auto border-b border-line">
         <div role="tablist" aria-label={t('tabsLabel')} className="flex min-w-max items-center gap-1">
           {LIVE_TABS.map((id) => (
@@ -390,6 +391,22 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
           className="mt-8"
         >
           <FloorPlanPanel projectId={projectId} projectUpdatedAt={project.updatedAt} />
+        </div>
+      ) : null}
+
+      {/* Mounted only while selected: unmounting releases the WebGL context. */}
+      {tab === 'view3d' ? (
+        <div
+          role="tabpanel"
+          id="workspace-panel-view3d"
+          aria-labelledby="workspace-tab-view3d"
+          className="mt-8"
+        >
+          <ThreePanel
+            projectId={projectId}
+            projectUpdatedAt={project.updatedAt}
+            land={project.land}
+          />
         </div>
       ) : null}
 

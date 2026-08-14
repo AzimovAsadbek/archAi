@@ -43,6 +43,15 @@ enum RoomType {
   OTHER
 }
 
+enum AiGenerationKind {
+  PARSE_PROJECT
+}
+
+enum AiGenerationStatus {
+  SUCCEEDED
+  FAILED
+}
+
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
@@ -54,6 +63,7 @@ model User {
   updatedAt     DateTime       @updatedAt
   projects      Project[]
   refreshTokens RefreshToken[]
+  aiGenerations AiGeneration[]
 
   @@map("users")
 }
@@ -142,4 +152,28 @@ model FloorPlan {
   createdAt     DateTime @default(now())
 
   @@map("floor_plans")
+}
+
+/// Provenance of one AI call. Deliberately holds no prompt, request text or
+/// model output — only who called, what answered, and how it went.
+model AiGeneration {
+  id            String             @id @default(cuid())
+  userId        String
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind          AiGenerationKind
+  /// ArchitectureAIProvider.name, e.g. 'anthropic' | 'unconfigured'.
+  provider      String
+  model         String
+  /// PARSE_PROJECT_PROMPT_VERSION of the run.
+  promptVersion String
+  status        AiGenerationStatus
+  /// AiErrorCode when status is FAILED.
+  errorCode     String?
+  inputTokens   Int?
+  outputTokens  Int?
+  durationMs    Int
+  createdAt     DateTime           @default(now())
+
+  @@index([userId, createdAt])
+  @@map("ai_generations")
 }

@@ -258,6 +258,7 @@
   "projectNew": {
     "back": "Loyihalarga qaytish",
     "title": "Yangi loyiha",
+    "formTitle": "Nom bilan boshlash",
     "subtitle": "Loyihaga nom bering — keyin yer va uy parametrlarini birga sozlaymiz.",
     "name": "Loyiha nomi",
     "namePlaceholder": "Masalan: Chilonzordagi uy",
@@ -266,6 +267,144 @@
     "descriptionHint": "Ixtiyoriy. Keyinchalik o'zgartirsangiz ham bo'ladi.",
     "submit": "Yaratish va davom etish",
     "cancel": "Bekor qilish"
+  },
+
+  "ai": {
+    "mode": {
+      "pageSubtitle": "Ikki yo'l bor: parametrlarni o'zingiz kiritasiz yoki talabingizni oddiy so'zlar bilan yozib berasiz.",
+      "legend": "Loyihani yaratish usuli",
+      "simple": {
+        "label": "Oddiy",
+        "body": "Loyihaga nom bering va yer, uy, xonalarni konfiguratorda bosqichma-bosqich sozlang."
+      },
+      "ai": {
+        "label": "AI bilan",
+        "body": "Talabingizni o'z so'zlaringiz bilan yozing — AI konfiguratsiya taklifini tayyorlaydi, siz tekshirib tasdiqlaysiz.",
+        "badge": "Tez usul"
+      }
+    },
+    "input": {
+      "title": "Loyihani tavsiflang",
+      "subtitle": "Yer, uy, qavatlar, xonalar va qo'shimchalar haqida bilganingizni yozing. AI faqat taklif tayyorlaydi — nimani saqlashni siz hal qilasiz.",
+      "label": "Talabingiz",
+      "hint": "O'zbek, rus yoki ingliz tilida yozing. Aniq raqamlar (sotix, metr, qavatlar va xonalar soni) natijani yaxshilaydi.",
+      "placeholder": "6 sotix yerga 2 qavatli, 4 xonali zamonaviy uy, garaj va terrasa bilan",
+      "counter": "{count} / {max}",
+      "counterLabel": "Belgilar",
+      "exampleLabel": "Masalan",
+      "example": "6 sotix yerga 2 qavatli, 4 xonali zamonaviy uy, garaj va terrasa bilan. Birinchi qavatda mehmonxona, oshxona va hammom.",
+      "note": "Hech narsa avtomatik saqlanmaydi — avval taklifni ko'rasiz.",
+      "submit": "AI ga yuborish",
+      "pending": "AI o'qimoqda…",
+      "pendingLive": "AI talabingizni o'qiyapti. Bu bir necha soniya olishi mumkin.",
+      "readyLive": "Taklif tayyor. Uni tekshirib chiqing."
+    },
+    "review": {
+      "title": "AI taklifi",
+      "subtitle": "Bu hali loyiha emas — taklif. Nom va tavsifni tahrirlashingiz, keyin tasdiqlashingiz mumkin.",
+      "detectedLanguage": "Aniqlangan til: {language}",
+      "languages": {
+        "uz": "o'zbekcha",
+        "ru": "ruscha",
+        "en": "inglizcha",
+        "other": "boshqa"
+      },
+      "nameLabel": "Loyiha nomi",
+      "nameFallback": "AI loyihasi",
+      "descriptionLabel": "Tavsif",
+      "descriptionHint": "Ixtiyoriy. Keyinchalik o'zgartirsangiz ham bo'ladi.",
+      "descriptionPlaceholder": "Loyiha haqida qisqacha izoh",
+      "notSet": "aytilmagan",
+      "landTitle": "Yer",
+      "landArea": "Maydon",
+      "landAreaValue": "{m2} m² ({sotix} sotix)",
+      "landDims": "O'lchamlari",
+      "dimsValue": "{width} × {length} m",
+      "houseTitle": "Uy",
+      "houseDims": "O'lchamlari",
+      "floors": "Qavatlar",
+      "floorsValue": "{count, plural, one {# qavat} other {# qavat}}",
+      "footprint": "Bino asosi",
+      "totalArea": "Umumiy maydon",
+      "coverage": "Yer bandligi",
+      "areaValue": "{area} m²",
+      "coverageValue": "{percent}%",
+      "roomsTitle": "Xonalar",
+      "roomsEmpty": "Xonalar aytilmagan.",
+      "floorGroup": "{floor}-qavat",
+      "featuresTitle": "Qo'shimchalar",
+      "featureNo": "yo'q",
+      "featureUnknown": "aytilmagan",
+      "styleTitle": "Uslub",
+      "styleEmpty": "Uslub aytilmagan.",
+      "assumptionsTitle": "AI taxminlari",
+      "assumptionsBody": "Matndan aniq kelib chiqmagan, AI o'zi to'ldirgan joylar. Tekshirib chiqing.",
+      "assumptionsServerIntro": "Tizim izohi:",
+      "unmappableTitle": "Sxemaga sig'magan talablar",
+      "unmappableBody": "Bu talablarni hozircha loyiha ma'lumotiga kiritib bo'lmaydi — ular saqlanmaydi. Usta yoki arxitektor bilan alohida kelishing.",
+      "applyRejected": "Server bu konfiguratsiyani qabul qilmadi:",
+      "applyFailed": "Loyihani saqlab bo'lmadi",
+      "createdTitle": "Loyiha yaratildi",
+      "createdBody": "Loyiha yaratildi, lekin konfiguratsiya saqlanmadi. Uni ochib, qo'lda sozlashingiz mumkin.",
+      "createdOpen": "Loyihani ochish",
+      "applyHint": "Tasdiqlasangiz, loyiha yaratiladi va taklif konfiguratsiyasi saqlanadi.",
+      "applyBlocked": "Konfiguratsiyada xatolik bor — shuning uchun uni to'g'ridan-to'g'ri saqlab bo'lmaydi.",
+      "applyDropped": "Tahrirlash rejimida ochsangiz, xatoli qism ({blocks}) tashlab yuboriladi, qolgani saqlanadi.",
+      "blocks": {
+        "land": "Yer",
+        "house": "Uy",
+        "rooms": "Xonalar"
+      },
+      "reset": "Qaytadan",
+      "openInWizard": "Tahrirlash rejimida ochish",
+      "apply": "Loyihani yaratish",
+      "applying": "Yaratilmoqda…",
+      "provenance": "AI javobi: {model} · prompt v{version}"
+    },
+    "errors": {
+      "AI_NOT_CONFIGURED": {
+        "title": "AI hali ulanmagan",
+        "body": "Serverda ANTHROPIC_API_KEY o'rnatilmagan — buni administrator qiladi. Shu paytgacha loyihani oddiy usulda yaratib, konfiguratorda sozlashingiz mumkin."
+      },
+      "AI_RATE_LIMITED": {
+        "title": "Juda ko'p so'rov",
+        "body": "So'rovlar soni cheklangan. Bir oz kutib, qayta urinib ko'ring — matningiz saqlanib turibdi."
+      },
+      "AI_TIMEOUT": {
+        "title": "AI javob bermadi",
+        "body": "So'rov belgilangan vaqtda tugamadi. Matnni qisqartirib, qayta urinib ko'ring."
+      },
+      "AI_PROVIDER_ERROR": {
+        "title": "AI xizmatida xatolik",
+        "body": "So'rovni bajarib bo'lmadi. Birozdan so'ng qayta urinib ko'ring."
+      },
+      "AI_REFUSED": {
+        "title": "AI javob berishdan bosh tortdi",
+        "body": "So'rovni uy loyihasi talabi sifatida qayta yozing: yer maydoni, uy o'lchamlari, qavatlar va xonalarni ko'rsating."
+      },
+      "AI_INVALID_OUTPUT": {
+        "title": "Javobni o'qib bo'lmadi",
+        "body": "AI javobi loyiha ma'lumotiga aylanmadi. Talabni soddaroq va aniqroq yozib, qayta urinib ko'ring."
+      },
+      "VALIDATION_ERROR": {
+        "title": "Matn talabga mos emas",
+        "body": "Talab matnining uzunligini tekshirib, qayta yuboring."
+      },
+      "NETWORK_ERROR": {
+        "title": "Serverga ulanib bo'lmadi",
+        "body": "Internet aloqasini tekshirib, qayta urinib ko'ring."
+      },
+      "UNAUTHORIZED": {
+        "title": "Seans tugagan",
+        "body": "Davom etish uchun qaytadan tizimga kiring."
+      },
+      "generic": {
+        "title": "Kutilmagan xatolik",
+        "body": "So'rovni bajarib bo'lmadi. Qayta urinib ko'ring."
+      },
+      "retry": "Qayta urinish",
+      "useSimple": "Oddiy usulga o'tish"
+    }
   },
 
   "wizard": {
@@ -517,6 +656,19 @@
     }
   },
 
+  "three": {
+    "floors": {
+      "label": "Ko'rinish",
+      "all": "Butun uy",
+      "cutaway": "{floor}-qavat kesimi"
+    },
+    "resetView": "Ko'rinishni tiklash",
+    "canvasLabel": "Uyning sxematik 3D ko'rinishi: {floors} qavat, {width} × {length} m",
+    "disclaimerChip": "Sxematik 3D ko'rinish",
+    "disclaimerBody": "Bu sxematik 3D ko'rinish: hajmlar o'sha rejadan avtomatik quriladi — devor balandligi, tom va zinapoya shartli. Bu me'moriy vizualizatsiya yoki qurilish hujjati emas.",
+    "hint": "Aylantirish uchun torting, masshtab uchun g'ildirakni aylantiring."
+  },
+
   "validation": {
     "errorsTitle": "Tuzatish kerak",
     "warningsTitle": "E'tibor bering",
@@ -561,7 +713,9 @@
     "floors_max": "Ko'pi bilan {max} qavat bo'lsin.",
     "room_side_min": "Xona tomoni kamida {min} m bo'lsin.",
     "room_side_max": "Xona tomoni {max} m dan oshmasin.",
-    "too_many_rooms": "Ko'pi bilan {max} ta xona qo'shish mumkin."
+    "too_many_rooms": "Ko'pi bilan {max} ta xona qo'shish mumkin.",
+    "ai_text_min": "Talab kamida {min} ta belgidan iborat bo'lsin.",
+    "ai_text_max": "Talab {max} ta belgidan oshmasin."
   },
 
   "errors": {
