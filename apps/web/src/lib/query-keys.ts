@@ -1,6 +1,9 @@
 import { type FinishLevel } from '@archai/shared';
 import {
   type ListAdminAuditInput,
+  type ListAdminBlogInput,
+  type ListAdminFaqInput,
+  type ListAdminPricingInput,
   type ListAdminProjectsInput,
   type ListAdminUsersInput,
   type ListProjectsInput,
@@ -21,5 +24,8 @@ export const queryKeys = {
     projects: (query: ListAdminProjectsInput) => ['admin', 'projects', query] as const,
     estimateRules: ['admin', 'estimate-rules'] as const,
     audit: (query: ListAdminAuditInput) => ['admin', 'audit', query] as const,
+    faq: (query: ListAdminFaqInput) => ['admin', 'faq', query] as const,
+    blog: (query: ListAdminBlogInput) => ['admin', 'blog', query] as const,
+    pricing: (query: ListAdminPricingInput) => ['admin', 'pricing', query] as const,
   },
 };

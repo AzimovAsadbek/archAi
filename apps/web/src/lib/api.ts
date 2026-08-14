@@ -31,6 +31,13 @@ export interface RequestOptions {
   signal?: AbortSignal;
   /** Skip the automatic refresh-and-retry dance (used by the auth endpoints). */
   skipAuthRefresh?: boolean;
+  /**
+   * Passed through to `fetch` for React Server Component reads — lets the public
+   * marketing pages cache/revalidate their content fetches. Ignored in the
+   * browser, where these options are no-ops.
+   */
+  cache?: RequestCache;
+  next?: { revalidate?: number | false; tags?: string[] };
 }
 
 function buildUrl(path: string, query?: Record<string, QueryValue>): string {
@@ -76,9 +83,9 @@ async function toApiError(response: Response): Promise<ApiError> {
 }
 
 async function rawRequest(path: string, options: RequestOptions): Promise<Response> {
-  const { method = 'GET', body, query, signal } = options;
+  const { method = 'GET', body, query, signal, cache, next } = options;
 
-  const init: RequestInit = {
+  const init: RequestInit & { next?: RequestOptions['next'] } = {
     method,
     credentials: 'include',
     signal,
@@ -88,6 +95,8 @@ async function rawRequest(path: string, options: RequestOptions): Promise<Respon
     },
   };
   if (body !== undefined) init.body = JSON.stringify(body);
+  if (cache !== undefined) init.cache = cache;
+  if (next !== undefined) init.next = next;
 
   try {
     return await fetch(buildUrl(path, query), init);

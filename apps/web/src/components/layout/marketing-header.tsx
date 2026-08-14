@@ -12,18 +12,30 @@ export async function MarketingHeader() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
         <Logo href="/" />
 
-        <nav aria-label={t('primary')} className="hidden items-center gap-7 md:flex">
-          <Link
-            href="/#how-it-works"
-            className="text-sm font-medium text-ink-soft transition-colors hover:text-ink"
-          >
-            {t('howItWorks')}
-          </Link>
+        <nav aria-label={t('primary')} className="hidden items-center gap-6 md:flex lg:gap-7">
           <Link
             href="/#features"
             className="text-sm font-medium text-ink-soft transition-colors hover:text-ink"
           >
             {t('features')}
+          </Link>
+          <Link
+            href="/pricing"
+            className="text-sm font-medium text-ink-soft transition-colors hover:text-ink"
+          >
+            {t('pricing')}
+          </Link>
+          <Link
+            href="/blog"
+            className="text-sm font-medium text-ink-soft transition-colors hover:text-ink"
+          >
+            {t('blog')}
+          </Link>
+          <Link
+            href="/faq"
+            className="text-sm font-medium text-ink-soft transition-colors hover:text-ink"
+          >
+            {t('faq')}
           </Link>
         </nav>
 

@@ -2,13 +2,20 @@ import type { FloorPlan } from '@archai/floor-plan-engine';
 import type {
   AiParseProjectResponse,
   AuthResponse,
+  BlogListQuery,
+  BlogListResponse,
+  BlogPostDto,
+  BlogStatus,
   CreateProjectInput,
   EstimateResult,
   EstimateRules,
+  FaqListResponse,
   FinishLevel,
   ListProjectsQuery,
   LoginInput,
   Paginated,
+  PricingLimits,
+  PricingResponse,
   ProjectDto,
   ProjectListItemDto,
   ProjectStatus,
@@ -294,4 +301,225 @@ export function listAdminAudit(
     },
     signal,
   });
+}
+
+// ── Public content (FAQ / blog / pricing) ───────────────────────────────────
+//
+// Contract: docs/public-content.md §Web. These routes need no auth and are read
+// from React Server Components. `revalidate` lets the marketing pages cache the
+// content briefly instead of hitting the API on every request; the admin panel
+// edits are visible within the window.
+
+const PUBLIC_REVALIDATE = 60;
+
+export function getPricing(revalidate: number | false = PUBLIC_REVALIDATE): Promise<PricingResponse> {
+  return apiRequest<PricingResponse>('/pricing', { next: { revalidate } });
+}
+
+export function getFaq(revalidate: number | false = PUBLIC_REVALIDATE): Promise<FaqListResponse> {
+  return apiRequest<FaqListResponse>('/faq', { next: { revalidate } });
+}
+
+export type PublicBlogListInput = Partial<BlogListQuery>;
+
+export function listBlog(
+  query: PublicBlogListInput = {},
+  revalidate: number | false = PUBLIC_REVALIDATE,
+): Promise<BlogListResponse> {
+  return apiRequest<BlogListResponse>('/blog', {
+    query: {
+      page: query.page,
+      pageSize: query.pageSize,
+      category: query.category,
+      tag: query.tag,
+    },
+    next: { revalidate },
+  });
+}
+
+/** Throws `ApiError` with status 404 for a draft or unknown slug — map to notFound(). */
+export function getBlogPost(
+  slug: string,
+  revalidate: number | false = PUBLIC_REVALIDATE,
+): Promise<BlogPostDto> {
+  return apiRequest<BlogPostDto>(`/blog/${encodeURIComponent(slug)}`, { next: { revalidate } });
+}
+
+// ── Admin content CRUD ──────────────────────────────────────────────────────
+//
+// Contract: docs/public-content.md §Web + apps/api content module. ADMIN-only
+// server-side; the admin panel default page size mirrors ADMIN_PAGE_SIZE.
+
+export interface AdminFaqRow {
+  id: string;
+  question: string;
+  answer: string;
+  category: string | null;
+  sortOrder: number;
+  isPublished: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ListAdminFaqInput {
+  page?: number;
+  pageSize?: number;
+  category?: string;
+}
+
+export interface FaqInput {
+  question: string;
+  answer: string;
+  category?: string | null;
+  sortOrder?: number;
+  isPublished?: boolean;
+}
+
+export function listAdminFaq(
+  query: ListAdminFaqInput = {},
+  signal?: AbortSignal,
+): Promise<Paginated<AdminFaqRow>> {
+  return apiRequest<Paginated<AdminFaqRow>>('/admin/faq', {
+    query: { page: query.page, pageSize: query.pageSize, category: query.category },
+    signal,
+  });
+}
+
+export function createAdminFaq(input: FaqInput): Promise<AdminFaqRow> {
+  return apiRequest<AdminFaqRow>('/admin/faq', { method: 'POST', body: input });
+}
+
+export function updateAdminFaq(id: string, input: Partial<FaqInput>): Promise<AdminFaqRow> {
+  return apiRequest<AdminFaqRow>(`/admin/faq/${id}`, { method: 'PATCH', body: input });
+}
+
+export function deleteAdminFaq(id: string): Promise<void> {
+  return apiRequest<void>(`/admin/faq/${id}`, { method: 'DELETE' });
+}
+
+export interface AdminBlogRow {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  body: string;
+  authorName: string;
+  category: string | null;
+  tags: string[];
+  coverImageUrl: string | null;
+  status: BlogStatus;
+  publishedAt: string | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ListAdminBlogInput {
+  page?: number;
+  pageSize?: number;
+  status?: BlogStatus;
+  category?: string;
+  tag?: string;
+}
+
+export interface BlogInput {
+  slug: string;
+  title: string;
+  excerpt: string;
+  body: string;
+  authorName: string;
+  category?: string | null;
+  tags?: string[];
+  coverImageUrl?: string | null;
+  status?: BlogStatus;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+}
+
+export function listAdminBlog(
+  query: ListAdminBlogInput = {},
+  signal?: AbortSignal,
+): Promise<Paginated<AdminBlogRow>> {
+  return apiRequest<Paginated<AdminBlogRow>>('/admin/blog', {
+    query: {
+      page: query.page,
+      pageSize: query.pageSize,
+      status: query.status,
+      category: query.category,
+      tag: query.tag,
+    },
+    signal,
+  });
+}
+
+/** 409 `SLUG_EXISTS` when the slug is taken. */
+export function createAdminBlog(input: BlogInput): Promise<AdminBlogRow> {
+  return apiRequest<AdminBlogRow>('/admin/blog', { method: 'POST', body: input });
+}
+
+/** 409 `SLUG_EXISTS` when the new slug is taken; publishing stamps publishedAt server-side. */
+export function updateAdminBlog(id: string, input: Partial<BlogInput>): Promise<AdminBlogRow> {
+  return apiRequest<AdminBlogRow>(`/admin/blog/${id}`, { method: 'PATCH', body: input });
+}
+
+export function deleteAdminBlog(id: string): Promise<void> {
+  return apiRequest<void>(`/admin/blog/${id}`, { method: 'DELETE' });
+}
+
+export interface AdminPricingRow {
+  id: string;
+  key: string;
+  name: string;
+  tagline: string;
+  priceMonthly: number;
+  limits: PricingLimits;
+  features: string[];
+  sortOrder: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ListAdminPricingInput {
+  page?: number;
+  pageSize?: number;
+  isActive?: boolean;
+}
+
+export interface CreatePricingInput {
+  key: string;
+  name: string;
+  tagline: string;
+  priceMonthly: number;
+  limits: PricingLimits;
+  features?: string[];
+  sortOrder?: number;
+  isActive?: boolean;
+}
+
+/** `key` is immutable once created, so it is absent from the update body. */
+export type UpdatePricingInput = Partial<Omit<CreatePricingInput, 'key'>>;
+
+export function listAdminPricing(
+  query: ListAdminPricingInput = {},
+  signal?: AbortSignal,
+): Promise<Paginated<AdminPricingRow>> {
+  return apiRequest<Paginated<AdminPricingRow>>('/admin/pricing', {
+    query: { page: query.page, pageSize: query.pageSize, isActive: query.isActive },
+    signal,
+  });
+}
+
+/** 409 `CONFLICT` when the plan key is already taken. */
+export function createAdminPricing(input: CreatePricingInput): Promise<AdminPricingRow> {
+  return apiRequest<AdminPricingRow>('/admin/pricing', { method: 'POST', body: input });
+}
+
+export function updateAdminPricing(id: string, input: UpdatePricingInput): Promise<AdminPricingRow> {
+  return apiRequest<AdminPricingRow>(`/admin/pricing/${id}`, { method: 'PATCH', body: input });
+}
+
+export function deactivateAdminPricing(id: string): Promise<AdminPricingRow> {
+  return apiRequest<AdminPricingRow>(`/admin/pricing/${id}/deactivate`, { method: 'POST' });
 }

@@ -30,7 +30,12 @@
     "getStarted": "Boshlash",
     "projects": "Loyihalar",
     "logout": "Chiqish",
-    "admin": "Admin panel"
+    "admin": "Admin panel",
+    "pricing": "Narxlar",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "help": "Yordam",
+    "about": "Biz haqimizda"
   },
   "marketing": {
     "hero": {
@@ -133,7 +138,8 @@
     },
     "footer": {
       "tagline": "Yer va talablardan tuzilgan uy loyihasi.",
-      "rights": "© 2026 archAi. Barcha huquqlar himoyalangan."
+      "rights": "© 2026 archAi. Barcha huquqlar himoyalangan.",
+      "navLabel": "Sayt navigatsiyasi"
     }
   },
   "auth": {
@@ -798,7 +804,10 @@
       "users": "Foydalanuvchilar",
       "projects": "Loyihalar",
       "estimateRules": "Smeta qoidalari",
-      "audit": "Audit"
+      "audit": "Audit",
+      "faq": "FAQ",
+      "blog": "Blog",
+      "pricing": "Narxlar"
     },
     "table": {
       "error": {
@@ -964,6 +973,296 @@
       "empty": {
         "title": "Yozuvlar yo'q",
         "body": "Hozircha audit yozuvlari qayd etilmagan."
+      }
+    }
+  },
+  "publicContent": {
+    "pricing": {
+      "metaTitle": "Narxlar",
+      "metaDescription": "archAi tariflari. Beta davrida barcha imkoniyatlar bepul — to'lov tizimi hali ulanmagan.",
+      "eyebrow": "Narxlar",
+      "title": "Oddiy, halol narxlar",
+      "subtitle": "Hozir archAi beta bosqichida va butunlay bepul. Quyidagi tariflar kelajak uchun mo'ljallangan — ularni oldindan ko'rib qo'ying.",
+      "betaBannerTitle": "Beta — hammasi bepul",
+      "betaBanner": "Hozircha barcha imkoniyatlar bepul. To'lov tizimi hali ulanmagan.",
+      "free": "Bepul (beta)",
+      "futurePrice": "Kelajakdagi narx: {price} so'm/oy",
+      "cta": "Bepul boshlash",
+      "unlimited": "Cheksiz",
+      "storageValue": "{mb} MB",
+      "popular": "Ommabop",
+      "unavailable": "Narxlarni hozir yuklab bo'lmadi. Birozdan so'ng qayta urinib ko'ring.",
+      "empty": "Hozircha faol tarif yo’q.",
+      "footnote": "Beta tugagach, oldindan xabar beramiz — hech qanday avtomatik to'lov bo'lmaydi.",
+      "limits": {
+        "projects": "Loyihalar",
+        "aiParsesPerMonth": "AI so’rovlar (oyiga)",
+        "pdfExportsPerMonth": "PDF eksport (oyiga)",
+        "storageMb": "Xotira"
+      },
+      "features": {
+        "projects_3": "3 tagacha loyiha",
+        "projects_25": "25 tagacha loyiha",
+        "projects_unlimited": "Cheksiz loyihalar",
+        "ai_parse": "AI bilan yaratish",
+        "floor_plan": "2D rejalar",
+        "estimate": "Taxminiy smeta",
+        "pdf_export": "PDF eksport",
+        "priority_support": "Ustuvor qo'llab-quvvatlash",
+        "early_access": "Yangi imkoniyatlarga erta kirish"
+      }
+    },
+    "blog": {
+      "metaTitle": "Blog",
+      "metaDescription": "Uy loyihalash, smeta va dizayn bo’yicha maslahatlar — archAi jamoasidan.",
+      "eyebrow": "Blog",
+      "title": "Maslahatlar va yo’riqnomalar",
+      "subtitle": "Uy rejalashtirish, smetani o’qish va uslub tanlash bo’yicha amaliy maqolalar.",
+      "filterLabel": "Turkum bo’yicha filtr",
+      "allCategories": "Barchasi",
+      "unavailable": "Maqolalarni hozir yuklab bo'lmadi. Birozdan so'ng qayta urinib ko'ring.",
+      "back": "Blogga qaytish",
+      "tags": "Teglar",
+      "empty": {
+        "title": "Maqola topilmadi",
+        "body": "Bu turkumda hali maqola yo’q. Boshqa turkumni tanlab ko’ring.",
+        "reset": "Barcha maqolalar"
+      },
+      "pagination": {
+        "label": "Sahifalar",
+        "prev": "Oldingi",
+        "next": "Keyingi",
+        "info": "Sahifa {page} / {pages}"
+      }
+    },
+    "faq": {
+      "metaTitle": "Ko’p so’raladigan savollar",
+      "metaDescription": "archAi haqida ko’p beriladigan savollarga javoblar — narx, aniqlik, maxfiylik va boshqalar.",
+      "eyebrow": "Yordam",
+      "title": "Ko’p so’raladigan savollar",
+      "subtitle": "Eng ko’p beriladigan savollarga javoblar. Kerakli javobni topmasangiz, biz bilan bog’laning.",
+      "unavailable": "Savollarni hozir yuklab bo'lmadi. Birozdan so'ng qayta urinib ko'ring.",
+      "searchLabel": "Savollar ichidan qidirish",
+      "searchPlaceholder": "Savol yoki kalit so’z",
+      "generalCategory": "Umumiy",
+      "noResults": {
+        "title": "Hech narsa topilmadi",
+        "body": "Boshqa so’z bilan qidirib ko’ring."
+      }
+    },
+    "about": {
+      "metaTitle": "Biz haqimizda",
+      "metaDescription": "archAi — yer va talablardan tuzilgan uy loyihasini yaratadigan platforma. Missiyamiz va yondashuvimiz.",
+      "eyebrow": "Biz haqimizda",
+      "title": "Uy loyihalashni hammabop qilamiz",
+      "subtitle": "archAi murakkab loyihalash jarayonini oddiy, tushunarli qadamlarga aylantiradi.",
+      "missionTitle": "Missiyamiz",
+      "mission": "Har bir kishi uy qurishdan oldin uni aniq tasavvur qila olishi kerak. Biz yer, o’lcham va talablarni tuzilgan, tekshirilgan loyihaga aylantiramiz — ortiqcha atamalar va taxminlarsiz.",
+      "howTitle": "Qanday ishlaymiz",
+      "howBody": "Siz yer maydoni, uy o’lchamlari, xonalar va uslubni kiritasiz. archAi ularni darhol tekshiradi, 2D reja va taxminiy smeta tayyorlaydi. Hammasi bir joyda saqlanadi.",
+      "honestyTitle": "Halollik",
+      "honesty": "archAi taxminiy hisob va konsepsiya beradi — bu rasmiy qurilish hujjati emas. Ishni boshlashdan oldin loyihani litsenziyali mutaxassis bilan tasdiqlang.",
+      "contactTitle": "Bog’lanish",
+      "contactBody": "Savol yoki taklifingiz bormi? Bizga yozing — soxta forma yo’q, to’g’ridan-to’g’ri pochta.",
+      "cta": "Bepul boshlash"
+    },
+    "help": {
+      "metaTitle": "Yordam",
+      "metaDescription": "archAi’dan qanday foydalanish — boshlash, konfigurator va smeta bo’yicha yo’riqnoma.",
+      "eyebrow": "Yordam markazi",
+      "title": "Yordam kerakmi?",
+      "subtitle": "archAi’dan foydalanishning asosiy qadamlari. Batafsil savollar uchun FAQ bo’limiga qarang.",
+      "faqTitle": "Ko’p so’raladigan savollar",
+      "faqBody": "Ko’p beriladigan savollarga tayyor javoblar bor.",
+      "faqCta": "FAQ bo’limiga o’tish",
+      "contactTitle": "Bog’lanish",
+      "contactBody": "Javobni topmadingizmi? Bizga to’g’ridan-to’g’ri yozing.",
+      "sections": {
+        "start": {
+          "title": "Qanday boshlash",
+          "body": "Bepul ro’yxatdan o’ting va birinchi loyihangizni yarating. Yer maydonini kiriting — qolganini bosqichma-bosqich sozlaymiz."
+        },
+        "configurator": {
+          "title": "Konfigurator",
+          "body": "Yer, uy, qavatlar, xonalar va uslubni bosqichma-bosqich kiriting. Har qadamda tizim xatolarni darhol ko’rsatadi."
+        },
+        "estimate": {
+          "title": "Taxminiy smeta",
+          "body": "Smeta o’lcham va pardoz darajasi asosida hisoblanadi. Bu dastlabki mo’ljal — aniq narx uchun mahalliy pudratchiga murojaat qiling."
+        }
+      }
+    }
+  },
+  "adminContent": {
+    "faq": {
+      "title": "FAQ",
+      "subtitle": "Ommaviy FAQ bo’limidagi savol-javoblar. Turkum va tartib bo’yicha ko’rsatiladi.",
+      "count": "{count, plural, =0 {Savol yo'q} one {# ta savol} other {# ta savol}}",
+      "new": "Yangi savol",
+      "caption": "FAQ savollari ro’yxati",
+      "noCategory": "Turkumsiz",
+      "editAction": "Tahrirlash",
+      "deleteAction": "O’chirish",
+      "published": "Chop etilgan",
+      "unpublished": "Yashirin",
+      "backToList": "Ro’yxatga qaytish",
+      "columns": {
+        "question": "Savol",
+        "category": "Turkum",
+        "status": "Holat",
+        "order": "Tartib",
+        "actions": "Amallar"
+      },
+      "empty": {
+        "title": "Hali savol yo’q",
+        "body": "Birinchi FAQ savolini qo’shing."
+      },
+      "confirmDelete": {
+        "title": "Savolni o’chirish",
+        "body": "«{question}» o’chiriladi. Bu amalni qaytarib bo’lmaydi.",
+        "confirm": "O’chirish"
+      },
+      "form": {
+        "createTitle": "Yangi savol",
+        "editTitle": "Savolni tahrirlash",
+        "question": "Savol",
+        "answer": "Javob",
+        "answerHint": "Oddiy matn. Bo’sh qatorlar alohida paragraflarga bo’linadi.",
+        "category": "Turkum",
+        "categoryHint": "Ixtiyoriy. Bir xil turkumdagi savollar birga guruhlanadi.",
+        "sortOrder": "Tartib raqami",
+        "sortOrderHint": "Kichik raqam yuqorida turadi.",
+        "isPublished": "Chop etilgan (ommaga ko’rinadi)",
+        "save": "Saqlash",
+        "create": "Qo’shish"
+      }
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "Barcha maqolalar, jumladan qoralamalar. Slug va holat bo’yicha boshqariladi.",
+      "count": "{count, plural, =0 {Maqola yo'q} one {# ta maqola} other {# ta maqola}}",
+      "new": "Yangi maqola",
+      "caption": "Maqolalar ro’yxati",
+      "noCategory": "Turkumsiz",
+      "editAction": "Tahrirlash",
+      "deleteAction": "O’chirish",
+      "statusLabel": "Holat bo’yicha filtr",
+      "statusAll": "Barcha holatlar",
+      "backToList": "Ro’yxatga qaytish",
+      "status": {
+        "DRAFT": "Qoralama",
+        "PUBLISHED": "Chop etilgan"
+      },
+      "columns": {
+        "title": "Sarlavha",
+        "slug": "Slug",
+        "status": "Holat",
+        "category": "Turkum",
+        "publishedAt": "Chop etilgan sana",
+        "actions": "Amallar"
+      },
+      "empty": {
+        "title": "Hali maqola yo’q",
+        "body": "Birinchi maqolangizni yozing."
+      },
+      "confirmDelete": {
+        "title": "Maqolani o’chirish",
+        "body": "«{title}» o’chiriladi. Bu amalni qaytarib bo’lmaydi.",
+        "confirm": "O’chirish"
+      },
+      "form": {
+        "createTitle": "Yangi maqola",
+        "editTitle": "Maqolani tahrirlash",
+        "title": "Sarlavha",
+        "slug": "Slug",
+        "slugHint": "Manzilda ko’rinadi: /blog/slug. Faqat kichik harflar, raqam va chiziqcha.",
+        "slugExists": "Bu slug allaqachon band. Boshqasini tanlang.",
+        "slugInvalid": "Slug faqat kichik harf, raqam va chiziqchadan iborat bo’lsin.",
+        "excerpt": "Qisqa tavsif",
+        "excerptHint": "Ro’yxatda va qidiruvda ko’rinadigan qisqa matn.",
+        "body": "Matn (markdown)",
+        "bodyHint": "Markdown: # sarlavha, **qalin**, *kursiv*, - ro’yxat, [matn](havola). HTML ishlamaydi.",
+        "showPreview": "Ko’rish",
+        "hidePreview": "Ko’rishni yopish",
+        "previewTitle": "Ko’rinish",
+        "previewEmpty": "Matn kiritilmagan.",
+        "authorName": "Muallif",
+        "status": "Holat",
+        "statusHint": "Chop etilgan maqolalar ommaga ko’rinadi.",
+        "category": "Turkum",
+        "categoryHint": "Ixtiyoriy.",
+        "tags": "Teglar",
+        "tagsHint": "Vergul bilan ajrating.",
+        "tagsPlaceholder": "rejalashtirish, byudjet",
+        "coverImageUrl": "Muqova rasmi (URL)",
+        "coverImageUrlHint": "Ixtiyoriy. Rasmning to’liq manzili (https://…).",
+        "seoGroup": "SEO",
+        "metaTitle": "Meta sarlavha",
+        "metaTitleHint": "Ixtiyoriy. Bo’sh bo’lsa, sarlavha ishlatiladi.",
+        "metaDescription": "Meta tavsif",
+        "metaDescriptionHint": "Ixtiyoriy. Bo’sh bo’lsa, qisqa tavsif ishlatiladi.",
+        "save": "Saqlash",
+        "create": "Qo’shish"
+      }
+    },
+    "pricing": {
+      "title": "Narxlar",
+      "subtitle": "Tariflar — bu ma’lumot. Beta davrida hammasi bepul; narxlar kelajak uchun saqlanadi.",
+      "count": "{count, plural, =0 {Tarif yo'q} one {# ta tarif} other {# ta tarif}}",
+      "new": "Yangi tarif",
+      "caption": "Tariflar ro’yxati",
+      "editAction": "Tahrirlash",
+      "deactivateAction": "Faolsizlantirish",
+      "active": "Faol",
+      "inactive": "Faolsiz",
+      "priceValue": "{amount} so'm",
+      "backToList": "Ro’yxatga qaytish",
+      "columns": {
+        "key": "Kalit",
+        "name": "Nomi",
+        "price": "Narx (oyiga)",
+        "status": "Holat",
+        "order": "Tartib",
+        "actions": "Amallar"
+      },
+      "empty": {
+        "title": "Hali tarif yo’q",
+        "body": "Birinchi tarifni qo’shing."
+      },
+      "confirmDeactivate": {
+        "title": "Tarifni faolsizlantirish",
+        "body": "«{name}» ommaviy ro’yxatdan yashiriladi. Keyin tahrirlab qayta faollashtirish mumkin.",
+        "confirm": "Faolsizlantirish"
+      },
+      "form": {
+        "createTitle": "Yangi tarif",
+        "editTitle": "Tarifni tahrirlash",
+        "key": "Kalit",
+        "keyHint": "Barqaror ommaviy identifikator.",
+        "keyLocked": "Kalitni yaratgandan keyin o’zgartirib bo’lmaydi.",
+        "keyExists": "Bu kalitli tarif allaqachon mavjud.",
+        "name": "Nomi",
+        "tagline": "Qisqa shior",
+        "priceMonthly": "Oylik narx",
+        "priceHint": "{amount} so'm/oy",
+        "priceHintEmpty": "Narxni so’mda kiriting (0 = bepul)",
+        "sortOrder": "Tartib raqami",
+        "sortOrderHint": "Kichik raqam chapda turadi.",
+        "limitsGroup": "Cheklovlar",
+        "limitsHint": "v1 da cheklovlar faqat ma’lumot uchun. Bo’sh qoldirsangiz — cheksiz.",
+        "unlimited": "Cheksiz",
+        "features": "Imkoniyatlar",
+        "featuresHint": "Vergul bilan ajrating. Belgilangan kalitlar tarjima qilinadi.",
+        "featuresPlaceholder": "ai_parse, floor_plan, estimate",
+        "isActive": "Faol (ommaga ko’rinadi)",
+        "save": "Saqlash",
+        "create": "Qo’shish",
+        "limits": {
+          "projects": "Loyihalar",
+          "aiParsesPerMonth": "AI so’rovlar (oyiga)",
+          "pdfExportsPerMonth": "PDF eksport (oyiga)",
+          "storageMb": "Xotira (MB)"
+        }
       }
     }
   }

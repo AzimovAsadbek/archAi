@@ -30,7 +30,12 @@
     "getStarted": "Get started",
     "projects": "Projects",
     "logout": "Log out",
-    "admin": "Admin panel"
+    "admin": "Admin panel",
+    "pricing": "Pricing",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "help": "Help",
+    "about": "About"
   },
   "marketing": {
     "hero": {
@@ -133,7 +138,8 @@
     },
     "footer": {
       "tagline": "A structured house project, built from your land and requirements.",
-      "rights": "© 2026 archAi. All rights reserved."
+      "rights": "© 2026 archAi. All rights reserved.",
+      "navLabel": "Site navigation"
     }
   },
   "auth": {
@@ -798,7 +804,10 @@
       "users": "Users",
       "projects": "Projects",
       "estimateRules": "Estimate rules",
-      "audit": "Audit"
+      "audit": "Audit",
+      "faq": "FAQ",
+      "blog": "Blog",
+      "pricing": "Pricing"
     },
     "table": {
       "error": {
@@ -964,6 +973,296 @@
       "empty": {
         "title": "No entries",
         "body": "No audit entry has been recorded yet."
+      }
+    }
+  },
+  "publicContent": {
+    "pricing": {
+      "metaTitle": "Pricing",
+      "metaDescription": "archAi pricing. Everything is free during beta — no payment system is connected yet.",
+      "eyebrow": "Pricing",
+      "title": "Simple, honest pricing",
+      "subtitle": "archAi is in beta and completely free right now. The plans below are for the future — take a look ahead of time.",
+      "betaBannerTitle": "Beta — everything is free",
+      "betaBanner": "All features are free for now. No payment system is connected yet.",
+      "free": "Free (beta)",
+      "futurePrice": "Future price: {price} so'm/mo",
+      "cta": "Start for free",
+      "unlimited": "Unlimited",
+      "storageValue": "{mb} MB",
+      "popular": "Popular",
+      "unavailable": "Couldn't load pricing right now. Please try again later.",
+      "empty": "No active plans yet.",
+      "footnote": "When beta ends we'll let you know in advance — there are no automatic charges.",
+      "limits": {
+        "projects": "Projects",
+        "aiParsesPerMonth": "AI requests (per month)",
+        "pdfExportsPerMonth": "PDF exports (per month)",
+        "storageMb": "Storage"
+      },
+      "features": {
+        "projects_3": "Up to 3 projects",
+        "projects_25": "Up to 25 projects",
+        "projects_unlimited": "Unlimited projects",
+        "ai_parse": "AI-assisted creation",
+        "floor_plan": "2D floor plans",
+        "estimate": "Cost estimate",
+        "pdf_export": "PDF export",
+        "priority_support": "Priority support",
+        "early_access": "Early access to new features"
+      }
+    },
+    "blog": {
+      "metaTitle": "Blog",
+      "metaDescription": "Tips on home planning, estimates and design — from the archAi team.",
+      "eyebrow": "Blog",
+      "title": "Guides and tips",
+      "subtitle": "Practical articles on planning a home, reading an estimate and choosing a style.",
+      "filterLabel": "Filter by category",
+      "allCategories": "All",
+      "unavailable": "Couldn't load articles right now. Please try again later.",
+      "back": "Back to blog",
+      "tags": "Tags",
+      "empty": {
+        "title": "No articles found",
+        "body": "There are no articles in this category yet. Try another one.",
+        "reset": "All articles"
+      },
+      "pagination": {
+        "label": "Pages",
+        "prev": "Previous",
+        "next": "Next",
+        "info": "Page {page} / {pages}"
+      }
+    },
+    "faq": {
+      "metaTitle": "FAQ",
+      "metaDescription": "Answers to common questions about archAi — pricing, accuracy, privacy and more.",
+      "eyebrow": "Help",
+      "title": "Frequently asked questions",
+      "subtitle": "Answers to the most common questions. Can't find yours — get in touch.",
+      "unavailable": "Couldn't load questions right now. Please try again later.",
+      "searchLabel": "Search the questions",
+      "searchPlaceholder": "Question or keyword",
+      "generalCategory": "General",
+      "noResults": {
+        "title": "Nothing found",
+        "body": "Try a different search."
+      }
+    },
+    "about": {
+      "metaTitle": "About",
+      "metaDescription": "archAi turns your plot and requirements into a structured home project. Our mission and approach.",
+      "eyebrow": "About us",
+      "title": "Making home planning accessible",
+      "subtitle": "archAi turns a complex planning process into simple, clear steps.",
+      "missionTitle": "Our mission",
+      "mission": "Everyone should be able to picture their home clearly before building. We turn plot, dimensions and requirements into a structured, validated project — without jargon or guesswork.",
+      "howTitle": "How we work",
+      "howBody": "You enter the plot area, house dimensions, rooms and style. archAi validates it instantly, produces a 2D plan and a rough estimate. Everything is kept in one place.",
+      "honestyTitle": "Honesty",
+      "honesty": "archAi gives a rough estimate and concept — it is not official construction documentation. Confirm the project with a licensed professional before starting work.",
+      "contactTitle": "Get in touch",
+      "contactBody": "Have a question or suggestion? Write to us — no fake forms, just direct email.",
+      "cta": "Start for free"
+    },
+    "help": {
+      "metaTitle": "Help",
+      "metaDescription": "How to use archAi — getting started, the configurator and estimates.",
+      "eyebrow": "Help centre",
+      "title": "Need a hand?",
+      "subtitle": "The basics of using archAi. For detailed questions, see the FAQ.",
+      "faqTitle": "Frequently asked questions",
+      "faqBody": "Common questions already have ready answers.",
+      "faqCta": "Go to the FAQ",
+      "contactTitle": "Get in touch",
+      "contactBody": "Didn't find an answer? Write to us directly.",
+      "sections": {
+        "start": {
+          "title": "Getting started",
+          "body": "Sign up for free and create your first project. Enter the plot area — we'll set up the rest step by step."
+        },
+        "configurator": {
+          "title": "The configurator",
+          "body": "Enter the plot, house, floors, rooms and style step by step. At each step the system flags errors right away."
+        },
+        "estimate": {
+          "title": "Cost estimate",
+          "body": "The estimate is based on dimensions and finish level. It's an early guide — for an exact price, contact a local contractor."
+        }
+      }
+    }
+  },
+  "adminContent": {
+    "faq": {
+      "title": "FAQ",
+      "subtitle": "Questions and answers for the public FAQ. Shown by category and order.",
+      "count": "{count, plural, =0 {No questions} one {# question} other {# questions}}",
+      "new": "New question",
+      "caption": "List of FAQ questions",
+      "noCategory": "No category",
+      "editAction": "Edit",
+      "deleteAction": "Delete",
+      "published": "Published",
+      "unpublished": "Hidden",
+      "backToList": "Back to list",
+      "columns": {
+        "question": "Question",
+        "category": "Category",
+        "status": "Status",
+        "order": "Order",
+        "actions": "Actions"
+      },
+      "empty": {
+        "title": "No questions yet",
+        "body": "Add the first FAQ question."
+      },
+      "confirmDelete": {
+        "title": "Delete question",
+        "body": "“{question}” will be deleted. This cannot be undone.",
+        "confirm": "Delete"
+      },
+      "form": {
+        "createTitle": "New question",
+        "editTitle": "Edit question",
+        "question": "Question",
+        "answer": "Answer",
+        "answerHint": "Plain text. Blank lines split into paragraphs.",
+        "category": "Category",
+        "categoryHint": "Optional. Questions in the same category are grouped.",
+        "sortOrder": "Order",
+        "sortOrderHint": "Lower numbers appear first.",
+        "isPublished": "Published (visible to everyone)",
+        "save": "Save",
+        "create": "Add"
+      }
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "All posts, including drafts. Managed by slug and status.",
+      "count": "{count, plural, =0 {No posts} one {# post} other {# posts}}",
+      "new": "New post",
+      "caption": "List of posts",
+      "noCategory": "No category",
+      "editAction": "Edit",
+      "deleteAction": "Delete",
+      "statusLabel": "Filter by status",
+      "statusAll": "All statuses",
+      "backToList": "Back to list",
+      "status": {
+        "DRAFT": "Draft",
+        "PUBLISHED": "Published"
+      },
+      "columns": {
+        "title": "Title",
+        "slug": "Slug",
+        "status": "Status",
+        "category": "Category",
+        "publishedAt": "Published",
+        "actions": "Actions"
+      },
+      "empty": {
+        "title": "No posts yet",
+        "body": "Write your first post."
+      },
+      "confirmDelete": {
+        "title": "Delete post",
+        "body": "“{title}” will be deleted. This cannot be undone.",
+        "confirm": "Delete"
+      },
+      "form": {
+        "createTitle": "New post",
+        "editTitle": "Edit post",
+        "title": "Title",
+        "slug": "Slug",
+        "slugHint": "Appears in the URL: /blog/slug. Lowercase letters, numbers and hyphens only.",
+        "slugExists": "That slug is already taken. Choose another.",
+        "slugInvalid": "Slug must be lowercase letters, numbers and hyphens only.",
+        "excerpt": "Excerpt",
+        "excerptHint": "Short text shown in the list and search.",
+        "body": "Body (markdown)",
+        "bodyHint": "Markdown: # heading, **bold**, *italic*, - list, [text](link). HTML does not work.",
+        "showPreview": "Preview",
+        "hidePreview": "Hide preview",
+        "previewTitle": "Preview",
+        "previewEmpty": "No text yet.",
+        "authorName": "Author",
+        "status": "Status",
+        "statusHint": "Published posts are visible to everyone.",
+        "category": "Category",
+        "categoryHint": "Optional.",
+        "tags": "Tags",
+        "tagsHint": "Separate with commas.",
+        "tagsPlaceholder": "planning, budget",
+        "coverImageUrl": "Cover image (URL)",
+        "coverImageUrlHint": "Optional. Full image URL (https://…).",
+        "seoGroup": "SEO",
+        "metaTitle": "Meta title",
+        "metaTitleHint": "Optional. Falls back to the title.",
+        "metaDescription": "Meta description",
+        "metaDescriptionHint": "Optional. Falls back to the excerpt.",
+        "save": "Save",
+        "create": "Add"
+      }
+    },
+    "pricing": {
+      "title": "Pricing",
+      "subtitle": "Plans are data. Everything is free during beta; prices are kept for the future.",
+      "count": "{count, plural, =0 {No plans} one {# plan} other {# plans}}",
+      "new": "New plan",
+      "caption": "List of plans",
+      "editAction": "Edit",
+      "deactivateAction": "Deactivate",
+      "active": "Active",
+      "inactive": "Inactive",
+      "priceValue": "{amount} so'm",
+      "backToList": "Back to list",
+      "columns": {
+        "key": "Key",
+        "name": "Name",
+        "price": "Price (per month)",
+        "status": "Status",
+        "order": "Order",
+        "actions": "Actions"
+      },
+      "empty": {
+        "title": "No plans yet",
+        "body": "Add the first plan."
+      },
+      "confirmDeactivate": {
+        "title": "Deactivate plan",
+        "body": "“{name}” will be hidden from the public list. You can edit and reactivate it later.",
+        "confirm": "Deactivate"
+      },
+      "form": {
+        "createTitle": "New plan",
+        "editTitle": "Edit plan",
+        "key": "Key",
+        "keyHint": "Stable public identifier.",
+        "keyLocked": "The key can't be changed after creation.",
+        "keyExists": "A plan with this key already exists.",
+        "name": "Name",
+        "tagline": "Short tagline",
+        "priceMonthly": "Monthly price",
+        "priceHint": "{amount} so'm/mo",
+        "priceHintEmpty": "Enter the price in so'm (0 = free)",
+        "sortOrder": "Order",
+        "sortOrderHint": "Lower numbers appear first.",
+        "limitsGroup": "Limits",
+        "limitsHint": "In v1 limits are informational only. Leave blank for unlimited.",
+        "unlimited": "Unlimited",
+        "features": "Features",
+        "featuresHint": "Separate with commas. Known keys are translated.",
+        "featuresPlaceholder": "ai_parse, floor_plan, estimate",
+        "isActive": "Active (visible to everyone)",
+        "save": "Save",
+        "create": "Add",
+        "limits": {
+          "projects": "Projects",
+          "aiParsesPerMonth": "AI requests (per month)",
+          "pdfExportsPerMonth": "PDF exports (per month)",
+          "storageMb": "Storage (MB)"
+        }
       }
     }
   }

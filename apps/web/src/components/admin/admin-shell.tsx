@@ -8,9 +8,12 @@ import {
   ArrowLeft,
   Calculator,
   FolderKanban,
+  HelpCircle,
+  Newspaper,
   ScrollText,
   TriangleAlert,
   Users,
+  Wallet,
 } from 'lucide-react';
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { Logo } from '@/components/layout/logo';
@@ -36,6 +39,9 @@ import { useRequireAuth } from '@/lib/use-auth';
 const NAV_ITEMS = [
   { key: 'users', href: '/admin/users', icon: Users },
   { key: 'projects', href: '/admin/projects', icon: FolderKanban },
+  { key: 'faq', href: '/admin/faq', icon: HelpCircle },
+  { key: 'blog', href: '/admin/blog', icon: Newspaper },
+  { key: 'pricing', href: '/admin/pricing', icon: Wallet },
   { key: 'estimateRules', href: '/admin/estimate-rules', icon: Calculator },
   { key: 'audit', href: '/admin/audit', icon: ScrollText },
 ] as const;
@@ -47,6 +53,9 @@ function useNavLabels(): Record<(typeof NAV_ITEMS)[number]['key'], string> {
   return {
     users: tNav('users'),
     projects: tNav('projects'),
+    faq: tNav('faq'),
+    blog: tNav('blog'),
+    pricing: tNav('pricing'),
     estimateRules: tNav('estimateRules'),
     audit: tNav('audit'),
   };
