@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum ProjectStatus {
+  DRAFT
+  CONFIGURED
+  GENERATING
+  READY
+  ARCHIVED
+  FAILED
+}
+
+enum HouseStyle {
+  MODERN
+  MINIMALIST
+  CLASSIC
+  TRADITIONAL
+  EUROPEAN
+  NATIONAL
+}
+
+enum RoomType {
+  BEDROOM
+  LIVING_ROOM
+  KITCHEN
+  BATHROOM
+  DINING_ROOM
+  OFFICE
+  STORAGE
+  LAUNDRY
+  HALLWAY
+  OTHER
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String
+  fullName      String
+  role          UserRole       @default(USER)
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  projects      Project[]
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  userAgent String?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  ownerId     String
+  owner       User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  status      ProjectStatus @default(DRAFT)
+
+  // Land (meters / m²)
+  landAreaM2 Float?
+  landWidthM Float?
+  landLengthM Float?
+
+  // House
+  houseWidthM  Float?
+  houseLengthM Float?
+  floorCount   Int?
+  style        HouseStyle?
+
+  // Features
+  hasGarage  Boolean @default(false)
+  hasTerrace Boolean @default(false)
+  hasBalcony Boolean @default(false)
+  hasPool    Boolean @default(false)
+  hasGarden  Boolean @default(false)
+
+  rooms     Room[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([ownerId, status])
+  @@index([ownerId, updatedAt])
+  @@map("projects")
+}
+
+model Room {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type      RoomType
+  /// 0-based floor index
+  floor     Int      @default(0)
+  widthM    Float?
+  lengthM   Float?
+  label     String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+  @@map("rooms")
+}

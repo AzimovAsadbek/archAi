@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: archai-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: archai
+      POSTGRES_PASSWORD: archai_dev_password
+      POSTGRES_DB: archai
+    ports:
+      # Host port 5433: a native PostgreSQL service occupies 5432 on this machine.
+      - "5433:5432"
+    volumes:
+      - archai_pgdata:/var/lib/postgresql/data
+      - ./docker/postgres-init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U archai -d archai"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+volumes:
+  archai_pgdata:

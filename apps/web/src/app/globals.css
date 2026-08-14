@@ -1,0 +1,90 @@
+@import 'tailwindcss';
+
+@theme {
+  /* ── Surfaces & ink ─────────────────────────────────────────────── */
+  --color-paper: #f7f6f2;
+  --color-surface: #ffffff;
+  --color-ink: #191a1e;
+  --color-ink-soft: #55575e;
+  --color-ink-faint: #8a8d95;
+  --color-line: #e4e2db;
+  --color-line-strong: #cfccc2;
+
+  /* ── Accent (terracotta) ────────────────────────────────────────── */
+  --color-accent: #c2571e;
+  --color-accent-strong: #a64312;
+  --color-accent-soft: #fbeee6;
+
+  /* ── Status ─────────────────────────────────────────────────────── */
+  --color-success: #2f7d46;
+  --color-success-soft: #eaf3ec;
+  --color-warning: #b0700f;
+  --color-warning-soft: #fbf2e2;
+  --color-danger: #b3341f;
+  --color-danger-soft: #fbeae6;
+  --color-info: #2a5da8;
+  --color-info-soft: #e9eefa;
+
+  /* ── Typography ─────────────────────────────────────────────────── */
+  --font-sans:
+    var(--font-manrope), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* ── Geometry ───────────────────────────────────────────────────── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* ── Elevation (exactly one card shadow) ────────────────────────── */
+  --shadow-card: 0 1px 2px rgb(25 26 30 / 0.05), 0 10px 26px -18px rgb(25 26 30 / 0.35);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Remove the ugly native spinners on number inputs. */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
+  dialog {
+    margin: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+  }
+
+  dialog::backdrop {
+    background-color: rgb(25 26 30 / 0.38);
+  }
+
+  ::selection {
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+  }
+}
+
+@utility numeric {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}

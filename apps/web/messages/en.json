@@ -1,0 +1,534 @@
+{
+  "meta": {
+    "title": "archAi — a house project from your land and requirements",
+    "description": "archAi turns land area, house dimensions, rooms and style into a structured house project. Plans, a 3D preview and a preliminary estimate in one place."
+  },
+
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "close": "Close",
+    "retry": "Try again",
+    "loading": "Loading…",
+    "roadmap": "soon",
+    "live": "live"
+  },
+
+  "locale": {
+    "label": "Language",
+    "uz": "UZ",
+    "ru": "РУ",
+    "en": "EN",
+    "uzFull": "Uzbek",
+    "ruFull": "Russian",
+    "enFull": "English"
+  },
+
+  "nav": {
+    "primary": "Main menu",
+    "howItWorks": "How it works",
+    "features": "Features",
+    "login": "Log in",
+    "getStarted": "Get started",
+    "projects": "Projects",
+    "logout": "Log out"
+  },
+
+  "marketing": {
+    "hero": {
+      "eyebrow": "House design platform",
+      "title": "Turn your land and your wishes into a structured house project",
+      "subtitle": "Enter land area, house dimensions, rooms and style — archAi turns them into precise, validated project data. Plans, a 3D preview and a preliminary estimate come next.",
+      "ctaPrimary": "Start for free",
+      "ctaSecondary": "Log in",
+      "note": "The configurator is fully working today. Visualization, estimates and PDF export arrive in later stages."
+    },
+    "schematic": {
+      "title": "Schematic plan",
+      "plot": "Land plot",
+      "living": "Living room",
+      "kitchen": "Kitchen",
+      "dining": "Dining",
+      "bedroom": "Bedroom",
+      "bath": "Bathroom",
+      "hallway": "Hallway",
+      "caption": "12.0 × 10.0 m · 2 floors",
+      "description": "Schematic floor-plan illustration showing room placement and dimensions."
+    },
+    "how": {
+      "title": "How it works",
+      "subtitle": "Four steps — from plain numbers to a project you can actually read.",
+      "steps": {
+        "describe": {
+          "title": "Describe or configure",
+          "body": "Enter the land area in sotix or m², then set house dimensions, floors, rooms and style."
+        },
+        "validate": {
+          "title": "Validate",
+          "body": "The system tells you right away whether the house fits the plot, whether the floor plate is big enough and which rooms are missing."
+        },
+        "visualize": {
+          "title": "Visualize",
+          "body": "2D plans and the 3D preview are derived from structured data — nothing is invented."
+        },
+        "export": {
+          "title": "Export",
+          "body": "Save the project summary, plans and preliminary estimate as a single PDF."
+        }
+      }
+    },
+    "features": {
+      "title": "What the platform does",
+      "subtitle": "The configurator works today. The rest is on the roadmap — we ship them in order instead of promising everything at once.",
+      "items": {
+        "configurator": {
+          "title": "Structured configurator",
+          "body": "Land, house, floors, rooms, extras and style — in one place, validated at every step."
+        },
+        "ai": {
+          "title": "AI understanding (uz/ru/en)",
+          "body": "Describe the house in plain words — the system proposes a structured configuration for you to review."
+        },
+        "plans": {
+          "title": "2D floor plans",
+          "body": "Per-floor plans with room placement, walls and dimensions."
+        },
+        "preview": {
+          "title": "3D preview",
+          "body": "Rotate the massing, walls and roof right in the browser."
+        },
+        "estimate": {
+          "title": "Preliminary estimate",
+          "body": "An indicative budget based on areas, floor count and materials."
+        },
+        "pdf": {
+          "title": "PDF export",
+          "body": "Download the full project summary as one document and share it with your builders."
+        }
+      }
+    },
+    "value": {
+      "title": "What you get",
+      "items": {
+        "structure": {
+          "title": "Structured project data",
+          "body": "Every room, dimension and choice is stored. Come back any time and change it — nothing gets lost."
+        },
+        "errors": {
+          "title": "Catch mistakes early",
+          "body": "House too big for the plot, floor plate too small — you find out before construction starts, not after."
+        },
+        "language": {
+          "title": "A shared language with your builder",
+          "body": "Exact numbers, a room list and areas make the conversation with an architect or contractor far easier."
+        }
+      },
+      "disclaimerTitle": "Important",
+      "disclaimer": "archAi produces a preliminary calculation and a concept. It is not official construction documentation.",
+      "disclaimerSecondary": "Have the project reviewed by a licensed architect or engineer before building. Estimates are for initial orientation only."
+    },
+    "finalCta": {
+      "title": "Start your first project today",
+      "body": "Signing up is free. Enter your land area and you will have a structured project in a few minutes.",
+      "cta": "Create a project",
+      "secondary": "I already have an account"
+    },
+    "footer": {
+      "tagline": "A structured house project, built from your land and requirements.",
+      "rights": "© 2026 archAi. All rights reserved."
+    }
+  },
+
+  "auth": {
+    "backToHome": "Back to home",
+    "login": {
+      "title": "Log in",
+      "subtitle": "Sign in to keep working on your projects.",
+      "submit": "Log in",
+      "noAccount": "No account yet?",
+      "createAccount": "Create one",
+      "demoTitle": "Demo account",
+      "demoBody": "Email: {email} · Password: {password}"
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Set up an account in a minute and start your first project.",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "signIn": "Log in"
+    },
+    "fields": {
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "At least 8 characters",
+      "passwordHint": "At least 8 characters, including a letter and a digit.",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Your first and last name"
+    }
+  },
+
+  "apiErrors": {
+    "generic": "Something went wrong. Please try again.",
+    "NETWORK_ERROR": "Could not reach the server. Check your internet connection.",
+    "UNAUTHORIZED": "Your session expired. Please log in again.",
+    "INVALID_CREDENTIALS": "Incorrect email or password.",
+    "EMAIL_TAKEN": "That email is already registered.",
+    "VALIDATION_ERROR": "Please check the values you entered.",
+    "DOMAIN_VALIDATION_ERROR": "The configuration has errors — fix the items below.",
+    "FORBIDDEN": "You do not have permission for this action.",
+    "NOT_FOUND": "Not found.",
+    "RATE_LIMITED": "Too many attempts. Wait a moment and try again.",
+    "INTERNAL": "Unexpected server error. Please try again shortly.",
+    "PROJECT_ARCHIVED": "Archived projects cannot be edited. Restore it from the archive first."
+  },
+
+  "dashboard": {
+    "title": "My projects",
+    "count": "{count, plural, =0 {No projects yet} one {# project} other {# projects}}",
+    "newProject": "New project",
+    "searchLabel": "Search projects",
+    "searchPlaceholder": "Search by project name",
+    "statusLabel": "Filter by status",
+    "statusAll": "All statuses",
+    "empty": {
+      "title": "No projects yet",
+      "body": "Create your first project — we start with the land area and house dimensions.",
+      "cta": "Create your first project"
+    },
+    "emptySearch": {
+      "title": "Nothing found",
+      "body": "Try a different name or another status.",
+      "reset": "Clear filters"
+    },
+    "error": {
+      "title": "Could not load your projects",
+      "retry": "Try again"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "prev": "Previous",
+      "next": "Next",
+      "info": "Page {page} of {pages}"
+    }
+  },
+
+  "project": {
+    "status": {
+      "DRAFT": "Draft",
+      "CONFIGURED": "Configured",
+      "GENERATING": "Generating",
+      "READY": "Ready",
+      "ARCHIVED": "Archived",
+      "FAILED": "Failed"
+    },
+    "actions": {
+      "menu": "Project actions",
+      "open": "Open",
+      "edit": "Edit",
+      "duplicate": "Duplicate",
+      "archive": "Archive",
+      "unarchive": "Restore",
+      "delete": "Delete"
+    },
+    "meta": {
+      "landLabel": "Land area",
+      "land": "{m2} m²",
+      "noLand": "No land set",
+      "floorsLabel": "Floors",
+      "floors": "{count, plural, one {# floor} other {# floors}}",
+      "noFloors": "No floors set",
+      "roomsLabel": "Rooms",
+      "rooms": "{count, plural, =0 {no rooms} one {# room} other {# rooms}}",
+      "noStyle": "No style chosen"
+    },
+    "confirmDelete": {
+      "title": "Delete project",
+      "body": "“{name}” will be deleted. This cannot be undone.",
+      "confirm": "Delete"
+    },
+    "confirmArchive": {
+      "title": "Archive project",
+      "body": "“{name}” moves to the archive and editing stops. You can restore it later.",
+      "confirm": "Archive"
+    }
+  },
+
+  "projectNew": {
+    "back": "Back to projects",
+    "title": "New project",
+    "subtitle": "Give the project a name — then we configure the land and the house together.",
+    "name": "Project name",
+    "namePlaceholder": "For example: House in Chilanzar",
+    "description": "Description",
+    "descriptionPlaceholder": "A short note about this project",
+    "descriptionHint": "Optional. You can change it at any time.",
+    "submit": "Create and continue",
+    "cancel": "Cancel"
+  },
+
+  "wizard": {
+    "metaTitle": "Configure project",
+    "backToProject": "Back to project",
+    "stepOf": "Step {current} of {total}",
+    "stepperLabel": "Configuration steps",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Finish project",
+    "loadError": "Could not load the project",
+    "archivedNotice": "This project is archived. Restore it from the archive before editing.",
+    "steps": {
+      "land": "Land",
+      "house": "House",
+      "rooms": "Rooms",
+      "features": "Extras",
+      "style": "Style",
+      "review": "Review"
+    },
+    "save": {
+      "saving": "Saving…",
+      "saved": "Saved",
+      "error": "Not saved"
+    },
+    "land": {
+      "title": "Land plot",
+      "subtitle": "Enter the area in sotix or m² — we show both.",
+      "area": "Land area",
+      "areaHint": "Between {min} m² and {max} m².",
+      "unitLabel": "Unit",
+      "unitSotix": "sotix",
+      "unitM2": "m²",
+      "conversion": "{sotix} sotix = {m2} m² (1 sotix = {factor} m²)",
+      "width": "Plot width (m)",
+      "length": "Plot length (m)",
+      "dimsHint": "Optional. Add them if the plot is rectangular — we warn you if they do not match the area."
+    },
+    "house": {
+      "title": "House dimensions",
+      "subtitle": "Width and length measured on the outer walls, plus the number of floors.",
+      "width": "House width (m)",
+      "length": "House length (m)",
+      "floors": "Number of floors",
+      "floorOption": "{count, plural, one {# floor} other {# floors}}",
+      "footprint": "Footprint",
+      "totalArea": "Total floor area",
+      "coverage": "Land coverage",
+      "areaValue": "{area} m²",
+      "coverageValue": "{percent}%",
+      "needLand": "Enter the land area first to see how much of the plot the house covers."
+    },
+    "rooms": {
+      "title": "Rooms",
+      "subtitle": "Add the rooms you need and assign them to floors.",
+      "quickAdd": "Quick add",
+      "otherType": "Other room type",
+      "add": "Add",
+      "limit": "You can add at most {max} rooms.",
+      "empty": "No rooms added yet. Use the buttons above.",
+      "floorGroup": "Floor {floor}",
+      "floorOption": "Floor {floor}",
+      "floorEmpty": "No rooms on this floor.",
+      "floorUsage": "{used} / {total} m² used",
+      "type": "Type",
+      "floor": "Floor",
+      "width": "Width (m)",
+      "length": "Length (m)",
+      "areaValue": "{area} m²",
+      "remove": "Remove room: {type}"
+    },
+    "features": {
+      "title": "Extras",
+      "subtitle": "Select the elements you want included in the project."
+    },
+    "style": {
+      "title": "House style",
+      "subtitle": "Pick the direction for the exterior.",
+      "note": "Style will drive the 3D preview and concept imagery in later stages."
+    },
+    "review": {
+      "title": "Final review",
+      "subtitle": "Check everything and finish the project.",
+      "notSet": "not set",
+      "edit": "Edit",
+      "landTitle": "Land",
+      "landArea": "Area",
+      "landAreaValue": "{m2} m² ({sotix} sotix)",
+      "landDims": "Dimensions",
+      "dimsValue": "{width} × {length} m",
+      "houseTitle": "House",
+      "houseDims": "Dimensions",
+      "floors": "Floors",
+      "floorsValue": "{count, plural, one {# floor} other {# floors}}",
+      "footprint": "Footprint",
+      "totalArea": "Total floor area",
+      "coverage": "Land coverage",
+      "areaValue": "{area} m²",
+      "coverageValue": "{percent}%",
+      "roomsTitle": "Rooms",
+      "roomsEmpty": "No rooms added.",
+      "floorGroup": "Floor {floor}",
+      "floorUsed": "{used} m² used",
+      "featuresTitle": "Extras",
+      "featuresEmpty": "No extras selected.",
+      "styleTitle": "Style",
+      "styleEmpty": "No style chosen."
+    }
+  },
+
+  "features": {
+    "garage": { "label": "Garage", "description": "Enclosed space for a car" },
+    "terrace": { "label": "Terrace", "description": "Open outdoor sitting area" },
+    "balcony": { "label": "Balcony", "description": "Open platform on an upper floor" },
+    "pool": { "label": "Pool", "description": "Swimming pool in the yard" },
+    "garden": { "label": "Garden", "description": "Planted, green yard" }
+  },
+
+  "roomTypes": {
+    "BEDROOM": "Bedroom",
+    "LIVING_ROOM": "Living room",
+    "KITCHEN": "Kitchen",
+    "BATHROOM": "Bathroom",
+    "DINING_ROOM": "Dining room",
+    "OFFICE": "Office",
+    "STORAGE": "Storage",
+    "LAUNDRY": "Laundry",
+    "HALLWAY": "Hallway",
+    "OTHER": "Other"
+  },
+
+  "styles": {
+    "MODERN": {
+      "label": "Modern",
+      "description": "Simple volumes, large windows, straight lines."
+    },
+    "MINIMALIST": {
+      "label": "Minimalist",
+      "description": "No excess decoration: clean surfaces and a clear volume."
+    },
+    "CLASSIC": {
+      "label": "Classic",
+      "description": "Symmetry, columns and traditional ornament."
+    },
+    "TRADITIONAL": {
+      "label": "Traditional",
+      "description": "Local architecture: courtyard, ayvan and an enclosed yard."
+    },
+    "EUROPEAN": {
+      "label": "European",
+      "description": "Pitched roof, brick surfaces and calm colours."
+    },
+    "NATIONAL": {
+      "label": "National",
+      "description": "Uzbek architectural patterns and ganch carving."
+    }
+  },
+
+  "workspace": {
+    "metaTitle": "Project",
+    "back": "Back to projects",
+    "descriptionEmpty": "No description yet.",
+    "loadError": "Could not load the project",
+    "tabsLabel": "Project sections",
+    "tabDisabled": "Coming in a later stage",
+    "tabs": {
+      "overview": "Overview",
+      "plans2d": "2D",
+      "view3d": "3D",
+      "interior": "Interior",
+      "exterior": "Exterior",
+      "estimate": "Estimate"
+    },
+    "stats": {
+      "land": "Land area",
+      "footprint": "Footprint",
+      "floors": "Floors",
+      "rooms": "Rooms",
+      "areaValue": "{area} m²",
+      "sotixHint": "{sotix} sotix",
+      "coverageHint": "{percent}% of the plot",
+      "totalAreaHint": "{area} m² total"
+    },
+    "featuresTitle": "Extras",
+    "notConfigured": {
+      "title": "This project is not fully configured",
+      "body": "Add the land, house and room details — the full summary appears once they are set.",
+      "cta": "Continue configuring"
+    },
+    "rooms": {
+      "title": "Rooms",
+      "caption": "Room list grouped by floor",
+      "empty": "No rooms added.",
+      "type": "Room",
+      "label": "Name",
+      "dims": "Size",
+      "area": "Area",
+      "floorGroup": "Floor {floor}",
+      "floorTotal": "Floor {floor} total",
+      "dimsValue": "{width} × {length} m",
+      "areaValue": "{area} m²"
+    }
+  },
+
+  "validation": {
+    "errorsTitle": "Needs fixing",
+    "warningsTitle": "Worth a look",
+    "okTitle": "Configuration looks good",
+    "okBody": "No errors or warnings found. You can finish the project.",
+    "codes": {
+      "HOUSE_EXCEEDS_LAND": "The footprint ({footprintM2} m²) is larger than the land area ({landAreaM2} m²).",
+      "HOUSE_WIDTH_EXCEEDS_LAND": "House width ({houseM} m) exceeds the plot width ({landM} m).",
+      "HOUSE_LENGTH_EXCEEDS_LAND": "House length ({houseM} m) exceeds the plot length ({landM} m).",
+      "HIGH_LAND_COVERAGE": "The house covers {coveragePercent}% of the plot — little room is left for the yard.",
+      "LAND_DIMENSIONS_MISMATCH": "The declared area ({areaM2} m²) does not match width × length ({rectAreaM2} m²).",
+      "ROOM_ON_MISSING_FLOOR": "Room #{roomNumber} sits on floor {floorNumber}, but the house has {floorCount} floor(s).",
+      "FLOOR_AREA_EXCEEDED": "Rooms on floor {floorNumber} take {usedM2} m², while the floor plate is {floorM2} m².",
+      "FLOOR_NEARLY_FULL": "Floor {floorNumber} is {fillPercent}% full — walls and circulation need space too.",
+      "MISSING_KITCHEN": "No kitchen added.",
+      "MISSING_BATHROOM": "No bathroom added.",
+      "NO_ROOMS": "No rooms added yet.",
+      "unknown": "An unknown issue was found in the configuration."
+    }
+  },
+
+  "fieldErrors": {
+    "invalid": "Invalid value.",
+    "required": "This field is required.",
+    "number_required": "Enter a number.",
+    "invalid_email": "Enter a valid email address.",
+    "password_min": "Password must be at least {min} characters.",
+    "password_max": "Password must not exceed {max} characters.",
+    "password_weak": "Password needs at least one letter and one digit.",
+    "full_name_min": "Name must be at least {min} characters.",
+    "full_name_max": "Name must not exceed {max} characters.",
+    "name_min": "Name must be at least {min} characters.",
+    "name_max": "Name must not exceed {max} characters.",
+    "description_max": "Description must not exceed {max} characters.",
+    "land_area_min": "Land area must be at least {min} m².",
+    "land_area_max": "Land area must not exceed {max} m².",
+    "land_side_min": "Plot side must be at least {min} m.",
+    "land_side_max": "Plot side must not exceed {max} m.",
+    "house_side_min": "House side must be at least {min} m.",
+    "house_side_max": "House side must not exceed {max} m.",
+    "floors_min": "At least {min} floor.",
+    "floors_max": "At most {max} floors.",
+    "room_side_min": "Room side must be at least {min} m.",
+    "room_side_max": "Room side must not exceed {max} m.",
+    "too_many_rooms": "You can add at most {max} rooms."
+  },
+
+  "errors": {
+    "notFound": {
+      "title": "Page not found",
+      "body": "The page you asked for does not exist or has moved somewhere else.",
+      "home": "Go home",
+      "dashboard": "My projects"
+    },
+    "appError": {
+      "title": "Something went wrong",
+      "body": "An unexpected error occurred. Try reloading the page.",
+      "retry": "Try again",
+      "reference": "Error reference: {id}"
+    }
+  }
+}

@@ -1,0 +1,534 @@
+{
+  "meta": {
+    "title": "archAi — yer va talablardan uy loyihasi",
+    "description": "archAi yer maydoni, uy o'lchamlari, xonalar va uslub haqidagi ma'lumotlarni tuzilgan uy loyihasiga aylantiradi. Rejalar, 3D ko'rinish va taxminiy smeta bir joyda."
+  },
+
+  "common": {
+    "cancel": "Bekor qilish",
+    "save": "Saqlash",
+    "delete": "O'chirish",
+    "close": "Yopish",
+    "retry": "Qayta urinish",
+    "loading": "Yuklanmoqda…",
+    "roadmap": "tez orada",
+    "live": "ishlaydi"
+  },
+
+  "locale": {
+    "label": "Til",
+    "uz": "UZ",
+    "ru": "РУ",
+    "en": "EN",
+    "uzFull": "O'zbekcha",
+    "ruFull": "Ruscha",
+    "enFull": "Inglizcha"
+  },
+
+  "nav": {
+    "primary": "Asosiy menyu",
+    "howItWorks": "Qanday ishlaydi",
+    "features": "Imkoniyatlar",
+    "login": "Kirish",
+    "getStarted": "Boshlash",
+    "projects": "Loyihalar",
+    "logout": "Chiqish"
+  },
+
+  "marketing": {
+    "hero": {
+      "eyebrow": "Uy loyihalash platformasi",
+      "title": "Yeringiz va istaklaringizni tuzilgan uy loyihasiga aylantiring",
+      "subtitle": "Yer maydoni, uy o'lchamlari, xonalar va uslubni kiriting — archAi ularni aniq, tekshirilgan loyiha ma'lumotiga aylantiradi. Keyinchalik esa rejalar, 3D ko'rinish va taxminiy smeta qo'shiladi.",
+      "ctaPrimary": "Bepul boshlash",
+      "ctaSecondary": "Hisobga kirish",
+      "note": "Konfigurator bugun to'liq ishlaydi. Vizualizatsiya, smeta va PDF keyingi bosqichlarda qo'shiladi."
+    },
+    "schematic": {
+      "title": "Sxematik reja",
+      "plot": "Yer uchastkasi",
+      "living": "Mehmonxona",
+      "kitchen": "Oshxona",
+      "dining": "Ovqatlanish",
+      "bedroom": "Yotoqxona",
+      "bath": "Hammom",
+      "hallway": "Yo'lak",
+      "caption": "12.0 × 10.0 m · 2 qavat",
+      "description": "Xonalar joylashuvi va o'lchamlari ko'rsatilgan bir qavatli sxematik reja tasviri."
+    },
+    "how": {
+      "title": "Qanday ishlaydi",
+      "subtitle": "To'rt qadam — oddiy ma'lumotdan tushunarli loyihagacha.",
+      "steps": {
+        "describe": {
+          "title": "Tavsiflang yoki sozlang",
+          "body": "Yer maydonini sotix yoki m² da kiriting, uy o'lchamlari, qavatlar, xonalar va uslubni tanlang."
+        },
+        "validate": {
+          "title": "Tekshiring",
+          "body": "Tizim uy yerga sig'adimi, qavat maydoni yetadimi va qaysi xonalar yetishmayotganini darhol aytadi."
+        },
+        "visualize": {
+          "title": "Ko'ring",
+          "body": "2D reja va 3D ko'rinish tuzilgan ma'lumotlardan hosil qilinadi — hech qanday taxmin yo'q."
+        },
+        "export": {
+          "title": "Yuklab oling",
+          "body": "Loyiha xulosasi, rejalar va taxminiy smetani yagona PDF faylida saqlang."
+        }
+      }
+    },
+    "features": {
+      "title": "Platforma imkoniyatlari",
+      "subtitle": "Konfigurator bugun ishlaydi. Qolgan modullar yo'l xaritasida — biz va'da bermaymiz, ketma-ket chiqaramiz.",
+      "items": {
+        "configurator": {
+          "title": "Tuzilgan konfigurator",
+          "body": "Yer, uy, qavatlar, xonalar, qo'shimchalar va uslub — bir joyda, har qadamda avtomatik tekshiruv bilan."
+        },
+        "ai": {
+          "title": "AI tushunish (uz/ru/en)",
+          "body": "Oddiy so'zlar bilan yozing — tizim uni tuzilgan konfiguratsiya taklifiga aylantiradi va siz tasdiqlaysiz."
+        },
+        "plans": {
+          "title": "2D rejalar",
+          "body": "Xonalar joylashuvi, devorlar va o'lchamlar ko'rsatilgan qavat rejalari."
+        },
+        "preview": {
+          "title": "3D ko'rinish",
+          "body": "Uy hajmi, devorlar va tomni brauzerda aylantirib ko'ring."
+        },
+        "estimate": {
+          "title": "Taxminiy smeta",
+          "body": "Maydon, qavatlar va materiallar asosida hisoblangan dastlabki byudjet."
+        },
+        "pdf": {
+          "title": "PDF eksport",
+          "body": "Loyihaning to'liq xulosasini bitta hujjatda yuklab oling va ustalar bilan bo'lishing."
+        }
+      }
+    },
+    "value": {
+      "title": "Nima olasiz",
+      "items": {
+        "structure": {
+          "title": "Tuzilgan loyiha ma'lumoti",
+          "body": "Har bir xona, o'lcham va tanlov saqlanadi. Istalgan vaqtda qaytib kelib o'zgartirasiz — hech narsa yo'qolmaydi."
+        },
+        "errors": {
+          "title": "Xatolarni erta aniqlash",
+          "body": "Uy yerga sig'maydimi, qavatda joy yetmayaptimi — buni qurilish boshlanmasdan oldin bilib olasiz."
+        },
+        "language": {
+          "title": "Usta bilan umumiy til",
+          "body": "Aniq raqamlar, xonalar ro'yxati va maydonlar — arxitektor yoki quruvchi bilan suhbatni ancha osonlashtiradi."
+        }
+      },
+      "disclaimerTitle": "Muhim",
+      "disclaimer": "archAi taxminiy hisob va konsepsiya beradi. Bu qurilish uchun rasmiy loyiha hujjatlari emas.",
+      "disclaimerSecondary": "Ishni boshlashdan oldin loyihani litsenziyali arxitektor yoki muhandis bilan tasdiqlang. Smeta faqat dastlabki mo'ljal uchun."
+    },
+    "finalCta": {
+      "title": "Birinchi loyihangizni bugun boshlang",
+      "body": "Ro'yxatdan o'tish bepul. Yer maydonini kiriting — bir necha daqiqada tuzilgan loyihaga ega bo'lasiz.",
+      "cta": "Loyiha yaratish",
+      "secondary": "Hisobim bor"
+    },
+    "footer": {
+      "tagline": "Yer va talablardan tuzilgan uy loyihasi.",
+      "rights": "© 2026 archAi. Barcha huquqlar himoyalangan."
+    }
+  },
+
+  "auth": {
+    "backToHome": "Bosh sahifaga qaytish",
+    "login": {
+      "title": "Hisobga kirish",
+      "subtitle": "Loyihalaringizni davom ettirish uchun kiring.",
+      "submit": "Kirish",
+      "noAccount": "Hisobingiz yo'qmi?",
+      "createAccount": "Ro'yxatdan o'tish",
+      "demoTitle": "Sinov hisobi",
+      "demoBody": "Email: {email} · Parol: {password}"
+    },
+    "register": {
+      "title": "Ro'yxatdan o'tish",
+      "subtitle": "Bir daqiqada hisob yarating va birinchi loyihangizni boshlang.",
+      "submit": "Hisob yaratish",
+      "haveAccount": "Hisobingiz bormi?",
+      "signIn": "Kirish"
+    },
+    "fields": {
+      "email": "Email",
+      "emailPlaceholder": "siz@example.com",
+      "password": "Parol",
+      "passwordPlaceholder": "Kamida 8 belgi",
+      "passwordHint": "Kamida 8 belgi, ichida harf ham, raqam ham bo'lsin.",
+      "fullName": "To'liq ism",
+      "fullNamePlaceholder": "Ism va familiyangiz"
+    }
+  },
+
+  "apiErrors": {
+    "generic": "Xatolik yuz berdi. Qayta urinib ko'ring.",
+    "NETWORK_ERROR": "Serverga ulanib bo'lmadi. Internet aloqasini tekshiring.",
+    "UNAUTHORIZED": "Seans tugagan. Iltimos, qaytadan kiring.",
+    "INVALID_CREDENTIALS": "Email yoki parol noto'g'ri.",
+    "EMAIL_TAKEN": "Bu email allaqachon ro'yxatdan o'tgan.",
+    "VALIDATION_ERROR": "Kiritilgan ma'lumotlarni tekshiring.",
+    "DOMAIN_VALIDATION_ERROR": "Konfiguratsiyada xatolik bor — quyidagilarni tuzating.",
+    "FORBIDDEN": "Bu amal uchun ruxsat yo'q.",
+    "NOT_FOUND": "Ma'lumot topilmadi.",
+    "RATE_LIMITED": "Juda ko'p urinish. Bir oz kutib, qayta urinib ko'ring.",
+    "INTERNAL": "Serverda kutilmagan xatolik. Birozdan so'ng urinib ko'ring.",
+    "PROJECT_ARCHIVED": "Arxivlangan loyihani tahrirlab bo'lmaydi. Avval arxivdan chiqaring."
+  },
+
+  "dashboard": {
+    "title": "Loyihalarim",
+    "count": "{count, plural, =0 {Hali loyiha yo'q} one {# ta loyiha} other {# ta loyiha}}",
+    "newProject": "Yangi loyiha",
+    "searchLabel": "Loyihalarni qidirish",
+    "searchPlaceholder": "Loyiha nomi bo'yicha qidiring",
+    "statusLabel": "Holat bo'yicha filtr",
+    "statusAll": "Barcha holatlar",
+    "empty": {
+      "title": "Hali loyihalar yo'q",
+      "body": "Birinchi loyihangizni yarating — yer maydoni va uy o'lchamlaridan boshlaymiz.",
+      "cta": "Birinchi loyihani yaratish"
+    },
+    "emptySearch": {
+      "title": "Hech narsa topilmadi",
+      "body": "Boshqa nom yoki boshqa holat bilan urinib ko'ring.",
+      "reset": "Filtrlarni tozalash"
+    },
+    "error": {
+      "title": "Loyihalarni yuklab bo'lmadi",
+      "retry": "Qayta urinish"
+    },
+    "pagination": {
+      "label": "Sahifalar",
+      "prev": "Oldingi",
+      "next": "Keyingi",
+      "info": "Sahifa {page} / {pages}"
+    }
+  },
+
+  "project": {
+    "status": {
+      "DRAFT": "Qoralama",
+      "CONFIGURED": "Sozlangan",
+      "GENERATING": "Yaratilmoqda",
+      "READY": "Tayyor",
+      "ARCHIVED": "Arxivlangan",
+      "FAILED": "Xatolik"
+    },
+    "actions": {
+      "menu": "Loyiha amallari",
+      "open": "Ochish",
+      "edit": "Tahrirlash",
+      "duplicate": "Nusxa olish",
+      "archive": "Arxivlash",
+      "unarchive": "Arxivdan chiqarish",
+      "delete": "O'chirish"
+    },
+    "meta": {
+      "landLabel": "Yer maydoni",
+      "land": "{m2} m²",
+      "noLand": "Yer kiritilmagan",
+      "floorsLabel": "Qavatlar",
+      "floors": "{count, plural, one {# qavat} other {# qavat}}",
+      "noFloors": "Qavat kiritilmagan",
+      "roomsLabel": "Xonalar",
+      "rooms": "{count, plural, =0 {xonasiz} one {# xona} other {# xona}}",
+      "noStyle": "Uslub tanlanmagan"
+    },
+    "confirmDelete": {
+      "title": "Loyihani o'chirish",
+      "body": "«{name}» loyihasi o'chiriladi. Bu amalni qaytarib bo'lmaydi.",
+      "confirm": "O'chirish"
+    },
+    "confirmArchive": {
+      "title": "Loyihani arxivlash",
+      "body": "«{name}» arxivga o'tadi va tahrirlash to'xtatiladi. Keyin arxivdan qaytarish mumkin.",
+      "confirm": "Arxivlash"
+    }
+  },
+
+  "projectNew": {
+    "back": "Loyihalarga qaytish",
+    "title": "Yangi loyiha",
+    "subtitle": "Loyihaga nom bering — keyin yer va uy parametrlarini birga sozlaymiz.",
+    "name": "Loyiha nomi",
+    "namePlaceholder": "Masalan: Chilonzordagi uy",
+    "description": "Tavsif",
+    "descriptionPlaceholder": "Loyiha haqida qisqacha izoh",
+    "descriptionHint": "Ixtiyoriy. Keyinchalik o'zgartirsangiz ham bo'ladi.",
+    "submit": "Yaratish va davom etish",
+    "cancel": "Bekor qilish"
+  },
+
+  "wizard": {
+    "metaTitle": "Loyihani sozlash",
+    "backToProject": "Loyihaga qaytish",
+    "stepOf": "{current} / {total}-qadam",
+    "stepperLabel": "Sozlash qadamlari",
+    "back": "Orqaga",
+    "next": "Keyingi",
+    "finish": "Loyihani yakunlash",
+    "loadError": "Loyihani yuklab bo'lmadi",
+    "archivedNotice": "Bu loyiha arxivlangan. Tahrirlash uchun avval uni arxivdan chiqaring.",
+    "steps": {
+      "land": "Yer",
+      "house": "Uy",
+      "rooms": "Xonalar",
+      "features": "Qo'shimchalar",
+      "style": "Uslub",
+      "review": "Yakun"
+    },
+    "save": {
+      "saving": "Saqlanmoqda…",
+      "saved": "Saqlandi",
+      "error": "Saqlanmadi"
+    },
+    "land": {
+      "title": "Yer uchastkasi",
+      "subtitle": "Maydonni sotix yoki m² da kiriting — biz ikkalasini ham ko'rsatamiz.",
+      "area": "Yer maydoni",
+      "areaHint": "{min} m² dan {max} m² gacha.",
+      "unitLabel": "O'lchov birligi",
+      "unitSotix": "sotix",
+      "unitM2": "m²",
+      "conversion": "{sotix} sotix = {m2} m² (1 sotix = {factor} m²)",
+      "width": "Uchastka eni (m)",
+      "length": "Uchastka bo'yi (m)",
+      "dimsHint": "Ixtiyoriy. Uchastka to'rtburchak bo'lsa kiriting — maydonga mos kelmasa ogohlantiramiz."
+    },
+    "house": {
+      "title": "Uy o'lchamlari",
+      "subtitle": "Tashqi devorlar bo'yicha eni, bo'yi va qavatlar soni.",
+      "width": "Uy eni (m)",
+      "length": "Uy bo'yi (m)",
+      "floors": "Qavatlar soni",
+      "floorOption": "{count} qavat",
+      "footprint": "Bino asosi",
+      "totalArea": "Umumiy maydon",
+      "coverage": "Yer bandligi",
+      "areaValue": "{area} m²",
+      "coverageValue": "{percent}%",
+      "needLand": "Yer bandligini hisoblash uchun avval yer maydonini kiriting."
+    },
+    "rooms": {
+      "title": "Xonalar",
+      "subtitle": "Kerakli xonalarni qo'shing va ularni qavatlarga taqsimlang.",
+      "quickAdd": "Tez qo'shish",
+      "otherType": "Boshqa xona turi",
+      "add": "Qo'shish",
+      "limit": "Ko'pi bilan {max} ta xona qo'shish mumkin.",
+      "empty": "Hali birorta xona qo'shilmagan. Yuqoridagi tugmalardan foydalaning.",
+      "floorGroup": "{floor}-qavat",
+      "floorOption": "{floor}-qavat",
+      "floorEmpty": "Bu qavatda xona yo'q.",
+      "floorUsage": "{used} / {total} m² band",
+      "type": "Turi",
+      "floor": "Qavat",
+      "width": "Eni (m)",
+      "length": "Bo'yi (m)",
+      "areaValue": "{area} m²",
+      "remove": "{type} xonasini o'chirish"
+    },
+    "features": {
+      "title": "Qo'shimcha imkoniyatlar",
+      "subtitle": "Loyihaga kiritmoqchi bo'lgan elementlarni belgilang."
+    },
+    "style": {
+      "title": "Uy uslubi",
+      "subtitle": "Tashqi ko'rinish yo'nalishini tanlang.",
+      "note": "Uslub keyingi bosqichlarda 3D ko'rinish va konsepsiya tasvirlariga ta'sir qiladi."
+    },
+    "review": {
+      "title": "Yakuniy ko'rib chiqish",
+      "subtitle": "Hammasini tekshiring va loyihani yakunlang.",
+      "notSet": "kiritilmagan",
+      "edit": "Tahrirlash",
+      "landTitle": "Yer",
+      "landArea": "Maydon",
+      "landAreaValue": "{m2} m² ({sotix} sotix)",
+      "landDims": "O'lchamlari",
+      "dimsValue": "{width} × {length} m",
+      "houseTitle": "Uy",
+      "houseDims": "O'lchamlari",
+      "floors": "Qavatlar",
+      "floorsValue": "{count, plural, one {# qavat} other {# qavat}}",
+      "footprint": "Bino asosi",
+      "totalArea": "Umumiy maydon",
+      "coverage": "Yer bandligi",
+      "areaValue": "{area} m²",
+      "coverageValue": "{percent}%",
+      "roomsTitle": "Xonalar",
+      "roomsEmpty": "Xona qo'shilmagan.",
+      "floorGroup": "{floor}-qavat",
+      "floorUsed": "{used} m² band",
+      "featuresTitle": "Qo'shimchalar",
+      "featuresEmpty": "Qo'shimchalar tanlanmagan.",
+      "styleTitle": "Uslub",
+      "styleEmpty": "Uslub tanlanmagan."
+    }
+  },
+
+  "features": {
+    "garage": { "label": "Garaj", "description": "Avtomobil uchun yopiq joy" },
+    "terrace": { "label": "Ayvon", "description": "Ochiq dam olish maydoni" },
+    "balcony": { "label": "Balkon", "description": "Yuqori qavatdagi ochiq maydon" },
+    "pool": { "label": "Basseyn", "description": "Hovlidagi suzish havzasi" },
+    "garden": { "label": "Bog'", "description": "Ko'kalamzorlashtirilgan hovli" }
+  },
+
+  "roomTypes": {
+    "BEDROOM": "Yotoqxona",
+    "LIVING_ROOM": "Mehmonxona",
+    "KITCHEN": "Oshxona",
+    "BATHROOM": "Hammom",
+    "DINING_ROOM": "Ovqatlanish xonasi",
+    "OFFICE": "Ish xonasi",
+    "STORAGE": "Omborxona",
+    "LAUNDRY": "Kir yuvish xonasi",
+    "HALLWAY": "Yo'lak",
+    "OTHER": "Boshqa"
+  },
+
+  "styles": {
+    "MODERN": {
+      "label": "Zamonaviy",
+      "description": "Sodda shakllar, keng oynalar, tekis chiziqlar."
+    },
+    "MINIMALIST": {
+      "label": "Minimalizm",
+      "description": "Ortiqcha bezaksiz, toza yuzalar va aniq hajm."
+    },
+    "CLASSIC": {
+      "label": "Klassik",
+      "description": "Simmetriya, ustunlar va an'anaviy bezaklar."
+    },
+    "TRADITIONAL": {
+      "label": "An'anaviy",
+      "description": "Mahalliy me'morchilik: hovli, ayvon va yopiq maydon."
+    },
+    "EUROPEAN": {
+      "label": "Yevropacha",
+      "description": "Nishab tom, g'isht yuzalar va tinch ranglar."
+    },
+    "NATIONAL": {
+      "label": "Milliy",
+      "description": "O'zbek me'moriy naqshlari va ganch bezaklari."
+    }
+  },
+
+  "workspace": {
+    "metaTitle": "Loyiha",
+    "back": "Loyihalarga qaytish",
+    "descriptionEmpty": "Tavsif kiritilmagan.",
+    "loadError": "Loyihani yuklab bo'lmadi",
+    "tabsLabel": "Loyiha bo'limlari",
+    "tabDisabled": "Keyingi bosqichda",
+    "tabs": {
+      "overview": "Umumiy",
+      "plans2d": "2D",
+      "view3d": "3D",
+      "interior": "Interyer",
+      "exterior": "Eksteryer",
+      "estimate": "Smeta"
+    },
+    "stats": {
+      "land": "Yer maydoni",
+      "footprint": "Bino asosi",
+      "floors": "Qavatlar",
+      "rooms": "Xonalar",
+      "areaValue": "{area} m²",
+      "sotixHint": "{sotix} sotix",
+      "coverageHint": "yerning {percent}% i",
+      "totalAreaHint": "jami {area} m²"
+    },
+    "featuresTitle": "Qo'shimchalar",
+    "notConfigured": {
+      "title": "Loyiha hali to'liq sozlanmagan",
+      "body": "Yer, uy va xonalar ma'lumotlarini kiriting — shundan keyin to'liq xulosa paydo bo'ladi.",
+      "cta": "Sozlashni davom ettirish"
+    },
+    "rooms": {
+      "title": "Xonalar",
+      "caption": "Qavatlar bo'yicha guruhlangan xonalar ro'yxati",
+      "empty": "Xonalar qo'shilmagan.",
+      "type": "Xona",
+      "label": "Nomi",
+      "dims": "O'lchami",
+      "area": "Maydon",
+      "floorGroup": "{floor}-qavat",
+      "floorTotal": "{floor}-qavat jami",
+      "dimsValue": "{width} × {length} m",
+      "areaValue": "{area} m²"
+    }
+  },
+
+  "validation": {
+    "errorsTitle": "Tuzatish kerak",
+    "warningsTitle": "E'tibor bering",
+    "okTitle": "Konfiguratsiya to'g'ri",
+    "okBody": "Xatolik va ogohlantirish topilmadi. Loyihani yakunlashingiz mumkin.",
+    "codes": {
+      "HOUSE_EXCEEDS_LAND": "Uy asosi ({footprintM2} m²) yer maydonidan ({landAreaM2} m²) katta.",
+      "HOUSE_WIDTH_EXCEEDS_LAND": "Uy eni ({houseM} m) uchastka enidan ({landM} m) katta.",
+      "HOUSE_LENGTH_EXCEEDS_LAND": "Uy bo'yi ({houseM} m) uchastka bo'yidan ({landM} m) katta.",
+      "HIGH_LAND_COVERAGE": "Uy yerning {coveragePercent}% ini egallaydi — hovli uchun joy kam qoladi.",
+      "LAND_DIMENSIONS_MISMATCH": "Kiritilgan maydon ({areaM2} m²) eni × bo'yi natijasiga ({rectAreaM2} m²) mos kelmayapti.",
+      "ROOM_ON_MISSING_FLOOR": "{roomNumber}-xona {floorNumber}-qavatga qo'yilgan, lekin uyda {floorCount} qavat bor.",
+      "FLOOR_AREA_EXCEEDED": "{floorNumber}-qavatdagi xonalar {usedM2} m² joy oladi, qavat maydoni esa {floorM2} m².",
+      "FLOOR_NEARLY_FULL": "{floorNumber}-qavat {fillPercent}% to'lgan — devor va yo'laklar uchun ham joy kerak.",
+      "MISSING_KITCHEN": "Oshxona qo'shilmagan.",
+      "MISSING_BATHROOM": "Hammom qo'shilmagan.",
+      "NO_ROOMS": "Hali birorta xona qo'shilmagan.",
+      "unknown": "Konfiguratsiyada noma'lum muammo aniqlandi."
+    }
+  },
+
+  "fieldErrors": {
+    "invalid": "Qiymat noto'g'ri.",
+    "required": "Bu maydon to'ldirilishi shart.",
+    "number_required": "Raqam kiriting.",
+    "invalid_email": "Email manzil noto'g'ri.",
+    "password_min": "Parol kamida {min} ta belgidan iborat bo'lsin.",
+    "password_max": "Parol {max} ta belgidan oshmasin.",
+    "password_weak": "Parolda kamida bitta harf va bitta raqam bo'lsin.",
+    "full_name_min": "Ism kamida {min} ta belgidan iborat bo'lsin.",
+    "full_name_max": "Ism {max} ta belgidan oshmasin.",
+    "name_min": "Nom kamida {min} ta belgidan iborat bo'lsin.",
+    "name_max": "Nom {max} ta belgidan oshmasin.",
+    "description_max": "Tavsif {max} ta belgidan oshmasin.",
+    "land_area_min": "Yer maydoni kamida {min} m² bo'lsin.",
+    "land_area_max": "Yer maydoni {max} m² dan oshmasin.",
+    "land_side_min": "Uchastka tomoni kamida {min} m bo'lsin.",
+    "land_side_max": "Uchastka tomoni {max} m dan oshmasin.",
+    "house_side_min": "Uy tomoni kamida {min} m bo'lsin.",
+    "house_side_max": "Uy tomoni {max} m dan oshmasin.",
+    "floors_min": "Kamida {min} qavat bo'lsin.",
+    "floors_max": "Ko'pi bilan {max} qavat bo'lsin.",
+    "room_side_min": "Xona tomoni kamida {min} m bo'lsin.",
+    "room_side_max": "Xona tomoni {max} m dan oshmasin.",
+    "too_many_rooms": "Ko'pi bilan {max} ta xona qo'shish mumkin."
+  },
+
+  "errors": {
+    "notFound": {
+      "title": "Sahifa topilmadi",
+      "body": "So'ralgan sahifa mavjud emas yoki boshqa manzilga ko'chirilgan.",
+      "home": "Bosh sahifaga",
+      "dashboard": "Loyihalarim"
+    },
+    "appError": {
+      "title": "Nimadir noto'g'ri ketdi",
+      "body": "Kutilmagan xatolik yuz berdi. Sahifani qayta yuklashga urinib ko'ring.",
+      "retry": "Qayta urinish",
+      "reference": "Xatolik kodi: {id}"
+    }
+  }
+}
