@@ -46,6 +46,10 @@ Base URL: `http://localhost:3001/api/v1`. JSON only. Swagger UI at `/docs` (non-
 | POST | `/projects/:id/unarchive` | — | 200 `ProjectDto` (status recomputed DRAFT/CONFIGURED) |
 | POST | `/projects/:id/duplicate` | — | 201 `ProjectDto` (copy incl. rooms, name suffix " (nusxa)", status recomputed) |
 
+### Floor plan (`/projects/:id/floor-plan`) — authenticated, owner-scoped
+
+| GET | `/projects/:id/floor-plan` | — | 200 `{ plan: FloorPlan, generatedAt }`. Deterministic engine output persisted in `floor_plans` (regenerated when config inputHash or engine version changes). 409 `PROJECT_NOT_CONFIGURED` when configuration incomplete; 422 `FLOOR_PLAN_UNAVAILABLE` `{ details: { issues } }` when the engine rejects the configuration. Full contract: docs/floor-plan-engine.md §Consumers. |
+
 ### Meta
 
 | GET | `/health` | — | 200 `{ status: 'ok', db: 'up' \| 'down' }` (no auth) |

@@ -81,8 +81,8 @@ model Project {
   status      ProjectStatus @default(DRAFT)
 
   // Land (meters / m²)
-  landAreaM2 Float?
-  landWidthM Float?
+  landAreaM2  Float?
+  landWidthM  Float?
   landLengthM Float?
 
   // House
@@ -99,8 +99,9 @@ model Project {
   hasGarden  Boolean @default(false)
 
   rooms     Room[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  floorPlan FloorPlan?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   deletedAt DateTime?
 
   @@index([ownerId, status])
@@ -123,4 +124,22 @@ model Room {
 
   @@index([projectId])
   @@map("rooms")
+}
+
+/// Cached output of `@archai/floor-plan-engine` — one plan per project.
+model FloorPlan {
+  id            String   @id @default(cuid())
+  projectId     String   @unique
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  /// FLOOR_PLAN_ENGINE_VERSION of the run that produced `geometry`.
+  engineVersion String
+  /// sha256 of the canonical FloorPlanInput JSON; a mismatch forces regeneration.
+  inputHash     String
+  /// Engine `FloorPlan` output, stored verbatim.
+  geometry      Json
+  /// Set explicitly on every regeneration (not on unrelated row writes).
+  generatedAt   DateTime
+  createdAt     DateTime @default(now())
+
+  @@map("floor_plans")
 }

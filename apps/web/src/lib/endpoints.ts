@@ -1,3 +1,4 @@
+import type { FloorPlan } from '@archai/floor-plan-engine';
 import type {
   AuthResponse,
   CreateProjectInput,
@@ -77,4 +78,20 @@ export function unarchiveProject(id: string): Promise<ProjectDto> {
 
 export function duplicateProject(id: string): Promise<ProjectDto> {
   return apiRequest<ProjectDto>(`/projects/${id}/duplicate`, { method: 'POST' });
+}
+
+// ── Floor plan ────────────────────────────────────────────────────────────
+
+/** Contract: docs/api.md → GET /projects/:id/floor-plan. */
+export interface FloorPlanResponse {
+  plan: FloorPlan;
+  /** ISO timestamp of the persisted engine run. */
+  generatedAt: string;
+}
+
+export function getFloorPlan(
+  projectId: string,
+  signal?: AbortSignal,
+): Promise<FloorPlanResponse> {
+  return apiRequest<FloorPlanResponse>(`/projects/${projectId}/floor-plan`, { signal });
 }

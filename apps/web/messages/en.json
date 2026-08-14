@@ -470,6 +470,53 @@
     }
   },
 
+  "floorPlan": {
+    "loadError": "Could not load the floor plan",
+    "areaValue": "{area} m²",
+    "dimensionValue": "{value} m",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "zoomReset": "Reset zoom",
+    "zoomValue": "{percent}%",
+    "floorSwitcherLabel": "Choose a floor",
+    "canvasLabel": "Floor {floor} plan: {rooms} rooms, {width} × {length} m",
+    "disclaimerChip": "Schematic plan",
+    "disclaimerBody": "This is a schematic plan: room positions and sizes are generated automatically and may differ from the ones you requested. It is not construction documentation.",
+    "roomTooltip": "{name} ({type}) — {width} × {length} m, {area} m²",
+    "roomTooltipRequested": "Requested area: {requested} m².",
+    "stairs": {
+      "up": "Stairs — up",
+      "down": "Stairs — down",
+      "both": "Stairs — up and down"
+    },
+    "legend": {
+      "title": "Legend",
+      "corridor": "Shared hallway",
+      "door": "Door",
+      "window": "Window",
+      "stairs": "Stairs"
+    },
+    "notConfigured": {
+      "title": "Not enough data for a plan",
+      "body": "A plan needs the land, the house dimensions and at least one room.",
+      "cta": "Continue configuring"
+    },
+    "unavailable": {
+      "title": "The plan could not be generated",
+      "body": "The rooms cannot be laid out at these dimensions. Fix the following and try again.",
+      "cta": "Edit the dimensions"
+    },
+    "issues": {
+      "FOOTPRINT_TOO_SMALL": "The footprint is too small to lay any rooms out. Increase the house width or length.",
+      "ROOM_AREA_UNSATISFIABLE": "On floor {floorNumber} one of the rooms cannot reach the {minSideM} m minimum side. Remove a room or enlarge the house.",
+      "TOO_MANY_ROOMS_PER_FLOOR": "The {rooms} rooms on floor {floorNumber} do not fit. Use fewer rooms or spread them across floors.",
+      "ROOM_ON_MISSING_FLOOR": "Room {roomNumber} sits on floor {floorNumber}, but the house has {floorCount} floor(s).",
+      "INVALID_INPUT": "The house dimensions are invalid — check the width, length and floor count.",
+      "INTERNAL_ERROR": "Something went wrong while generating the plan. Please try again shortly.",
+      "unknown": "An unknown problem stopped the plan from being generated."
+    }
+  },
+
   "validation": {
     "errorsTitle": "Needs fixing",
     "warningsTitle": "Worth a look",

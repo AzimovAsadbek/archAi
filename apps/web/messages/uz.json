@@ -470,6 +470,53 @@
     }
   },
 
+  "floorPlan": {
+    "loadError": "Rejani yuklab bo'lmadi",
+    "areaValue": "{area} m²",
+    "dimensionValue": "{value} m",
+    "zoomIn": "Kattalashtirish",
+    "zoomOut": "Kichiklashtirish",
+    "zoomReset": "Masshtabni tiklash",
+    "zoomValue": "{percent}%",
+    "floorSwitcherLabel": "Qavatni tanlash",
+    "canvasLabel": "{floor}-qavat rejasi: {rooms} ta xona, {width} × {length} m",
+    "disclaimerChip": "Sxematik reja",
+    "disclaimerBody": "Bu sxematik reja: xonalar joylashuvi va o'lchamlari avtomatik hisoblangan va so'ralgan o'lchamlardan farq qilishi mumkin. Qurilish uchun rasmiy loyiha hujjati emas.",
+    "roomTooltip": "{name} ({type}) — {width} × {length} m, {area} m²",
+    "roomTooltipRequested": "So'ralgan maydon: {requested} m².",
+    "stairs": {
+      "up": "Zinapoya — yuqoriga",
+      "down": "Zinapoya — pastga",
+      "both": "Zinapoya — yuqoriga va pastga"
+    },
+    "legend": {
+      "title": "Belgilar",
+      "corridor": "Umumiy yo'lak",
+      "door": "Eshik",
+      "window": "Deraza",
+      "stairs": "Zinapoya"
+    },
+    "notConfigured": {
+      "title": "Reja uchun ma'lumot yetarli emas",
+      "body": "Rejani chizish uchun yer, uy o'lchamlari va kamida bitta xona kerak.",
+      "cta": "Sozlashni davom ettirish"
+    },
+    "unavailable": {
+      "title": "Rejani chizib bo'lmadi",
+      "body": "Kiritilgan o'lchamlar bilan xonalarni joylashtirishning imkoni yo'q. Quyidagilarni tuzating va qayta urinib ko'ring.",
+      "cta": "O'lchamlarni tahrirlash"
+    },
+    "issues": {
+      "FOOTPRINT_TOO_SMALL": "Uy asosi juda kichik — xonalarni joylashtirish uchun joy yetmaydi. Uy enini yoki bo'yini oshiring.",
+      "ROOM_AREA_UNSATISFIABLE": "{floorNumber}-qavatdagi xonalardan biri kamida {minSideM} m tomonga ega bo'la olmaydi. Xonani olib tashlang yoki uyni kattalashtiring.",
+      "TOO_MANY_ROOMS_PER_FLOOR": "{floorNumber}-qavatdagi {rooms} ta xona bu maydonga sig'maydi. Xonalar sonini kamaytiring yoki qavatlar bo'yicha taqsimlang.",
+      "ROOM_ON_MISSING_FLOOR": "{roomNumber}-xona {floorNumber}-qavatga qo'yilgan, lekin uyda {floorCount} qavat bor.",
+      "INVALID_INPUT": "Uy o'lchamlari noto'g'ri — eni, bo'yi va qavatlar sonini tekshiring.",
+      "INTERNAL_ERROR": "Rejani hisoblashda kutilmagan xatolik yuz berdi. Birozdan so'ng qayta urinib ko'ring.",
+      "unknown": "Rejani chizishda noma'lum muammo aniqlandi."
+    }
+  },
+
   "validation": {
     "errorsTitle": "Tuzatish kerak",
     "warningsTitle": "E'tibor bering",

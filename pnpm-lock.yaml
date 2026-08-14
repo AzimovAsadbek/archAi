@@ -26,6 +26,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@archai/floor-plan-engine':
+        specifier: workspace:*
+        version: link:../../packages/floor-plan-engine
       '@archai/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -114,6 +117,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@archai/floor-plan-engine':
+        specifier: workspace:*
+        version: link:../../packages/floor-plan-engine
       '@archai/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -172,6 +178,19 @@ importers:
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
+
+  packages/floor-plan-engine:
+    dependencies:
+      '@archai/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.0
+        version: 3.2.7(@types/node@24.13.3)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.49.2)(tsx@4.23.12)
 
   packages/shared:
     dependencies:

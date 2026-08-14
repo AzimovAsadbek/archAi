@@ -10,6 +10,7 @@
     "test": "echo \"web: no unit tests yet (E2E planned)\" && exit 0"
   },
   "dependencies": {
+    "@archai/floor-plan-engine": "workspace:*",
     "@archai/shared": "workspace:*",
     "@hookform/resolvers": "^5.0.0",
     "@tanstack/react-query": "^5.62.0",

@@ -20,6 +20,7 @@ import {
   TriangleAlert,
 } from 'lucide-react';
 import { type ProjectDto, type RoomDto } from '@archai/shared';
+import { FloorPlanPanel } from '@/components/floor-plan/floor-plan-panel';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { buttonClasses } from '@/components/ui/button';
@@ -43,8 +44,11 @@ import { useApiErrorMessage } from '@/lib/use-api-error';
 import { StatCard } from './stat-card';
 import { ValidationPanel } from './validation-panel';
 
-const ROADMAP_TABS = ['plans2d', 'view3d', 'interior', 'exterior', 'estimate'] as const;
+/** Tabs backed by a real panel today. */
+const LIVE_TABS = ['overview', 'plans2d'] as const;
+const ROADMAP_TABS = ['view3d', 'interior', 'exterior', 'estimate'] as const;
 
+type LiveTab = (typeof LIVE_TABS)[number];
 type PendingAction = 'delete' | 'archive' | null;
 
 function WorkspaceSkeleton() {
@@ -172,6 +176,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
 
   const [pending, setPending] = useState<PendingAction>(null);
   const [actionError, setActionError] = useState<string | undefined>();
+  const [tab, setTab] = useState<LiveTab>('overview');
 
   const projectQuery = useQuery({
     queryKey: queryKeys.project(projectId),
@@ -333,20 +338,31 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
         </Alert>
       ) : null}
 
-      {/* Tabs — only Overview is real in this slice. */}
+      {/* Tabs — Overview and the 2D plan are real; the rest is roadmap. */}
       <div className="mt-7 overflow-x-auto border-b border-line">
         <div role="tablist" aria-label={t('tabsLabel')} className="flex min-w-max items-center gap-1">
-          <button
-            type="button"
-            role="tab"
-            aria-selected="true"
-            className="-mb-px border-b-2 border-accent px-3 py-2.5 text-sm font-bold text-ink"
-          >
-            {t('tabs.overview')}
-          </button>
-          {ROADMAP_TABS.map((tab) => (
+          {LIVE_TABS.map((id) => (
             <button
-              key={tab}
+              key={id}
+              type="button"
+              role="tab"
+              id={`workspace-tab-${id}`}
+              aria-selected={tab === id}
+              aria-controls={`workspace-panel-${id}`}
+              onClick={() => setTab(id)}
+              className={cn(
+                '-mb-px border-b-2 px-3 py-2.5 text-sm transition-colors',
+                tab === id
+                  ? 'border-accent font-bold text-ink'
+                  : 'border-transparent font-semibold text-ink-faint hover:text-ink',
+              )}
+            >
+              {t(`tabs.${id}`)}
+            </button>
+          ))}
+          {ROADMAP_TABS.map((id) => (
+            <button
+              key={id}
               type="button"
               role="tab"
               aria-selected="false"
@@ -357,7 +373,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
                 'text-sm font-semibold text-ink-faint',
               )}
             >
-              {t(`tabs.${tab}`)}
+              {t(`tabs.${id}`)}
               <Badge tone="faint" size="sm">
                 {tCommon('roadmap')}
               </Badge>
@@ -366,78 +382,100 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
         </div>
       </div>
 
-      {!configured ? (
-        <EmptyState
+      {tab === 'plans2d' ? (
+        <div
+          role="tabpanel"
+          id="workspace-panel-plans2d"
+          aria-labelledby="workspace-tab-plans2d"
           className="mt-8"
-          icon={<Scan className="size-5" />}
-          title={t('notConfigured.title')}
-          description={t('notConfigured.body')}
-          action={
-            <Link href={`/projects/${projectId}/edit`} className={buttonClasses('accent', 'md')}>
-              {t('notConfigured.cta')}
-            </Link>
-          }
-        />
+        >
+          <FloorPlanPanel projectId={projectId} projectUpdatedAt={project.updatedAt} />
+        </div>
       ) : null}
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          icon={<Ruler className="size-4" />}
-          label={t('stats.land')}
-          value={landAreaM2 === null ? '—' : t('stats.areaValue', { area: landAreaM2 })}
-          hint={landAreaM2 === null ? undefined : t('stats.sotixHint', { sotix: m2ToSotix(landAreaM2) })}
-        />
-        <StatCard
-          icon={<Scan className="size-4" />}
-          label={t('stats.footprint')}
-          value={footprint === null ? '—' : t('stats.areaValue', { area: footprint })}
-          hint={coverage === null ? undefined : t('stats.coverageHint', { percent: coverage })}
-        />
-        <StatCard
-          icon={<Layers className="size-4" />}
-          label={t('stats.floors')}
-          value={project.house === null ? '—' : String(project.house.floorCount)}
-          hint={totalArea === null ? undefined : t('stats.totalAreaHint', { area: totalArea })}
-        />
-        <StatCard
-          icon={<SquareStack className="size-4" />}
-          label={t('stats.rooms')}
-          value={String(project.rooms.length)}
-          hint={project.house?.style ? tStyles(`${project.house.style}.label`) : undefined}
+      <div
+        role="tabpanel"
+        id="workspace-panel-overview"
+        aria-labelledby="workspace-tab-overview"
+        hidden={tab !== 'overview'}
+      >
+        {!configured ? (
+          <EmptyState
+            className="mt-8"
+            icon={<Scan className="size-5" />}
+            title={t('notConfigured.title')}
+            description={t('notConfigured.body')}
+            action={
+              <Link href={`/projects/${projectId}/edit`} className={buttonClasses('accent', 'md')}>
+                {t('notConfigured.cta')}
+              </Link>
+            }
+          />
+        ) : null}
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            icon={<Ruler className="size-4" />}
+            label={t('stats.land')}
+            value={landAreaM2 === null ? '—' : t('stats.areaValue', { area: landAreaM2 })}
+            hint={
+              landAreaM2 === null
+                ? undefined
+                : t('stats.sotixHint', { sotix: m2ToSotix(landAreaM2) })
+            }
+          />
+          <StatCard
+            icon={<Scan className="size-4" />}
+            label={t('stats.footprint')}
+            value={footprint === null ? '—' : t('stats.areaValue', { area: footprint })}
+            hint={coverage === null ? undefined : t('stats.coverageHint', { percent: coverage })}
+          />
+          <StatCard
+            icon={<Layers className="size-4" />}
+            label={t('stats.floors')}
+            value={project.house === null ? '—' : String(project.house.floorCount)}
+            hint={totalArea === null ? undefined : t('stats.totalAreaHint', { area: totalArea })}
+          />
+          <StatCard
+            icon={<SquareStack className="size-4" />}
+            label={t('stats.rooms')}
+            value={String(project.rooms.length)}
+            hint={project.house?.style ? tStyles(`${project.house.style}.label`) : undefined}
+          />
+        </div>
+
+        {enabledFeatures.length > 0 ? (
+          <section className="mt-6 rounded-md border border-line bg-surface p-5">
+            <h2 className="text-sm font-bold tracking-wide text-ink uppercase">
+              {t('featuresTitle')}
+            </h2>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {enabledFeatures.map((feature) => {
+                const Icon = FEATURE_ICONS[feature];
+                return (
+                  <li
+                    key={feature}
+                    className="inline-flex items-center gap-1.5 rounded-sm border border-line bg-paper px-2.5 py-1.5 text-xs font-semibold text-ink"
+                  >
+                    <Icon className="size-3.5 text-ink-faint" aria-hidden="true" />
+                    {tFeatures(`${feature}.label`)}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ) : null}
+
+        <div className="mt-6">
+          <RoomsTable project={project} />
+        </div>
+
+        <ValidationPanel
+          className="mt-6"
+          errors={project.validation.errors}
+          warnings={project.validation.warnings}
         />
       </div>
-
-      {enabledFeatures.length > 0 ? (
-        <section className="mt-6 rounded-md border border-line bg-surface p-5">
-          <h2 className="text-sm font-bold tracking-wide text-ink uppercase">
-            {t('featuresTitle')}
-          </h2>
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {enabledFeatures.map((feature) => {
-              const Icon = FEATURE_ICONS[feature];
-              return (
-                <li
-                  key={feature}
-                  className="inline-flex items-center gap-1.5 rounded-sm border border-line bg-paper px-2.5 py-1.5 text-xs font-semibold text-ink"
-                >
-                  <Icon className="size-3.5 text-ink-faint" aria-hidden="true" />
-                  {tFeatures(`${feature}.label`)}
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      ) : null}
-
-      <div className="mt-6">
-        <RoomsTable project={project} />
-      </div>
-
-      <ValidationPanel
-        className="mt-6"
-        errors={project.validation.errors}
-        warnings={project.validation.warnings}
-      />
 
       <ConfirmDialog
         open={pending !== null}

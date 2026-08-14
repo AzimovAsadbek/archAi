@@ -1,0 +1,77 @@
+import { createHash } from 'node:crypto';
+import { type FloorPlan, type FloorPlanInput } from '@archai/floor-plan-engine';
+import { type HouseConfig } from '@archai/shared';
+import { type Prisma } from '@prisma/client';
+import { isRecord } from '../common/types/request.types';
+import { type ProjectWithRooms, sortRooms } from '../projects/project.mapper';
+
+/** `GET /projects/:id/floor-plan` response (docs/api.md §Floor plan). */
+export interface FloorPlanDto {
+  plan: FloorPlan;
+  /** ISO-8601 timestamp of the engine run that produced `plan`. */
+  generatedAt: string;
+}
+
+/**
+ * Engine input for a project. Only geometry-relevant configuration goes in —
+ * `style`, features and names never change the layout, so they must not
+ * invalidate a cached plan.
+ */
+export function toFloorPlanInput(project: ProjectWithRooms, house: HouseConfig): FloorPlanInput {
+  return {
+    house: {
+      widthM: house.widthM,
+      lengthM: house.lengthM,
+      floorCount: house.floorCount,
+    },
+    rooms: sortRooms(project.rooms).map((room) => ({
+      id: room.id,
+      type: room.type,
+      floor: room.floor,
+      widthM: room.widthM,
+      lengthM: room.lengthM,
+      label: room.label,
+    })),
+  };
+}
+
+/** Object keys sorted recursively; array order (= room order) is significant and kept. */
+function canonicalize(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(canonicalize);
+  }
+  if (isRecord(value)) {
+    const sorted: Record<string, unknown> = {};
+    for (const key of Object.keys(value).sort()) {
+      const entry = canonicalize(value[key]);
+      if (entry !== undefined) {
+        sorted[key] = entry;
+      }
+    }
+    return sorted;
+  }
+  return value;
+}
+
+/** Stable serialization — identical input always yields the identical string. */
+export function canonicalJson(value: unknown): string {
+  return JSON.stringify(canonicalize(value)) ?? 'null';
+}
+
+/** Cache key for a stored plan: sha256 of the canonical engine input, nothing else. */
+export function hashFloorPlanInput(input: FloorPlanInput): string {
+  return createHash('sha256').update(canonicalJson(input)).digest('hex');
+}
+
+/** Geometry is stored verbatim; Prisma types JSON columns too loosely to infer it back. */
+export function toFloorPlan(geometry: Prisma.JsonValue): FloorPlan {
+  return geometry as unknown as FloorPlan;
+}
+
+export function toGeometryJson(plan: FloorPlan): Prisma.InputJsonValue {
+  return plan as unknown as Prisma.InputJsonValue;
+}
+
+export function toFloorPlanDto(plan: FloorPlan, generatedAt: Date): FloorPlanDto {
+  return { plan, generatedAt: generatedAt.toISOString() };
+}

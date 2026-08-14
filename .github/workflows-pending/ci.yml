@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: archai
+          POSTGRES_PASSWORD: archai_dev_password
+          POSTGRES_DB: archai
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U archai -d archai"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+
+    env:
+      DATABASE_URL: postgresql://archai:archai_dev_password@localhost:5432/archai?schema=public
+      TEST_DATABASE_URL: postgresql://archai:archai_dev_password@localhost:5432/archai_test?schema=public
+      JWT_ACCESS_SECRET: ci-only-access-secret-not-used-in-any-real-environment-0001
+      JWT_REFRESH_SECRET: ci-only-refresh-secret-not-used-in-any-real-environment-0002
+      JWT_ACCESS_TTL_SEC: '900'
+      JWT_REFRESH_TTL_SEC: '2592000'
+      API_PORT: '3001'
+      WEB_ORIGIN: http://localhost:3000
+      COOKIE_SECURE: 'false'
+      NODE_ENV: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create test database
+        run: PGPASSWORD=archai_dev_password psql -h localhost -U archai -d archai -c 'CREATE DATABASE archai_test OWNER archai;'
+
+      - name: Build shared package
+        run: pnpm --filter @archai/shared build
+
+      - name: Generate Prisma client
+        run: pnpm --filter @archai/api prisma:generate
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
