@@ -28,6 +28,8 @@ export function httpServer(app: INestApplication): Server {
 }
 
 export async function resetDatabase(prisma: PrismaService): Promise<void> {
+  // Audit rows reference users — cleared first so no trail outlives its actor.
+  await prisma.auditLog.deleteMany();
   await prisma.estimateRule.deleteMany();
   await prisma.aiGeneration.deleteMany();
   await prisma.refreshToken.deleteMany();

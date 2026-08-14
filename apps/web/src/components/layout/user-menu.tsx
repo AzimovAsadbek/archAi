@@ -1,7 +1,8 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { ChevronDown, LogOut } from 'lucide-react';
+import { ChevronDown, LogOut, ShieldCheck } from 'lucide-react';
 import { type UserDto } from '@archai/shared';
 import { Menu, MenuItem, MenuSeparator } from '@/components/ui/menu';
 import { useLogout } from '@/lib/use-auth';
@@ -9,6 +10,7 @@ import { initials } from '@/lib/format';
 
 export function UserMenu({ user }: { user: UserDto }) {
   const t = useTranslations('nav');
+  const router = useRouter();
   const logout = useLogout();
 
   return (
@@ -37,6 +39,19 @@ export function UserMenu({ user }: { user: UserDto }) {
             <p className="truncate text-xs text-ink-faint">{user.email}</p>
           </div>
           <MenuSeparator />
+          {/* Admin-only entry point; the panel itself re-checks the role, and every
+              /admin endpoint enforces it server-side. */}
+          {user.role === 'ADMIN' ? (
+            <MenuItem
+              icon={<ShieldCheck className="size-4" />}
+              onClick={() => {
+                close(false);
+                router.push('/admin/users');
+              }}
+            >
+              {t('admin')}
+            </MenuItem>
+          ) : null}
           <MenuItem
             icon={<LogOut className="size-4" />}
             disabled={logout.isPending}

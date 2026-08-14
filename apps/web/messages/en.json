@@ -3,7 +3,6 @@
     "title": "archAi — a house project from your land and requirements",
     "description": "archAi turns land area, house dimensions, rooms and style into a structured house project. Plans, a 3D preview and a preliminary estimate in one place."
   },
-
   "common": {
     "cancel": "Cancel",
     "save": "Save",
@@ -14,7 +13,6 @@
     "roadmap": "soon",
     "live": "live"
   },
-
   "locale": {
     "label": "Language",
     "uz": "UZ",
@@ -24,7 +22,6 @@
     "ruFull": "Russian",
     "enFull": "English"
   },
-
   "nav": {
     "primary": "Main menu",
     "howItWorks": "How it works",
@@ -32,9 +29,9 @@
     "login": "Log in",
     "getStarted": "Get started",
     "projects": "Projects",
-    "logout": "Log out"
+    "logout": "Log out",
+    "admin": "Admin panel"
   },
-
   "marketing": {
     "hero": {
       "eyebrow": "House design platform",
@@ -139,7 +136,6 @@
       "rights": "© 2026 archAi. All rights reserved."
     }
   },
-
   "auth": {
     "backToHome": "Back to home",
     "login": {
@@ -168,7 +164,6 @@
       "fullNamePlaceholder": "Your first and last name"
     }
   },
-
   "apiErrors": {
     "generic": "Something went wrong. Please try again.",
     "NETWORK_ERROR": "Could not reach the server. Check your internet connection.",
@@ -182,9 +177,11 @@
     "RATE_LIMITED": "Too many attempts. Wait a moment and try again.",
     "INTERNAL": "Unexpected server error. Please try again shortly.",
     "PROJECT_ARCHIVED": "Archived projects cannot be edited. Restore it from the archive first.",
-    "PROJECT_NOT_CONFIGURED": "Finish configuring the project first — add the land, house and rooms."
+    "PROJECT_NOT_CONFIGURED": "Finish configuring the project first — add the land, house and rooms.",
+    "CANNOT_MODIFY_SELF": "You cannot modify your own account.",
+    "CANNOT_MODIFY_ADMIN": "Another administrator account cannot be modified.",
+    "VERSION_EXISTS": "That version already exists. Choose a different name."
   },
-
   "dashboard": {
     "title": "My projects",
     "count": "{count, plural, =0 {No projects yet} one {# project} other {# projects}}",
@@ -214,7 +211,6 @@
       "info": "Page {page} of {pages}"
     }
   },
-
   "project": {
     "status": {
       "DRAFT": "Draft",
@@ -258,7 +254,6 @@
       "confirm": "Archive"
     }
   },
-
   "projectNew": {
     "back": "Back to projects",
     "title": "New project",
@@ -272,7 +267,6 @@
     "submit": "Create and continue",
     "cancel": "Cancel"
   },
-
   "ai": {
     "mode": {
       "pageSubtitle": "Two ways in: fill the parameters yourself, or describe what you want in your own words.",
@@ -410,7 +404,6 @@
       "useSimple": "Switch to the manual way"
     }
   },
-
   "wizard": {
     "metaTitle": "Configure project",
     "backToProject": "Back to project",
@@ -518,15 +511,28 @@
       "styleEmpty": "No style chosen."
     }
   },
-
   "features": {
-    "garage": { "label": "Garage", "description": "Enclosed space for a car" },
-    "terrace": { "label": "Terrace", "description": "Open outdoor sitting area" },
-    "balcony": { "label": "Balcony", "description": "Open platform on an upper floor" },
-    "pool": { "label": "Pool", "description": "Swimming pool in the yard" },
-    "garden": { "label": "Garden", "description": "Planted, green yard" }
+    "garage": {
+      "label": "Garage",
+      "description": "Enclosed space for a car"
+    },
+    "terrace": {
+      "label": "Terrace",
+      "description": "Open outdoor sitting area"
+    },
+    "balcony": {
+      "label": "Balcony",
+      "description": "Open platform on an upper floor"
+    },
+    "pool": {
+      "label": "Pool",
+      "description": "Swimming pool in the yard"
+    },
+    "garden": {
+      "label": "Garden",
+      "description": "Planted, green yard"
+    }
   },
-
   "roomTypes": {
     "BEDROOM": "Bedroom",
     "LIVING_ROOM": "Living room",
@@ -539,7 +545,6 @@
     "HALLWAY": "Hallway",
     "OTHER": "Other"
   },
-
   "styles": {
     "MODERN": {
       "label": "Modern",
@@ -566,7 +571,6 @@
       "description": "Uzbek architectural patterns and ganch carving."
     }
   },
-
   "workspace": {
     "metaTitle": "Project",
     "back": "Back to projects",
@@ -612,7 +616,6 @@
       "areaValue": "{area} m²"
     }
   },
-
   "floorPlan": {
     "loadError": "Could not load the floor plan",
     "areaValue": "{area} m²",
@@ -659,7 +662,6 @@
       "unknown": "An unknown problem stopped the plan from being generated."
     }
   },
-
   "three": {
     "floors": {
       "label": "View",
@@ -672,7 +674,6 @@
     "disclaimerBody": "This is a schematic 3D view: the massing is generated from the same plan — wall heights, roof and stairs are indicative. It is not an architectural visualization or construction documentation.",
     "hint": "Drag to orbit, scroll to zoom."
   },
-
   "estimate": {
     "levels": {
       "label": "Finish level",
@@ -727,7 +728,6 @@
       "cta": "Continue configuring"
     }
   },
-
   "validation": {
     "errorsTitle": "Needs fixing",
     "warningsTitle": "Worth a look",
@@ -748,7 +748,6 @@
       "unknown": "An unknown issue was found in the configuration."
     }
   },
-
   "fieldErrors": {
     "invalid": "Invalid value.",
     "required": "This field is required.",
@@ -776,7 +775,6 @@
     "ai_text_min": "The request must be at least {min} characters.",
     "ai_text_max": "The request must not exceed {max} characters."
   },
-
   "errors": {
     "notFound": {
       "title": "Page not found",
@@ -789,6 +787,184 @@
       "body": "An unexpected error occurred. Try reloading the page.",
       "retry": "Try again",
       "reference": "Error reference: {id}"
+    }
+  },
+  "admin": {
+    "badge": "Admin",
+    "backToApp": "Back to app",
+    "forbidden": "This area is for administrators only. Taking you back to your dashboard…",
+    "nav": {
+      "label": "Admin sections",
+      "users": "Users",
+      "projects": "Projects",
+      "estimateRules": "Estimate rules",
+      "audit": "Audit"
+    },
+    "table": {
+      "error": {
+        "title": "Could not load the data",
+        "retry": "Try again"
+      },
+      "noResults": {
+        "title": "Nothing found",
+        "body": "Try a different search or filter.",
+        "reset": "Clear filters"
+      },
+      "pagination": {
+        "label": "Pages",
+        "prev": "Previous",
+        "next": "Next",
+        "info": "Page {page} of {pages}"
+      }
+    },
+    "users": {
+      "title": "Users",
+      "subtitle": "Registered accounts, their projects and activity status.",
+      "count": "{count, plural, =0 {No users found} one {# user} other {# users}}",
+      "searchLabel": "Search users",
+      "searchPlaceholder": "Search by email or name",
+      "filterLabel": "Filter by status",
+      "filterAll": "All statuses",
+      "filterActive": "Active",
+      "filterInactive": "Deactivated",
+      "caption": "User list",
+      "columns": {
+        "email": "Email",
+        "name": "Name",
+        "role": "Role",
+        "status": "Status",
+        "projects": "Projects",
+        "aiGenerations": "AI requests",
+        "createdAt": "Registered",
+        "actions": "Actions"
+      },
+      "roles": {
+        "ADMIN": "Administrator",
+        "USER": "User"
+      },
+      "state": {
+        "active": "Active",
+        "inactive": "Deactivated"
+      },
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "protected": "Protected"
+      },
+      "confirmDeactivate": {
+        "title": "Deactivate account",
+        "body": "{email} will no longer be able to log in and all their sessions end. Continue?",
+        "confirm": "Deactivate"
+      },
+      "confirmActivate": {
+        "title": "Activate account",
+        "body": "{email} will be able to log in again. Continue?",
+        "confirm": "Activate"
+      },
+      "empty": {
+        "title": "No users",
+        "body": "No accounts have been registered yet."
+      }
+    },
+    "projects": {
+      "title": "Projects",
+      "subtitle": "Every project on the platform. Read-only in this release.",
+      "count": "{count, plural, =0 {No projects found} one {# project} other {# projects}}",
+      "searchLabel": "Search projects",
+      "searchPlaceholder": "Search by project name",
+      "statusLabel": "Filter by status",
+      "statusAll": "All statuses",
+      "caption": "Project list",
+      "noLand": "—",
+      "landValue": "{m2} m²",
+      "columns": {
+        "name": "Name",
+        "owner": "Owner",
+        "status": "Status",
+        "rooms": "Rooms",
+        "land": "Land",
+        "updatedAt": "Updated"
+      },
+      "empty": {
+        "title": "No projects",
+        "body": "No project has been created yet."
+      }
+    },
+    "rules": {
+      "title": "Estimate rules",
+      "subtitle": "Prices are data, not formula. Every change is saved as a new version.",
+      "activeVersion": "Active version: {version}",
+      "currentVersion": "Current active version: {version}",
+      "versionPlaceholder": "e.g. 2",
+      "versionExists": "That version already exists — pick another name.",
+      "uzsHint": "{amount} UZS",
+      "uzsHintEmpty": "Enter the amount in UZS",
+      "percentHint": "as a share: {share}",
+      "percentHintEmpty": "Enter a percentage (0–100)",
+      "currencyHint": "UZS is the only currency in v1.",
+      "saved": "Saved",
+      "hasErrors": "Check the fields",
+      "reset": "Reset",
+      "submit": "Save as new version",
+      "noActive": {
+        "title": "No active ruleset",
+        "body": "There is no active price set yet — fill in the fields and save the first version."
+      },
+      "groups": {
+        "version": "Version",
+        "versionHint": "Each save creates a new version and activates it. Older ones stay in the history.",
+        "structure": "Structure",
+        "structureHint": "Foundation, frame, walls and roof — per m².",
+        "finish": "Finish levels",
+        "finishHint": "Finishing cost per m² for each level.",
+        "features": "Features",
+        "featuresHint": "Flat amounts for the selected features. The garden scales with the land area.",
+        "shares": "Shares",
+        "sharesHint": "Entered as percentages, stored as a 0–1 share."
+      },
+      "fields": {
+        "version": "Version name",
+        "currency": "Currency",
+        "structureCostPerM2": "Structure cost",
+        "extraFloorFactor": "Extra floor factor",
+        "extraFloorFactorHint": "Multiplier for each floor above the first (1–3, e.g. 1.08).",
+        "perM2": "per m²",
+        "perSotix": "per sotix (100 m²) of land",
+        "laborShare": "Labor share",
+        "contingencyShare": "Contingency share",
+        "rangeShare": "Range (±)"
+      },
+      "history": {
+        "title": "Version history",
+        "subtitle": "Every estimate names the version it was calculated with.",
+        "empty": "No versions yet.",
+        "version": "v{version}",
+        "active": "Active",
+        "archived": "Archived",
+        "summary": "Structure {structure} · Standard {finish} · Contingency {contingency}%"
+      }
+    },
+    "audit": {
+      "title": "Audit",
+      "subtitle": "Every admin change and every read of another user’s data is recorded here.",
+      "count": "{count, plural, =0 {No entries found} one {# entry} other {# entries}}",
+      "actionLabel": "Filter by action",
+      "actionPlaceholder": "e.g. user.deactivate",
+      "actionHint": "Matches the start of the action name — user. shows every user action.",
+      "caption": "Audit entries",
+      "metadata": "Details:",
+      "deletedActor": "Deleted account",
+      "columns": {
+        "time": "Time",
+        "actor": "Actor",
+        "action": "Action",
+        "entity": "Entity",
+        "entityId": "Entity ID"
+      },
+      "empty": {
+        "title": "No entries",
+        "body": "No audit entry has been recorded yet."
+      }
     }
   }
 }

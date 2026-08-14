@@ -1,5 +1,10 @@
 import { type FinishLevel } from '@archai/shared';
-import { type ListProjectsInput } from './endpoints';
+import {
+  type ListAdminAuditInput,
+  type ListAdminProjectsInput,
+  type ListAdminUsersInput,
+  type ListProjectsInput,
+} from './endpoints';
 
 export const queryKeys = {
   me: ['me'] as const,
@@ -10,4 +15,11 @@ export const queryKeys = {
   estimates: (id: string) => ['project', id, 'estimate'] as const,
   estimate: (id: string, finishLevel: FinishLevel) =>
     ['project', id, 'estimate', finishLevel] as const,
+  /** Admin panel — `['admin']` is the prefix a mutation invalidates wholesale. */
+  admin: {
+    users: (query: ListAdminUsersInput) => ['admin', 'users', query] as const,
+    projects: (query: ListAdminProjectsInput) => ['admin', 'projects', query] as const,
+    estimateRules: ['admin', 'estimate-rules'] as const,
+    audit: (query: ListAdminAuditInput) => ['admin', 'audit', query] as const,
+  },
 };

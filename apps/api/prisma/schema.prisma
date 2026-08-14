@@ -64,6 +64,7 @@ model User {
   projects      Project[]
   refreshTokens RefreshToken[]
   aiGenerations AiGeneration[]
+  auditLogs     AuditLog[]
 
   @@map("users")
 }
@@ -168,6 +169,28 @@ model EstimateRule {
   createdAt DateTime @default(now())
 
   @@map("estimate_rules")
+}
+
+/// Trail of the admin panel (docs/admin.md §Backend): every mutation and every
+/// cross-user read an administrator performs. Written in the same transaction as
+/// the change it describes, so a mutation can never land unaudited.
+model AuditLog {
+  id        String   @id @default(cuid())
+  /// Kept when the administrator's account is deleted — the record outlives them.
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  /// Dot-namespaced, e.g. 'user.deactivate', 'estimate-rules.activate', 'users.list'.
+  action    String
+  /// Affected resource kind, e.g. 'user', 'project', 'estimate-rule'.
+  entity    String
+  entityId  String?
+  /// Small context object; no PII beyond ids/emails an admin already sees.
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([actorId])
+  @@map("audit_log")
 }
 
 /// Provenance of one AI call. Deliberately holds no prompt, request text or

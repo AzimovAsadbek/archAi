@@ -3,7 +3,6 @@
     "title": "archAi — yer va talablardan uy loyihasi",
     "description": "archAi yer maydoni, uy o'lchamlari, xonalar va uslub haqidagi ma'lumotlarni tuzilgan uy loyihasiga aylantiradi. Rejalar, 3D ko'rinish va taxminiy smeta bir joyda."
   },
-
   "common": {
     "cancel": "Bekor qilish",
     "save": "Saqlash",
@@ -14,7 +13,6 @@
     "roadmap": "tez orada",
     "live": "ishlaydi"
   },
-
   "locale": {
     "label": "Til",
     "uz": "UZ",
@@ -24,7 +22,6 @@
     "ruFull": "Ruscha",
     "enFull": "Inglizcha"
   },
-
   "nav": {
     "primary": "Asosiy menyu",
     "howItWorks": "Qanday ishlaydi",
@@ -32,9 +29,9 @@
     "login": "Kirish",
     "getStarted": "Boshlash",
     "projects": "Loyihalar",
-    "logout": "Chiqish"
+    "logout": "Chiqish",
+    "admin": "Admin panel"
   },
-
   "marketing": {
     "hero": {
       "eyebrow": "Uy loyihalash platformasi",
@@ -139,7 +136,6 @@
       "rights": "© 2026 archAi. Barcha huquqlar himoyalangan."
     }
   },
-
   "auth": {
     "backToHome": "Bosh sahifaga qaytish",
     "login": {
@@ -168,7 +164,6 @@
       "fullNamePlaceholder": "Ism va familiyangiz"
     }
   },
-
   "apiErrors": {
     "generic": "Xatolik yuz berdi. Qayta urinib ko'ring.",
     "NETWORK_ERROR": "Serverga ulanib bo'lmadi. Internet aloqasini tekshiring.",
@@ -182,9 +177,11 @@
     "RATE_LIMITED": "Juda ko'p urinish. Bir oz kutib, qayta urinib ko'ring.",
     "INTERNAL": "Serverda kutilmagan xatolik. Birozdan so'ng urinib ko'ring.",
     "PROJECT_ARCHIVED": "Arxivlangan loyihani tahrirlab bo'lmaydi. Avval arxivdan chiqaring.",
-    "PROJECT_NOT_CONFIGURED": "Avval loyihani sozlab yakunlang — yer, uy va xonalarni kiriting."
+    "PROJECT_NOT_CONFIGURED": "Avval loyihani sozlab yakunlang — yer, uy va xonalarni kiriting.",
+    "CANNOT_MODIFY_SELF": "O'z hisobingizni o'zgartira olmaysiz.",
+    "CANNOT_MODIFY_ADMIN": "Boshqa administrator hisobini o'zgartirib bo'lmaydi.",
+    "VERSION_EXISTS": "Bunday versiya allaqachon mavjud. Boshqa nom tanlang."
   },
-
   "dashboard": {
     "title": "Loyihalarim",
     "count": "{count, plural, =0 {Hali loyiha yo'q} one {# ta loyiha} other {# ta loyiha}}",
@@ -214,7 +211,6 @@
       "info": "Sahifa {page} / {pages}"
     }
   },
-
   "project": {
     "status": {
       "DRAFT": "Qoralama",
@@ -258,7 +254,6 @@
       "confirm": "Arxivlash"
     }
   },
-
   "projectNew": {
     "back": "Loyihalarga qaytish",
     "title": "Yangi loyiha",
@@ -272,7 +267,6 @@
     "submit": "Yaratish va davom etish",
     "cancel": "Bekor qilish"
   },
-
   "ai": {
     "mode": {
       "pageSubtitle": "Ikki yo'l bor: parametrlarni o'zingiz kiritasiz yoki talabingizni oddiy so'zlar bilan yozib berasiz.",
@@ -410,7 +404,6 @@
       "useSimple": "Oddiy usulga o'tish"
     }
   },
-
   "wizard": {
     "metaTitle": "Loyihani sozlash",
     "backToProject": "Loyihaga qaytish",
@@ -518,15 +511,28 @@
       "styleEmpty": "Uslub tanlanmagan."
     }
   },
-
   "features": {
-    "garage": { "label": "Garaj", "description": "Avtomobil uchun yopiq joy" },
-    "terrace": { "label": "Ayvon", "description": "Ochiq dam olish maydoni" },
-    "balcony": { "label": "Balkon", "description": "Yuqori qavatdagi ochiq maydon" },
-    "pool": { "label": "Basseyn", "description": "Hovlidagi suzish havzasi" },
-    "garden": { "label": "Bog'", "description": "Ko'kalamzorlashtirilgan hovli" }
+    "garage": {
+      "label": "Garaj",
+      "description": "Avtomobil uchun yopiq joy"
+    },
+    "terrace": {
+      "label": "Ayvon",
+      "description": "Ochiq dam olish maydoni"
+    },
+    "balcony": {
+      "label": "Balkon",
+      "description": "Yuqori qavatdagi ochiq maydon"
+    },
+    "pool": {
+      "label": "Basseyn",
+      "description": "Hovlidagi suzish havzasi"
+    },
+    "garden": {
+      "label": "Bog'",
+      "description": "Ko'kalamzorlashtirilgan hovli"
+    }
   },
-
   "roomTypes": {
     "BEDROOM": "Yotoqxona",
     "LIVING_ROOM": "Mehmonxona",
@@ -539,7 +545,6 @@
     "HALLWAY": "Yo'lak",
     "OTHER": "Boshqa"
   },
-
   "styles": {
     "MODERN": {
       "label": "Zamonaviy",
@@ -566,7 +571,6 @@
       "description": "O'zbek me'moriy naqshlari va ganch bezaklari."
     }
   },
-
   "workspace": {
     "metaTitle": "Loyiha",
     "back": "Loyihalarga qaytish",
@@ -612,7 +616,6 @@
       "areaValue": "{area} m²"
     }
   },
-
   "floorPlan": {
     "loadError": "Rejani yuklab bo'lmadi",
     "areaValue": "{area} m²",
@@ -659,7 +662,6 @@
       "unknown": "Rejani chizishda noma'lum muammo aniqlandi."
     }
   },
-
   "three": {
     "floors": {
       "label": "Ko'rinish",
@@ -672,7 +674,6 @@
     "disclaimerBody": "Bu sxematik 3D ko'rinish: hajmlar o'sha rejadan avtomatik quriladi — devor balandligi, tom va zinapoya shartli. Bu me'moriy vizualizatsiya yoki qurilish hujjati emas.",
     "hint": "Aylantirish uchun torting, masshtab uchun g'ildirakni aylantiring."
   },
-
   "estimate": {
     "levels": {
       "label": "Pardoz darajasi",
@@ -727,7 +728,6 @@
       "cta": "Sozlashni davom ettirish"
     }
   },
-
   "validation": {
     "errorsTitle": "Tuzatish kerak",
     "warningsTitle": "E'tibor bering",
@@ -748,7 +748,6 @@
       "unknown": "Konfiguratsiyada noma'lum muammo aniqlandi."
     }
   },
-
   "fieldErrors": {
     "invalid": "Qiymat noto'g'ri.",
     "required": "Bu maydon to'ldirilishi shart.",
@@ -776,7 +775,6 @@
     "ai_text_min": "Talab kamida {min} ta belgidan iborat bo'lsin.",
     "ai_text_max": "Talab {max} ta belgidan oshmasin."
   },
-
   "errors": {
     "notFound": {
       "title": "Sahifa topilmadi",
@@ -789,6 +787,184 @@
       "body": "Kutilmagan xatolik yuz berdi. Sahifani qayta yuklashga urinib ko'ring.",
       "retry": "Qayta urinish",
       "reference": "Xatolik kodi: {id}"
+    }
+  },
+  "admin": {
+    "badge": "Admin",
+    "backToApp": "Ilovaga qaytish",
+    "forbidden": "Bu bo'lim faqat administratorlar uchun. Sizni bosh sahifaga qaytaramiz…",
+    "nav": {
+      "label": "Admin bo'limlari",
+      "users": "Foydalanuvchilar",
+      "projects": "Loyihalar",
+      "estimateRules": "Smeta qoidalari",
+      "audit": "Audit"
+    },
+    "table": {
+      "error": {
+        "title": "Ma'lumotlarni yuklab bo'lmadi",
+        "retry": "Qayta urinish"
+      },
+      "noResults": {
+        "title": "Hech narsa topilmadi",
+        "body": "Qidiruv yoki filtrni o'zgartirib ko'ring.",
+        "reset": "Filtrlarni tozalash"
+      },
+      "pagination": {
+        "label": "Sahifalar",
+        "prev": "Oldingi",
+        "next": "Keyingi",
+        "info": "Sahifa {page} / {pages}"
+      }
+    },
+    "users": {
+      "title": "Foydalanuvchilar",
+      "subtitle": "Ro'yxatdan o'tgan hisoblar, ularning loyihalari va faollik holati.",
+      "count": "{count, plural, =0 {Foydalanuvchi topilmadi} one {# ta foydalanuvchi} other {# ta foydalanuvchi}}",
+      "searchLabel": "Foydalanuvchilarni qidirish",
+      "searchPlaceholder": "Email yoki ism bo'yicha qidiring",
+      "filterLabel": "Holat bo'yicha filtr",
+      "filterAll": "Barcha holatlar",
+      "filterActive": "Faol",
+      "filterInactive": "Faolsiz",
+      "caption": "Foydalanuvchilar ro'yxati",
+      "columns": {
+        "email": "Email",
+        "name": "Ism",
+        "role": "Rol",
+        "status": "Holat",
+        "projects": "Loyihalar",
+        "aiGenerations": "AI so'rovlar",
+        "createdAt": "Ro'yxatdan o'tgan",
+        "actions": "Amallar"
+      },
+      "roles": {
+        "ADMIN": "Administrator",
+        "USER": "Foydalanuvchi"
+      },
+      "state": {
+        "active": "Faol",
+        "inactive": "Faolsiz"
+      },
+      "actions": {
+        "activate": "Faollashtirish",
+        "deactivate": "Faolsizlantirish",
+        "protected": "Himoyalangan"
+      },
+      "confirmDeactivate": {
+        "title": "Hisobni faolsizlantirish",
+        "body": "{email} tizimga kira olmaydi va uning barcha seanslari yopiladi. Davom etamizmi?",
+        "confirm": "Faolsizlantirish"
+      },
+      "confirmActivate": {
+        "title": "Hisobni faollashtirish",
+        "body": "{email} yana tizimga kira oladi. Davom etamizmi?",
+        "confirm": "Faollashtirish"
+      },
+      "empty": {
+        "title": "Foydalanuvchilar yo'q",
+        "body": "Hozircha ro'yxatdan o'tgan hisob yo'q."
+      }
+    },
+    "projects": {
+      "title": "Loyihalar",
+      "subtitle": "Platformadagi barcha loyihalar. Bu bo'lim faqat kuzatish uchun.",
+      "count": "{count, plural, =0 {Loyiha topilmadi} one {# ta loyiha} other {# ta loyiha}}",
+      "searchLabel": "Loyihalarni qidirish",
+      "searchPlaceholder": "Loyiha nomi bo'yicha qidiring",
+      "statusLabel": "Holat bo'yicha filtr",
+      "statusAll": "Barcha holatlar",
+      "caption": "Loyihalar ro'yxati",
+      "noLand": "—",
+      "landValue": "{m2} m²",
+      "columns": {
+        "name": "Nomi",
+        "owner": "Egasi",
+        "status": "Holat",
+        "rooms": "Xonalar",
+        "land": "Yer maydoni",
+        "updatedAt": "Yangilangan"
+      },
+      "empty": {
+        "title": "Loyihalar yo'q",
+        "body": "Hozircha birorta loyiha yaratilmagan."
+      }
+    },
+    "rules": {
+      "title": "Smeta qoidalari",
+      "subtitle": "Narxlar — bu ma'lumot, formulaning bir qismi emas. Har bir o'zgarish yangi versiya sifatida saqlanadi.",
+      "activeVersion": "Faol versiya: {version}",
+      "currentVersion": "Joriy faol versiya: {version}",
+      "versionPlaceholder": "masalan, 2",
+      "versionExists": "Bunday versiya allaqachon mavjud — boshqa nom tanlang.",
+      "uzsHint": "{amount} so'm",
+      "uzsHintEmpty": "Qiymatni so'mda kiriting",
+      "percentHint": "ulush sifatida: {share}",
+      "percentHintEmpty": "Foizda kiriting (0–100)",
+      "currencyHint": "v1 da valyuta faqat so'm.",
+      "saved": "Saqlandi",
+      "hasErrors": "Maydonlarni tekshiring",
+      "reset": "Tiklash",
+      "submit": "Yangi versiya sifatida saqlash",
+      "noActive": {
+        "title": "Faol qoidalar topilmadi",
+        "body": "Hozircha faol narxlar to'plami yo'q — maydonlarni to'ldirib, birinchi versiyani saqlang."
+      },
+      "groups": {
+        "version": "Versiya",
+        "versionHint": "Har bir saqlash yangi versiya yaratadi va uni faollashtiradi. Eskilari tarixda qoladi.",
+        "structure": "Qurilish",
+        "structureHint": "Poydevor, karkas, devor va tom — 1 m² uchun.",
+        "finish": "Pardoz darajalari",
+        "finishHint": "Har bir daraja uchun 1 m² pardoz narxi.",
+        "features": "Qo'shimchalar",
+        "featuresHint": "Belgilangan qo'shimchalar uchun qat'iy summalar. Bog' yer maydoniga qarab hisoblanadi.",
+        "shares": "Ulushlar",
+        "sharesHint": "Foizda kiritiladi, 0–1 oralig'idagi ulushga aylantiriladi."
+      },
+      "fields": {
+        "version": "Versiya nomi",
+        "currency": "Valyuta",
+        "structureCostPerM2": "Qurilish narxi",
+        "extraFloorFactor": "Qo'shimcha qavat koeffitsiyenti",
+        "extraFloorFactorHint": "Birinchidan yuqoridagi har bir qavat uchun ko'paytiruvchi (1–3, masalan 1.08).",
+        "perM2": "1 m² uchun",
+        "perSotix": "1 sotix (100 m²) yer uchun",
+        "laborShare": "Ish haqi ulushi",
+        "contingencyShare": "Zaxira ulushi",
+        "rangeShare": "Oraliq (±)"
+      },
+      "history": {
+        "title": "Versiyalar tarixi",
+        "subtitle": "Har bir smeta o'zi hisoblangan versiyani ko'rsatadi.",
+        "empty": "Hali versiyalar yo'q.",
+        "version": "v{version}",
+        "active": "Faol",
+        "archived": "Arxiv",
+        "summary": "Qurilish {structure} · Standart {finish} · Zaxira {contingency}%"
+      }
+    },
+    "audit": {
+      "title": "Audit",
+      "subtitle": "Administratorning har bir o'zgarishi va begona ma'lumotni ko'rishi shu yerda qayd etiladi.",
+      "count": "{count, plural, =0 {Yozuv topilmadi} one {# ta yozuv} other {# ta yozuv}}",
+      "actionLabel": "Amal bo'yicha filtr",
+      "actionPlaceholder": "masalan, user.deactivate",
+      "actionHint": "Amal nomining boshi bo'yicha qidiriladi — masalan, user. barcha foydalanuvchi amallarini ko'rsatadi.",
+      "caption": "Audit yozuvlari",
+      "metadata": "Ma'lumot:",
+      "deletedActor": "O'chirilgan hisob",
+      "columns": {
+        "time": "Vaqt",
+        "actor": "Kim",
+        "action": "Amal",
+        "entity": "Obyekt",
+        "entityId": "Obyekt ID"
+      },
+      "empty": {
+        "title": "Yozuvlar yo'q",
+        "body": "Hozircha audit yozuvlari qayd etilmagan."
+      }
     }
   }
 }

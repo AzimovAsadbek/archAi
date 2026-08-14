@@ -2,6 +2,7 @@ import { type MiddlewareConsumer, Module, type NestModule } from '@nestjs/common
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { AdminModule } from './admin/admin.module';
 import { AiModule } from './ai/ai.module';
 import { GLOBAL_RATE_LIMIT, RATE_LIMIT_TTL_MS } from './auth/auth.constants';
 import { AuthModule } from './auth/auth.module';
@@ -29,6 +30,7 @@ import { UsersModule } from './users/users.module';
     EstimatesModule,
     PdfModule,
     AiModule,
+    AdminModule,
     HealthModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

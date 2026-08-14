@@ -18,6 +18,12 @@ export interface SessionUser {
   role: UserRole;
 }
 
+/**
+ * The plain client or an interactive-transaction client, so revocation can join
+ * a caller's transaction (e.g. deactivating a user in the admin panel).
+ */
+export type RefreshTokenClient = Pick<PrismaService, 'refreshToken'>;
+
 export const accessTokenPayloadSchema = z.object({
   sub: z.string().min(1),
   role: z.enum(USER_ROLES),
@@ -85,9 +91,12 @@ export class TokenService {
     });
   }
 
-  /** Theft mitigation: a reused refresh token kills every session of that user. */
-  async revokeAllForUser(userId: string): Promise<void> {
-    await this.prisma.refreshToken.updateMany({
+  /**
+   * Kills every live session of a user — theft mitigation on refresh-token reuse,
+   * and the session cut-off when an administrator deactivates an account.
+   */
+  async revokeAllForUser(userId: string, client: RefreshTokenClient = this.prisma): Promise<void> {
+    await client.refreshToken.updateMany({
       where: { userId, revokedAt: null },
       data: { revokedAt: new Date() },
     });
