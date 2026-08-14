@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import * as argon2 from 'argon2';
+import { ESTIMATE_RULES_V1 } from './estimate-rules.v1';
 
 const prisma = new PrismaClient();
 
@@ -78,7 +79,19 @@ async function main() {
     });
   }
 
-  console.log(`Seeded: admin=${admin.email}, demo=${demo.email}`);
+  // Prices are data an administrator may already have tuned: seed them only when
+  // no active rule set exists, and never overwrite one that does.
+  const activeRules = await prisma.estimateRule.findFirst({ where: { isActive: true } });
+  if (activeRules === null) {
+    await prisma.estimateRule.create({
+      data: { version: ESTIMATE_RULES_V1.version, data: ESTIMATE_RULES_V1, isActive: true },
+    });
+  }
+
+  console.log(
+    `Seeded: admin=${admin.email}, demo=${demo.email}, ` +
+      `estimateRules=v${activeRules?.version ?? ESTIMATE_RULES_V1.version}`,
+  );
 }
 
 main()

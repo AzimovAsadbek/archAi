@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { AppConfigModule } from './config/app-config.module';
 import { validateEnv } from './config/env.schema';
+import { EstimatesModule } from './estimates/estimates.module';
 import { FloorPlansModule } from './floor-plans/floor-plans.module';
 import { HealthModule } from './health/health.module';
 import { PrismaModule } from './prisma/prisma.module';
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     ProjectsModule,
     FloorPlansModule,
+    EstimatesModule,
     AiModule,
     HealthModule,
   ],

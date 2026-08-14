@@ -11,6 +11,12 @@ export const ERROR_CODES = {
   PROJECT_ARCHIVED: 'PROJECT_ARCHIVED',
   PROJECT_NOT_CONFIGURED: 'PROJECT_NOT_CONFIGURED',
   FLOOR_PLAN_UNAVAILABLE: 'FLOOR_PLAN_UNAVAILABLE',
+  /**
+   * No usable active `estimate_rules` row — a deployment fault (the seed
+   * guarantees one). Logged and classified with this code; the client sees the
+   * generic INTERNAL error, since the cause says nothing a user can act on.
+   */
+  ESTIMATE_RULES_MISSING: 'ESTIMATE_RULES_MISSING',
   /** AI provider outcomes — mirror `AiErrorCode` from `@archai/ai`. */
   AI_NOT_CONFIGURED: 'AI_NOT_CONFIGURED',
   AI_RATE_LIMITED: 'AI_RATE_LIMITED',

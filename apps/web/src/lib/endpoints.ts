@@ -3,6 +3,8 @@ import type {
   AiParseProjectResponse,
   AuthResponse,
   CreateProjectInput,
+  EstimateResult,
+  FinishLevel,
   ListProjectsQuery,
   LoginInput,
   Paginated,
@@ -95,6 +97,24 @@ export function getFloorPlan(
   signal?: AbortSignal,
 ): Promise<FloorPlanResponse> {
   return apiRequest<FloorPlanResponse>(`/projects/${projectId}/floor-plan`, { signal });
+}
+
+// ── Estimate ──────────────────────────────────────────────────────────────
+
+/** Contract: docs/estimate.md → GET /projects/:id/estimate. */
+export interface EstimateResponse {
+  estimate: EstimateResult;
+}
+
+export function getProjectEstimate(
+  projectId: string,
+  finishLevel: FinishLevel,
+  signal?: AbortSignal,
+): Promise<EstimateResponse> {
+  return apiRequest<EstimateResponse>(`/projects/${projectId}/estimate`, {
+    query: { finishLevel },
+    signal,
+  });
 }
 
 // ── AI ────────────────────────────────────────────────────────────────────

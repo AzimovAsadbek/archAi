@@ -154,6 +154,22 @@ model FloorPlan {
   @@map("floor_plans")
 }
 
+/// Versioned pricing rules for the estimate engine (docs/estimate.md §Rule model).
+/// Exactly one row may be active: the migration adds a unique index on
+/// `isActive` WHERE `isActive` = true, which Prisma cannot express in the schema.
+model EstimateRule {
+  id        String   @id @default(cuid())
+  /// Echoed as provenance in every estimate, e.g. '1'.
+  version   String
+  /// `estimateRulesSchema` payload, re-validated on every read.
+  data      Json
+  /// At most one active row; the API prices with that one.
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("estimate_rules")
+}
+
 /// Provenance of one AI call. Deliberately holds no prompt, request text or
 /// model output — only who called, what answered, and how it went.
 model AiGeneration {

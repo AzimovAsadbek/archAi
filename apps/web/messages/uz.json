@@ -669,6 +669,61 @@
     "hint": "Aylantirish uchun torting, masshtab uchun g'ildirakni aylantiring."
   },
 
+  "estimate": {
+    "levels": {
+      "label": "Pardoz darajasi",
+      "STANDARD": {
+        "label": "Standart",
+        "hint": "Oddiy ta'mir — ishonchli va keng tarqalgan materiallar."
+      },
+      "COMFORT": {
+        "label": "Komfort",
+        "hint": "Yaxshilangan pardoz — sifatliroq materiallar va jihozlar."
+      },
+      "PREMIUM": {
+        "label": "Premium",
+        "hint": "Yuqori sifat — qimmat materiallar va individual yechimlar."
+      }
+    },
+    "summary": {
+      "title": "Taxminiy qiymat",
+      "totalLabel": "Taxminiy umumiy qiymat",
+      "amountValue": "{amount} so'm",
+      "rangeLabel": "Ehtimoliy oraliq:",
+      "rangeValue": "{min} — {max}",
+      "costPerM2": "1 m² narxi",
+      "costPerM2Value": "{amount} so'm/m²",
+      "grossArea": "Umumiy qurilish maydoni",
+      "grossAreaValue": "{area} m²"
+    },
+    "table": {
+      "title": "Xarajatlar tarkibi",
+      "caption": "Smeta moddalari va ularning taxminiy summalari",
+      "item": "Modda",
+      "amount": "Summa, so'm",
+      "structure": "Qurilish ishlari",
+      "structureHint": "Poydevor, karkas, devorlar va tom",
+      "finish": "Pardoz ishlari — {level}",
+      "features": "Qo'shimchalar",
+      "contingency": "Zaxira",
+      "contingencyHint": "Kutilmagan xarajatlar uchun",
+      "labor": "Shundan ish haqi",
+      "laborNote": "Ish haqi yuqoridagi qurilish va pardoz summalari ichida — jamiga alohida qo'shilmaydi.",
+      "total": "Jami"
+    },
+    "disclaimer": {
+      "title": "Dastlabki mo'ljal — qurilish hujjati emas",
+      "body": "Hisob-kitob o'lchamlar va tanlangan pardoz darajasi asosida avtomatik tuzildi. Haqiqiy narxlar mintaqa, materiallar, pudratchi va mavsumga qarab sezilarli farq qiladi. Qaror qabul qilishdan oldin mahalliy pudratchidan rasmiy smeta oling."
+    },
+    "footnote": "Hisob qoidalari: v{version} · Pardoz darajasi: {level}",
+    "loadError": "Smetani hisoblab bo'lmadi",
+    "notConfigured": {
+      "title": "Smeta uchun ma'lumot yetarli emas",
+      "body": "Hisob-kitob uchun yer, uy o'lchamlari va kamida bitta xona kerak.",
+      "cta": "Sozlashni davom ettirish"
+    }
+  },
+
   "validation": {
     "errorsTitle": "Tuzatish kerak",
     "warningsTitle": "E'tibor bering",

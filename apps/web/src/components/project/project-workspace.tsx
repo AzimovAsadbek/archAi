@@ -20,6 +20,7 @@ import {
   TriangleAlert,
 } from 'lucide-react';
 import { type ProjectDto, type RoomDto } from '@archai/shared';
+import { EstimatePanel } from '@/components/estimate/estimate-panel';
 import { FloorPlanPanel } from '@/components/floor-plan/floor-plan-panel';
 import { ThreePanel } from '@/components/three/three-panel';
 import { Alert } from '@/components/ui/alert';
@@ -46,8 +47,8 @@ import { StatCard } from './stat-card';
 import { ValidationPanel } from './validation-panel';
 
 /** Tabs backed by a real panel today. */
-const LIVE_TABS = ['overview', 'plans2d', 'view3d'] as const;
-const ROADMAP_TABS = ['interior', 'exterior', 'estimate'] as const;
+const LIVE_TABS = ['overview', 'plans2d', 'view3d', 'estimate'] as const;
+const ROADMAP_TABS = ['interior', 'exterior'] as const;
 
 type LiveTab = (typeof LIVE_TABS)[number];
 type PendingAction = 'delete' | 'archive' | null;
@@ -339,7 +340,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
         </Alert>
       ) : null}
 
-      {/* Tabs — Overview, the 2D plan and the 3D preview are real; the rest is roadmap. */}
+      {/* Tabs — overview, 2D, 3D and the estimate are real; the rest is roadmap. */}
       <div className="mt-7 overflow-x-auto border-b border-line">
         <div role="tablist" aria-label={t('tabsLabel')} className="flex min-w-max items-center gap-1">
           {LIVE_TABS.map((id) => (
@@ -407,6 +408,17 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
             projectUpdatedAt={project.updatedAt}
             land={project.land}
           />
+        </div>
+      ) : null}
+
+      {tab === 'estimate' ? (
+        <div
+          role="tabpanel"
+          id="workspace-panel-estimate"
+          aria-labelledby="workspace-tab-estimate"
+          className="mt-8"
+        >
+          <EstimatePanel projectId={projectId} projectUpdatedAt={project.updatedAt} />
         </div>
       ) : null}
 

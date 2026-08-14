@@ -28,6 +28,7 @@ export function httpServer(app: INestApplication): Server {
 }
 
 export async function resetDatabase(prisma: PrismaService): Promise<void> {
+  await prisma.estimateRule.deleteMany();
   await prisma.aiGeneration.deleteMany();
   await prisma.refreshToken.deleteMany();
   await prisma.floorPlan.deleteMany();

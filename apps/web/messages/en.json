@@ -669,6 +669,61 @@
     "hint": "Drag to orbit, scroll to zoom."
   },
 
+  "estimate": {
+    "levels": {
+      "label": "Finish level",
+      "STANDARD": {
+        "label": "Standard",
+        "hint": "Basic renovation — dependable, widely used materials."
+      },
+      "COMFORT": {
+        "label": "Comfort",
+        "hint": "Upgraded finish — better materials and fittings."
+      },
+      "PREMIUM": {
+        "label": "Premium",
+        "hint": "High end — premium materials and bespoke solutions."
+      }
+    },
+    "summary": {
+      "title": "Indicative cost",
+      "totalLabel": "Indicative total cost",
+      "amountValue": "{amount} so'm",
+      "rangeLabel": "Likely range:",
+      "rangeValue": "{min} — {max}",
+      "costPerM2": "Cost per m²",
+      "costPerM2Value": "{amount} so'm/m²",
+      "grossArea": "Gross floor area",
+      "grossAreaValue": "{area} m²"
+    },
+    "table": {
+      "title": "Cost breakdown",
+      "caption": "Estimate line items and their indicative amounts",
+      "item": "Item",
+      "amount": "Amount, so'm",
+      "structure": "Structural works",
+      "structureHint": "Foundation, frame, walls and roof",
+      "finish": "Finishing — {level}",
+      "features": "Extras",
+      "contingency": "Contingency",
+      "contingencyHint": "For unforeseen costs",
+      "labor": "Of which labour",
+      "laborNote": "Labour is already part of the structural and finishing lines — it is not added to the total again.",
+      "total": "Total"
+    },
+    "disclaimer": {
+      "title": "Preliminary estimate — not a construction document",
+      "body": "This calculation is generated automatically from the dimensions and the chosen finish level. Real prices vary considerably by region, materials, contractor and season. Get a formal quote from a local contractor before committing."
+    },
+    "footnote": "Calculation rules: v{version} · Finish level: {level}",
+    "loadError": "Could not calculate the estimate",
+    "notConfigured": {
+      "title": "Not enough data for an estimate",
+      "body": "An estimate needs the land, the house dimensions and at least one room.",
+      "cta": "Continue configuring"
+    }
+  },
+
   "validation": {
     "errorsTitle": "Needs fixing",
     "warningsTitle": "Worth a look",
