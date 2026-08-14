@@ -5,5 +5,7 @@ import { FloorPlansService } from './floor-plans.service';
 @Module({
   controllers: [FloorPlansController],
   providers: [FloorPlansService],
+  // The PDF export renders the same geometry rather than generating its own.
+  exports: [FloorPlansService],
 })
 export class FloorPlansModule {}

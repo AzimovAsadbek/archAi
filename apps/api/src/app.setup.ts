@@ -18,7 +18,12 @@ export function configureApp(app: INestApplication): void {
 
   app.use(helmet());
   app.use(cookieParser());
-  app.enableCors({ origin: config.webOrigin, credentials: true });
+  app.enableCors({
+    origin: config.webOrigin,
+    credentials: true,
+    // Lets the browser read the PDF export filename cross-origin.
+    exposedHeaders: ['Content-Disposition'],
+  });
   app.setGlobalPrefix(API_PREFIX);
   app.useGlobalFilters(new HttpExceptionFilter());
 }

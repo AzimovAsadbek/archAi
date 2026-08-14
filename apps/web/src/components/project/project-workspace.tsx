@@ -10,6 +10,7 @@ import {
   ArchiveRestore,
   ArrowLeft,
   Copy,
+  FileDown,
   Layers,
   MoreHorizontal,
   Pencil,
@@ -19,6 +20,7 @@ import {
   Trash2,
   TriangleAlert,
 } from 'lucide-react';
+import { useLocale } from 'next-intl';
 import { type ProjectDto, type RoomDto } from '@archai/shared';
 import { EstimatePanel } from '@/components/estimate/estimate-panel';
 import { FloorPlanPanel } from '@/components/floor-plan/floor-plan-panel';
@@ -39,6 +41,7 @@ import {
   getProject,
   unarchiveProject,
 } from '@/lib/endpoints';
+import { downloadProjectPdf } from '@/lib/download-pdf';
 import { coveragePercent, m2ToSotix, round } from '@/lib/format';
 import { FEATURE_ICONS, FEATURE_KEYS } from '@/lib/project-options';
 import { queryKeys } from '@/lib/query-keys';
@@ -169,6 +172,7 @@ function RoomsTable({ project }: { project: ProjectDto }) {
 export function ProjectWorkspace({ projectId }: { projectId: string }) {
   const t = useTranslations('workspace');
   const tProject = useTranslations('project');
+  const locale = useLocale();
   const tFeatures = useTranslations('features');
   const tStyles = useTranslations('styles');
   const tCommon = useTranslations('common');
@@ -190,6 +194,11 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
     await queryClient.invalidateQueries({ queryKey: queryKeys.project(projectId) });
     await queryClient.invalidateQueries({ queryKey: ['projects'] });
   };
+
+  const exportPdf = useMutation({
+    mutationFn: () => downloadProjectPdf(projectId, locale),
+    onError: (error) => setActionError(apiErrorMessage(error)),
+  });
 
   const duplicate = useMutation({
     mutationFn: () => duplicateProject(projectId),
@@ -270,6 +279,17 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => exportPdf.mutate()}
+            disabled={!configured || exportPdf.isPending}
+            title={!configured ? tProject('actions.pdfUnavailable') : undefined}
+            className={buttonClasses('outline', 'md', 'disabled:cursor-not-allowed disabled:opacity-50')}
+          >
+            <FileDown className="size-4" aria-hidden="true" />
+            {exportPdf.isPending ? tProject('actions.pdfPending') : tProject('actions.pdf')}
+          </button>
+
           <Link
             href={`/projects/${projectId}/edit`}
             className={buttonClasses('primary', 'md', archived ? 'pointer-events-none opacity-50' : '')}

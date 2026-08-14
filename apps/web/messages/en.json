@@ -181,7 +181,8 @@
     "NOT_FOUND": "Not found.",
     "RATE_LIMITED": "Too many attempts. Wait a moment and try again.",
     "INTERNAL": "Unexpected server error. Please try again shortly.",
-    "PROJECT_ARCHIVED": "Archived projects cannot be edited. Restore it from the archive first."
+    "PROJECT_ARCHIVED": "Archived projects cannot be edited. Restore it from the archive first.",
+    "PROJECT_NOT_CONFIGURED": "Finish configuring the project first — add the land, house and rooms."
   },
 
   "dashboard": {
@@ -230,7 +231,10 @@
       "duplicate": "Duplicate",
       "archive": "Archive",
       "unarchive": "Restore",
-      "delete": "Delete"
+      "delete": "Delete",
+      "pdf": "PDF",
+      "pdfPending": "Preparing…",
+      "pdfUnavailable": "Finish configuring the project to export a PDF"
     },
     "meta": {
       "landLabel": "Land area",

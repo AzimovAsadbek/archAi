@@ -181,7 +181,8 @@
     "NOT_FOUND": "Ma'lumot topilmadi.",
     "RATE_LIMITED": "Juda ko'p urinish. Bir oz kutib, qayta urinib ko'ring.",
     "INTERNAL": "Serverda kutilmagan xatolik. Birozdan so'ng urinib ko'ring.",
-    "PROJECT_ARCHIVED": "Arxivlangan loyihani tahrirlab bo'lmaydi. Avval arxivdan chiqaring."
+    "PROJECT_ARCHIVED": "Arxivlangan loyihani tahrirlab bo'lmaydi. Avval arxivdan chiqaring.",
+    "PROJECT_NOT_CONFIGURED": "Avval loyihani sozlab yakunlang — yer, uy va xonalarni kiriting."
   },
 
   "dashboard": {
@@ -230,7 +231,10 @@
       "duplicate": "Nusxa olish",
       "archive": "Arxivlash",
       "unarchive": "Arxivdan chiqarish",
-      "delete": "O'chirish"
+      "delete": "O'chirish",
+      "pdf": "PDF",
+      "pdfPending": "Tayyorlanmoqda…",
+      "pdfUnavailable": "PDF uchun avval loyihani sozlab yakunlang"
     },
     "meta": {
       "landLabel": "Yer maydoni",

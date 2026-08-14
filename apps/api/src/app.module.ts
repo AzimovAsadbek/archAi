@@ -11,6 +11,7 @@ import { validateEnv } from './config/env.schema';
 import { EstimatesModule } from './estimates/estimates.module';
 import { FloorPlansModule } from './floor-plans/floor-plans.module';
 import { HealthModule } from './health/health.module';
+import { PdfModule } from './pdf/pdf.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProjectsModule } from './projects/projects.module';
 import { UsersModule } from './users/users.module';
@@ -26,6 +27,7 @@ import { UsersModule } from './users/users.module';
     ProjectsModule,
     FloorPlansModule,
     EstimatesModule,
+    PdfModule,
     AiModule,
     HealthModule,
   ],
