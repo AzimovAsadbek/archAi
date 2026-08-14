@@ -42,8 +42,10 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
    Audited server-side RBAC, session-revoking deactivation, rules activation without
    deploy, /admin UI with 4 sections. Pushed 04593c3. Templates/assets/blog/FAQ/pricing
    plans → public-content slice (TODO below).
-10. **Public content & pricing** — TODO (pricing page — honest free-during-beta, no fake
-    payments; blog + FAQ domains with admin CRUD; help/about; SEO metadata/sitemap)
+10. **Public content & pricing** — DONE (pushed a6c3a61 backend, c5eaace web)
+    Pricing (honest beta-free, no checkout), blog (safe markdown, XSS-verified, SEO/JSON-LD),
+    FAQ (accessible disclosures), help/about, sitemap/robots; FAQ/blog/pricing DB domains
+    with admin CRUD + audit. Admin now covers users/projects/estimate-rules/blog/faq/pricing/audit.
 11. **Hardening** — IN_PROGRESS
     - Security: independent review done, all High/Med findings fixed + verified live
       (pushed 8dc9a3b). Documented in docs/security.md.
