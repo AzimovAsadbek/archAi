@@ -5,6 +5,15 @@ import { ESTIMATE_RULES_V1 } from './estimate-rules.v1';
 const prisma = new PrismaClient();
 
 async function main() {
+  // These seeded credentials are published in the repo (README, login page hint),
+  // so seeding a production database would plant a known admin password. Refuse
+  // unless explicitly overridden for a deliberate demo deployment.
+  if (process.env.NODE_ENV === 'production' && process.env.ALLOW_PROD_SEED !== 'true') {
+    throw new Error(
+      'Refusing to seed in production. Set ALLOW_PROD_SEED=true only for an intentional demo environment.',
+    );
+  }
+
   const adminPassword = await argon2.hash('Admin1234!');
   const demoPassword = await argon2.hash('Demo1234!');
 

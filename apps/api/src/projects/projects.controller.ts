@@ -23,6 +23,7 @@ import {
   updateProjectSchema,
 } from '@archai/shared';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { IdParamPipe } from '../common/pipes/id-param.pipe';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { type AuthenticatedUser } from '../common/types/request.types';
 import { ProjectsService } from './projects.service';
@@ -56,7 +57,7 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Full project with rooms and fresh validation' })
   findOne(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id') id: string,
+    @Param('id', IdParamPipe) id: string,
   ): Promise<ProjectDto> {
     return this.projects.findOne(user.id, id);
   }
@@ -65,7 +66,7 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Replace configuration blocks' })
   update(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id') id: string,
+    @Param('id', IdParamPipe) id: string,
     @Body(new ZodValidationPipe(updateProjectSchema)) body: UpdateProjectInput,
   ): Promise<ProjectDto> {
     return this.projects.update(user.id, id, body);
@@ -74,7 +75,10 @@ export class ProjectsController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft-delete a project' })
-  remove(@CurrentUser() user: AuthenticatedUser, @Param('id') id: string): Promise<void> {
+  remove(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', IdParamPipe) id: string,
+  ): Promise<void> {
     return this.projects.softDelete(user.id, id);
   }
 
@@ -83,7 +87,7 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Archive a project' })
   archive(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id') id: string,
+    @Param('id', IdParamPipe) id: string,
   ): Promise<ProjectDto> {
     return this.projects.archive(user.id, id);
   }
@@ -93,7 +97,7 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Unarchive a project (status recomputed)' })
   unarchive(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id') id: string,
+    @Param('id', IdParamPipe) id: string,
   ): Promise<ProjectDto> {
     return this.projects.unarchive(user.id, id);
   }
@@ -103,7 +107,7 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Duplicate a project including rooms' })
   duplicate(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id') id: string,
+    @Param('id', IdParamPipe) id: string,
   ): Promise<ProjectDto> {
     return this.projects.duplicate(user.id, id);
   }

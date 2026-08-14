@@ -309,12 +309,20 @@ describe('Admin (e2e)', () => {
       expect(tokens.length).toBeGreaterThan(0);
       expect(tokens.every((token) => token.revokedAt !== null)).toBe(true);
 
-      // The still-unexpired access cookie no longer buys anything …
+      // The still-unexpired access cookie no longer buys anything — the guard
+      // re-checks isActive on every request, so a normal data endpoint is cut
+      // off immediately, not just the /users/me special case.
       const me = await request(server)
         .get(`${API}/users/me`)
         .set('Cookie', asDemo())
         .expect(401);
       expect(me.body).toMatchObject({ statusCode: 401, code: 'UNAUTHORIZED' });
+
+      const projects = await request(server)
+        .get(`${API}/projects`)
+        .set('Cookie', asDemo())
+        .expect(401);
+      expect(projects.body).toMatchObject({ statusCode: 401, code: 'UNAUTHORIZED' });
 
       // … the refresh token cannot mint a new one …
       const refreshed = await request(server)

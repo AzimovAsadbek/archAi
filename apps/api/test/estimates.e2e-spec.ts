@@ -1,8 +1,10 @@
 import { type INestApplication } from '@nestjs/common';
+import { ThrottlerStorage, ThrottlerStorageService } from '@nestjs/throttler';
 import { type Server } from 'node:http';
 import request from 'supertest';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { ESTIMATE_RULES_V1 } from '../prisma/estimate-rules.v1';
+import { GENERATE_RATE_LIMIT } from '../src/common/throttle.constants';
 import { PrismaService } from '../src/prisma/prisma.service';
 import {
   API,
@@ -127,6 +129,13 @@ describe('Estimate (e2e)', () => {
       .send({ name: 'Qoralama' })
       .expect(201);
     draftId = String(draft.body.id);
+  });
+
+  // Pricing is capped at 30/min/IP, and the throttle test below fires more than
+  // that in a tight loop — so each test starts from an empty bucket, as PDF does.
+  beforeEach(() => {
+    const storage = app.get<ThrottlerStorageService>(ThrottlerStorage);
+    storage.storage.clear();
   });
 
   afterAll(async () => {
@@ -280,5 +289,27 @@ describe('Estimate (e2e)', () => {
       .expect(200);
 
     expect((res.body.estimate as EstimateShape).total).toBe(EXPECTED.STANDARD.total);
+  });
+
+  it('returns 404 for a project id containing a NUL byte', async () => {
+    // A control byte in the id can crash the Prisma driver; IdParamPipe turns it
+    // into an ordinary "not found" before the request reaches the service.
+    const res = await request(server)
+      .get(`${API}/projects/%00/estimate`)
+      .set('Cookie', asOwner())
+      .expect(404);
+    expect(res.body).toMatchObject({ statusCode: 404, code: 'NOT_FOUND' });
+  });
+
+  it('throttles estimates to thirty per minute per IP', async () => {
+    for (let attempt = 0; attempt < GENERATE_RATE_LIMIT; attempt++) {
+      await request(server).get(estimateUrl(projectId)).set('Cookie', asOwner()).expect(200);
+    }
+
+    const res = await request(server)
+      .get(estimateUrl(projectId))
+      .set('Cookie', asOwner())
+      .expect(429);
+    expect(res.body).toMatchObject({ statusCode: 429, code: 'RATE_LIMITED' });
   });
 });

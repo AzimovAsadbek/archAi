@@ -1,6 +1,9 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { IdParamPipe } from '../common/pipes/id-param.pipe';
+import { GENERATE_THROTTLE } from '../common/throttle.constants';
 import { type AuthenticatedUser } from '../common/types/request.types';
 import { type FloorPlanDto } from './floor-plan.mapper';
 import { FloorPlansService } from './floor-plans.service';
@@ -11,6 +14,7 @@ import { FloorPlansService } from './floor-plans.service';
 export class FloorPlansController {
   constructor(private readonly floorPlans: FloorPlansService) {}
 
+  @Throttle(GENERATE_THROTTLE)
   @Get()
   @ApiOperation({
     summary: 'Deterministic 2D floor plan for a configured project',
@@ -21,7 +25,7 @@ export class FloorPlansController {
   })
   findOne(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id') id: string,
+    @Param('id', IdParamPipe) id: string,
   ): Promise<FloorPlanDto> {
     return this.floorPlans.findOne(user.id, id);
   }

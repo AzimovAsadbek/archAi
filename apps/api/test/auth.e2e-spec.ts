@@ -160,7 +160,7 @@ describe('Auth (e2e)', () => {
   });
 
   describe('POST /auth/refresh', () => {
-    it('rotates the refresh token and revokes the whole family on reuse', async () => {
+    it('rotates the refresh token and rejects the consumed one', async () => {
       const login = await request(server)
         .post(`${API}/auth/login`)
         .send({ email: USER.email, password: USER.password })
@@ -182,14 +182,48 @@ describe('Auth (e2e)', () => {
         .set('Cookie', cookieHeader(second))
         .expect(200);
 
-      // The consumed token is revoked …
+      // The consumed token is rejected …
       const reuse = await request(server)
         .post(`${API}/auth/refresh`)
         .set('Cookie', `archai_refresh=${first.archai_refresh}`)
         .expect(401);
       expect(reuse.body).toMatchObject({ statusCode: 401, code: 'UNAUTHORIZED' });
 
-      // … and reuse detection kills every other session of that user.
+      // … but an immediate reuse is treated as a benign concurrent rotation:
+      // the sibling's freshly issued token still works (no family kill).
+      await request(server)
+        .get(`${API}/users/me`)
+        .set('Cookie', cookieHeader(second))
+        .expect(200);
+    });
+
+    it('revokes the whole family when a token is reused past the grace window', async () => {
+      const login = await request(server)
+        .post(`${API}/auth/login`)
+        .send({ email: USER.email, password: USER.password })
+        .expect(200);
+      const first = applyCookies(login);
+
+      const rotated = await request(server)
+        .post(`${API}/auth/refresh`)
+        .set('Cookie', `archai_refresh=${first.archai_refresh}`)
+        .expect(200);
+      const second = applyCookies(rotated, first);
+
+      // Age the consumed token's revocation past the grace window so its reuse
+      // reads as genuine theft rather than a concurrent refresh.
+      await prisma.refreshToken.updateMany({
+        where: { userId, revokedAt: { not: null } },
+        data: { revokedAt: new Date(Date.now() - 60_000) },
+      });
+
+      await request(server)
+        .post(`${API}/auth/refresh`)
+        .set('Cookie', `archai_refresh=${first.archai_refresh}`)
+        .expect(401);
+
+      // Theft detection has now revoked every session of that user, including
+      // the token minted by the legitimate rotation.
       await request(server)
         .post(`${API}/auth/refresh`)
         .set('Cookie', `archai_refresh=${second.archai_refresh}`)

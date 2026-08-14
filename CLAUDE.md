@@ -50,5 +50,10 @@ estimates and PDF exports. Primary market: Uzbekistan (uz default locale, ru/en 
 
 ## Current state
 
-See `docs/roadmap.md` for slice status. Test accounts after seeding:
+Live product: auth → dashboard → configurator or AI description → workspace with
+Umumiy | 2D | 3D | Smeta tabs + PDF export; /admin panel (users, projects, estimate
+rules, audit). Postgres runs on host port **5433** (native PG owns 5432). AI needs
+`ANTHROPIC_API_KEY` in apps/api/.env (UI degrades honestly without it). CI workflow
+lives in `.github/workflows-pending/` until the GitHub token gains the `workflow`
+scope. See `docs/roadmap.md` for slice status. Test accounts after seeding:
 `demo@archai.uz` / `Demo1234!` and `admin@archai.uz` / `Admin1234!`.

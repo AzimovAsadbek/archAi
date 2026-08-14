@@ -12,7 +12,7 @@ import { ERROR_CODES } from '../common/error-codes';
 import { readCookie } from '../common/types/request.types';
 import { PrismaService } from '../prisma/prisma.service';
 import { toUserDto } from '../users/user.mapper';
-import { AUTH_COOKIES } from './auth.constants';
+import { AUTH_COOKIES, REFRESH_REUSE_GRACE_MS } from './auth.constants';
 import { TokenService } from './token.service';
 
 const ARGON2_OPTIONS: argon2.Options = { type: argon2.argon2id };
@@ -78,8 +78,14 @@ export class AuthService {
     }
 
     if (stored.revokedAt) {
-      this.logger.warn(`Refresh token reuse detected for user ${stored.userId} — revoking family`);
-      await this.tokens.revokeAllForUser(stored.userId);
+      const revokedAgoMs = Date.now() - stored.revokedAt.getTime();
+      if (revokedAgoMs > REFRESH_REUSE_GRACE_MS) {
+        // Replayed long after rotation — the theft signal. Kill the whole family.
+        this.logger.warn(`Refresh token reuse detected for user ${stored.userId} — revoking family`);
+        await this.tokens.revokeAllForUser(stored.userId);
+      }
+      // Within the grace window it is a benign concurrent rotation: reject this
+      // presenter but leave the sibling's freshly issued token alone.
       this.tokens.clearAuthCookies(res);
       throw this.unauthorized();
     }
@@ -99,10 +105,14 @@ export class AuthService {
 
     const accessToken = await this.tokens.signAccessToken(user);
     const nextRefreshToken = await this.prisma.$transaction(async (tx) => {
-      await tx.refreshToken.update({
-        where: { id: stored.id },
+      // Conditional revoke: exactly one racer flips revokedAt from null. A loser
+      // sees count 0 and bows out without minting a second successor.
+      const revoked = await tx.refreshToken.updateMany({
+        where: { id: stored.id, revokedAt: null },
         data: { revokedAt: new Date() },
       });
+      if (revoked.count === 0) return null;
+
       const { raw, hash } = this.tokens.generateRefreshToken();
       await tx.refreshToken.create({
         data: {
@@ -114,6 +124,12 @@ export class AuthService {
       });
       return raw;
     });
+
+    if (nextRefreshToken === null) {
+      // A concurrent request won the rotation; this one holds a now-stale token.
+      this.tokens.clearAuthCookies(res);
+      throw this.unauthorized();
+    }
 
     this.tokens.setAuthCookies(res, accessToken, nextRefreshToken);
     return { user: toUserDto(user) };

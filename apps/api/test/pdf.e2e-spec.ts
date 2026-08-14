@@ -148,6 +148,16 @@ describe('PDF export (e2e)', () => {
     expect(res.body).toMatchObject({ statusCode: 404, code: 'NOT_FOUND' });
   });
 
+  it('returns 404 for a project id containing a NUL byte', async () => {
+    // A control byte in the id can crash the Prisma driver; IdParamPipe turns it
+    // into an ordinary "not found" before the request reaches the service.
+    const res = await request(server)
+      .get(`${API}/projects/%00/export/pdf`)
+      .set('Cookie', asOwner())
+      .expect(404);
+    expect(res.body).toMatchObject({ statusCode: 404, code: 'NOT_FOUND' });
+  });
+
   it('rejects an unconfigured project with 409 PROJECT_NOT_CONFIGURED', async () => {
     const res = await request(server).get(pdfUrl(draftId)).set('Cookie', asOwner()).expect(409);
     expect(res.body).toMatchObject({ statusCode: 409, code: 'PROJECT_NOT_CONFIGURED' });

@@ -31,3 +31,33 @@ access (IDOR), injection via user input, and secret leakage.
 
 security-reviewer agent pass before every milestone push; full checklist (auth, authz, CSRF,
 XSS, injection, uploads, SSRF, rate limits, secrets, logging) before any production claim.
+
+## Independent review 2026-08-15 (post-admin) — findings & resolutions
+
+An independent fresh-context review (live-verified against the running app) confirmed the
+IDOR/404 policy, soft-delete honoring, admin RBAC+audit, mass-assignment stripping, Prisma
+operator-injection closure, PDF Content-Disposition safety, CORS lockdown, XSS sink absence,
+and AI injection defenses as solid. Fixed:
+
+- **[High] Deactivated user kept access** until the 15-min access token expired — the guard
+  verified only the JWT signature. `JwtAuthGuard` now loads the user and rejects when missing
+  or inactive on every request, and takes `role` from the live row (immediate deactivation
+  and demotion). e2e asserts a data endpoint 401s post-deactivation, not just `/users/me`.
+- **[High] Open redirect** via a backslash (`/\evil.com`) slipping past the `//` prefix check
+  in `safeNextPath` — now resolves against a throwaway base and compares origins.
+- **[Med] No web security headers** — `next.config.ts` sets `frame-ancestors 'none'` +
+  X-Frame-Options DENY (clickjacking on one-click destructive actions), Referrer-Policy,
+  nosniff, Permissions-Policy, and HSTS in production.
+- **[Med] Concurrent refresh false-positive** killed the whole session family — rotation is
+  now an atomic conditional revoke, and reuse inside a 10 s grace window is treated as benign
+  concurrency (reject the presenter, spare the family); genuine reuse past the window still
+  revokes the family. e2e covers both.
+- **[Med] Seed script** had no production guard and plants a repo-published admin password —
+  now refuses in production without `ALLOW_PROD_SEED=true`; the login-page demo-credentials
+  panel is gated out of production builds.
+- **[Low] Malformed `:id`** (NUL byte) surfaced as 500 — `IdParamPipe` 404s ids that can't be
+  real. Compute endpoints (`/floor-plan`, `/estimate`) gained rate limits.
+
+Deferred (documented, not blocking): register-endpoint email enumeration (product tradeoff;
+login is uniform), `x-request-id` echo (not rendered, CR/LF-safe), and throttler `trust proxy`
+tuning (deployment-time — must match the real hop count).

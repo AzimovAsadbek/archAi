@@ -29,11 +29,24 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
    land plate) + R3F viewer (demand frameloop, orbit, floor cutaway, async-chunked —
    +3 kB route First Load). Live-verified: geometry AABBs match spec, unmount cleanup,
    uz/ru/en. Workspace tabs now live: Umumiy | 2D | 3D.
-6. **Slice 5: Interior/exterior concepts** — TODO (image generation + asset storage)
-7. **Slice 6: Estimate engine** — TODO (deterministic rules, admin-configurable)
-8. **Slice 7: PDF export** — TODO
-9. **Slice 8: Admin panel** — TODO (users/projects/templates/pricing/blog/FAQ/audit)
-10. **Hardening** — TODO (security QA, performance QA, accessibility QA, CI green, Docker prod)
+6. **Slice 5: Interior/exterior concepts** — BLOCKED on `ANTHROPIC_API_KEY`
+   (image generation + asset storage; workspace tabs reserved and honestly disabled)
+7. **Slice 6: Estimate engine** — DONE
+   Pure calculateEstimate in shared (13 unit tests, exact-sum contract), estimate_rules
+   JSONB versioning with single-active index, GET /projects/:id/estimate, Smeta tab
+   (finish levels, breakdown, UZS formatting, disclaimer). Pushed 54e2d92.
+8. **Slice 7: PDF export** — DONE
+   Deterministic pdfkit report (cover/summary/native floor plans/estimate, uz/ru/en,
+   Manrope embedded, byte-identical repeats), workspace PDF action. Pushed 179c6a3.
+9. **Slice 8: Admin panel** — DONE (v1: users, projects, estimate rules, audit)
+   Audited server-side RBAC, session-revoking deactivation, rules activation without
+   deploy, /admin UI with 4 sections. Pushed 04593c3. Templates/assets/blog/FAQ/pricing
+   plans → public-content slice (TODO below).
+10. **Public content & pricing** — TODO (pricing page — honest free-during-beta, no fake
+    payments; blog + FAQ domains with admin CRUD; help/about; SEO metadata/sitemap)
+11. **Hardening** — IN_PROGRESS (independent security review running; then performance +
+    accessibility QA passes, CI activation once the token gets `workflow` scope, Docker
+    production images)
 
 ## Deferred decisions
 

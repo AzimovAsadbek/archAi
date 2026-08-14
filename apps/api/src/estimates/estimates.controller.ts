@@ -1,8 +1,11 @@
 import { type EstimateQuery, estimateQuerySchema } from '@archai/shared';
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { IdParamPipe } from '../common/pipes/id-param.pipe';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
+import { GENERATE_THROTTLE } from '../common/throttle.constants';
 import { type AuthenticatedUser } from '../common/types/request.types';
 import { type EstimateDto, EstimatesService } from './estimates.service';
 
@@ -12,6 +15,7 @@ import { type EstimateDto, EstimatesService } from './estimates.service';
 export class EstimatesController {
   constructor(private readonly estimates: EstimatesService) {}
 
+  @Throttle(GENERATE_THROTTLE)
   @Get()
   @ApiOperation({
     summary: 'Preliminary cost estimate for a configured project',
@@ -23,7 +27,7 @@ export class EstimatesController {
   })
   findOne(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id') id: string,
+    @Param('id', IdParamPipe) id: string,
     @Query(new ZodValidationPipe(estimateQuerySchema)) query: EstimateQuery,
   ): Promise<EstimateDto> {
     return this.estimates.findOne(user.id, id, query.finishLevel);

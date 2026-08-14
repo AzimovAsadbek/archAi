@@ -1,8 +1,10 @@
 import { type INestApplication } from '@nestjs/common';
+import { ThrottlerStorage, ThrottlerStorageService } from '@nestjs/throttler';
 import { FLOOR_PLAN_ENGINE_VERSION } from '@archai/floor-plan-engine';
 import { type Server } from 'node:http';
 import request from 'supertest';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { GENERATE_RATE_LIMIT } from '../src/common/throttle.constants';
 import { PrismaService } from '../src/prisma/prisma.service';
 import {
   API,
@@ -107,6 +109,13 @@ describe('Floor plan (e2e)', () => {
       .send({ name: 'Qoralama' })
       .expect(201);
     draftId = String(draft.body.id);
+  });
+
+  // Generation is capped at 30/min/IP, and the throttle test below fires more than
+  // that in a tight loop — so each test starts from an empty bucket, as PDF does.
+  beforeEach(() => {
+    const storage = app.get<ThrottlerStorageService>(ThrottlerStorage);
+    storage.storage.clear();
   });
 
   afterAll(async () => {
@@ -256,5 +265,25 @@ describe('Floor plan (e2e)', () => {
 
     const stored = await prisma.floorPlan.findUnique({ where: { projectId } });
     expect(stored?.generatedAt.toISOString()).toBe(res.body.generatedAt);
+  });
+
+  it('returns 404 for a project id containing a NUL byte', async () => {
+    // A control byte in the id can crash the Prisma driver; IdParamPipe turns it
+    // into an ordinary "not found" before the request reaches the service.
+    const res = await request(server)
+      .get(`${API}/projects/%00/floor-plan`)
+      .set('Cookie', asOwner())
+      .expect(404);
+    expect(res.body).toMatchObject({ statusCode: 404, code: 'NOT_FOUND' });
+  });
+
+  it('throttles floor-plan generation to thirty per minute per IP', async () => {
+    // The suite left projectId buildable, so every request under the cap succeeds.
+    for (let attempt = 0; attempt < GENERATE_RATE_LIMIT; attempt++) {
+      await request(server).get(planUrl(projectId)).set('Cookie', asOwner()).expect(200);
+    }
+
+    const res = await request(server).get(planUrl(projectId)).set('Cookie', asOwner()).expect(429);
+    expect(res.body).toMatchObject({ statusCode: 429, code: 'RATE_LIMITED' });
   });
 });

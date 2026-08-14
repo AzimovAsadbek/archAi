@@ -9,6 +9,7 @@ import {
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { IdParamPipe } from '../common/pipes/id-param.pipe';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { type AuthenticatedUser } from '../common/types/request.types';
 import { PDF_EXPORT_THROTTLE } from './pdf.constants';
@@ -52,7 +53,7 @@ export class PdfController {
   })
   async exportPdf(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id') id: string,
+    @Param('id', IdParamPipe) id: string,
     @Query(new ZodValidationPipe(pdfExportQuerySchema)) query: PdfExportQuery,
   ): Promise<StreamableFile> {
     const { buffer, filename, utf8Filename } = await this.pdf.export(user.id, id, query.locale);

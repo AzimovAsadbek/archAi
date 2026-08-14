@@ -19,6 +19,11 @@ import { useFieldError } from '@/lib/zod-errors';
 
 const DEMO_EMAIL = 'demo@archai.uz';
 const DEMO_PASSWORD = 'Demo1234!';
+// The seeded demo credentials are a dev/demo convenience only; never surface them
+// in a production build. Set NEXT_PUBLIC_SHOW_DEMO_CREDENTIALS=true to opt in.
+const SHOW_DEMO_CREDENTIALS =
+  process.env.NODE_ENV !== 'production' ||
+  process.env.NEXT_PUBLIC_SHOW_DEMO_CREDENTIALS === 'true';
 
 export function LoginForm({ next }: { next: string }) {
   const t = useTranslations('auth');
@@ -89,15 +94,17 @@ export function LoginForm({ next }: { next: string }) {
         </Button>
       </form>
 
-      <div className="mt-6 flex gap-3 rounded-md border border-line bg-paper px-4 py-3">
-        <Info className="mt-0.5 size-4 shrink-0 text-ink-faint" aria-hidden="true" />
-        <div className="text-sm">
-          <p className="font-semibold text-ink">{t('login.demoTitle')}</p>
-          <p className="numeric mt-0.5 text-ink-soft">
-            {t('login.demoBody', { email: DEMO_EMAIL, password: DEMO_PASSWORD })}
-          </p>
+      {SHOW_DEMO_CREDENTIALS ? (
+        <div className="mt-6 flex gap-3 rounded-md border border-line bg-paper px-4 py-3">
+          <Info className="mt-0.5 size-4 shrink-0 text-ink-faint" aria-hidden="true" />
+          <div className="text-sm">
+            <p className="font-semibold text-ink">{t('login.demoTitle')}</p>
+            <p className="numeric mt-0.5 text-ink-soft">
+              {t('login.demoBody', { email: DEMO_EMAIL, password: DEMO_PASSWORD })}
+            </p>
+          </div>
         </div>
-      </div>
+      ) : null}
 
       <p className="mt-6 text-center text-sm text-ink-soft">
         {t('login.noAccount')}{' '}

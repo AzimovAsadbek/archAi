@@ -17,6 +17,7 @@ import {
 } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { IdParamPipe } from '../common/pipes/id-param.pipe';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { type AuthenticatedUser } from '../common/types/request.types';
 import { AdminEstimateRulesService } from './admin-estimate-rules.service';
@@ -83,7 +84,7 @@ export class AdminController {
   })
   updateUser(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id') id: string,
+    @Param('id', IdParamPipe) id: string,
     @Body(new ZodValidationPipe(updateAdminUserSchema)) body: UpdateAdminUserInput,
   ): Promise<AdminUserListItemDto> {
     return this.users.setActive(user.id, id, body);
