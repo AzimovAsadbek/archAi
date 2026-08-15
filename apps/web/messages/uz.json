@@ -11,7 +11,8 @@
     "retry": "Qayta urinish",
     "loading": "Yuklanmoqda…",
     "roadmap": "tez orada",
-    "live": "ishlaydi"
+    "live": "ishlaydi",
+    "skipToContent": "Asosiy qismga o'tish"
   },
   "locale": {
     "label": "Til",
@@ -35,7 +36,9 @@
     "blog": "Blog",
     "faq": "FAQ",
     "help": "Yordam",
-    "about": "Biz haqimizda"
+    "about": "Biz haqimizda",
+    "openMenu": "Menyuni ochish",
+    "closeMenu": "Menyuni yopish"
   },
   "marketing": {
     "hero": {
@@ -583,7 +586,6 @@
     "descriptionEmpty": "Tavsif kiritilmagan.",
     "loadError": "Loyihani yuklab bo'lmadi",
     "tabsLabel": "Loyiha bo'limlari",
-    "tabDisabled": "Keyingi bosqichda",
     "tabs": {
       "overview": "Umumiy",
       "plans2d": "2D",
@@ -620,7 +622,8 @@
       "floorTotal": "{floor}-qavat jami",
       "dimsValue": "{width} × {length} m",
       "areaValue": "{area} m²"
-    }
+    },
+    "tabRoadmap": "{tab} — keyingi bosqichda"
   },
   "floorPlan": {
     "loadError": "Rejani yuklab bo'lmadi",
@@ -1265,5 +1268,13 @@
         }
       }
     }
+  },
+  "time": {
+    "now": "hozir",
+    "minutesAgo": "{count} daqiqa oldin",
+    "hoursAgo": "{count} soat oldin",
+    "daysAgo": "{count} kun oldin",
+    "monthsAgo": "{count} oy oldin",
+    "yearsAgo": "{count} yil oldin"
   }
 }

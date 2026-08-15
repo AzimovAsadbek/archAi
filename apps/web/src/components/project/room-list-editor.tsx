@@ -73,7 +73,7 @@ export function RoomListEditor({
               type="button"
               disabled={disabled || atLimit}
               onClick={() => addRoom(type)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-line-strong bg-surface px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-full border border-line-strong bg-surface px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-accent hover:text-accent-strong disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Plus className="size-3.5" aria-hidden="true" />
               {tRoomTypes(type)}

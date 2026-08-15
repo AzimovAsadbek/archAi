@@ -13,6 +13,7 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LocaleSwitcher } from './locale-switcher';
 import { Logo } from './logo';
+import { SkipLink } from './skip-link';
 import { UserMenu } from './user-menu';
 
 function AppShellSkeleton() {
@@ -71,6 +72,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-dvh bg-paper">
+      <SkipLink />
       <header className="sticky top-0 z-30 border-b border-line bg-surface">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
           <div className="flex items-center gap-7">
@@ -90,13 +92,19 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <LocaleSwitcher className="hidden sm:inline-flex" />
+            <LocaleSwitcher className="inline-flex" />
             <UserMenu user={user} />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-5 py-8 sm:py-10">{children}</main>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto max-w-6xl px-5 py-8 outline-none sm:py-10"
+      >
+        {children}
+      </main>
     </div>
   );
 }

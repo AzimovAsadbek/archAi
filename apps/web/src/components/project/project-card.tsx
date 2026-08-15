@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useFormatter, useNow, useTranslations } from 'next-intl';
@@ -17,13 +18,15 @@ import { type ProjectListItemDto } from '@archai/shared';
 import { Card } from '@/components/ui/card';
 import { Menu, MenuItem, MenuSeparator } from '@/components/ui/menu';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { relativeTimeParts } from '@/lib/relative-time';
 
 export interface ProjectCardProps {
   project: ProjectListItemDto;
   onDuplicate: (project: ProjectListItemDto) => void;
-  onArchive: (project: ProjectListItemDto) => void;
+  /** `trigger` is this card's ⋯ button, so a confirm dialog can return focus to it. */
+  onArchive: (project: ProjectListItemDto, trigger: HTMLElement | null) => void;
   onUnarchive: (project: ProjectListItemDto) => void;
-  onDelete: (project: ProjectListItemDto) => void;
+  onDelete: (project: ProjectListItemDto, trigger: HTMLElement | null) => void;
   busy?: boolean;
 }
 
@@ -37,11 +40,18 @@ export function ProjectCard({
 }: ProjectCardProps) {
   const t = useTranslations('project');
   const tStyles = useTranslations('styles');
+  const tTime = useTranslations('time');
   const format = useFormatter();
   const now = useNow({ updateInterval: 60_000 });
   const router = useRouter();
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const archived = project.status === 'ARCHIVED';
+
+  // Catalog-driven relative time: Intl.RelativeTimeFormat has no `uz` data and
+  // would render a raw "-15 h" (see relative-time.ts). `now` ticks each minute.
+  const updated = relativeTimeParts(project.updatedAt, now);
+  const updatedLabel = updated.key === 'now' ? tTime('now') : tTime(updated.key, { count: updated.count });
 
   return (
     <Card interactive className="relative flex flex-col p-5">
@@ -62,10 +72,14 @@ export function ProjectCard({
 
         <Menu
           className="relative z-10 shrink-0"
-          trigger={(triggerProps) => (
+          trigger={({ ref: menuRef, ...triggerProps }) => (
             <button
               type="button"
               {...triggerProps}
+              ref={(node) => {
+                menuRef(node);
+                menuButtonRef.current = node;
+              }}
               aria-label={t('actions.menu')}
               disabled={busy}
               className="flex size-8 items-center justify-center rounded-sm text-ink-faint transition-colors hover:bg-paper hover:text-ink disabled:opacity-50"
@@ -109,7 +123,7 @@ export function ProjectCard({
                   icon={<Archive className="size-4" />}
                   onClick={() => {
                     close(false);
-                    onArchive(project);
+                    onArchive(project, menuButtonRef.current);
                   }}
                 >
                   {t('actions.archive')}
@@ -121,7 +135,7 @@ export function ProjectCard({
                 icon={<Trash2 className="size-4" />}
                 onClick={() => {
                   close(false);
-                  onDelete(project);
+                  onDelete(project, menuButtonRef.current);
                 }}
               >
                 {t('actions.delete')}
@@ -164,11 +178,14 @@ export function ProjectCard({
           dateTime={project.updatedAt}
           className="shrink-0 text-xs text-ink-faint"
           title={format.dateTime(new Date(project.updatedAt), {
-            dateStyle: 'medium',
-            timeStyle: 'short',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
           })}
         >
-          {format.relativeTime(new Date(project.updatedAt), now)}
+          {updatedLabel}
         </time>
       </div>
     </Card>

@@ -53,7 +53,7 @@ function parseInline(text: string, keyPrefix: string): ReactNode[] {
           <a
             key={key}
             href={href}
-            className="font-medium text-accent underline decoration-line-strong underline-offset-2 hover:decoration-accent"
+            className="font-medium text-accent-strong underline decoration-line-strong underline-offset-2 hover:decoration-accent"
             {...(external ? { target: '_blank', rel: 'noopener noreferrer nofollow' } : {})}
           >
             {match[1]}

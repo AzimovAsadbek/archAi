@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { Logo } from '@/components/layout/logo';
+import { SkipLink } from '@/components/layout/skip-link';
 import { UserMenu } from '@/components/layout/user-menu';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -176,6 +177,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-dvh bg-paper">
+      <SkipLink />
       <header className="sticky top-0 z-30 border-b border-line bg-surface">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5">
           <div className="flex min-w-0 items-center gap-3 sm:gap-5">
@@ -205,7 +207,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-6 lg:flex-row lg:gap-8 lg:py-8">
         <AdminNav />
-        <main className="min-w-0 flex-1">{children}</main>
+        <main id="main-content" tabIndex={-1} className="min-w-0 flex-1 outline-none">
+          {children}
+        </main>
       </div>
     </div>
   );

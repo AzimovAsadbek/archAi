@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState, type KeyboardEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -183,6 +183,24 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
   const [pending, setPending] = useState<PendingAction>(null);
   const [actionError, setActionError] = useState<string | undefined>();
   const [tab, setTab] = useState<LiveTab>('overview');
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const tabRefs = useRef(new Map<LiveTab, HTMLButtonElement>());
+
+  // Roving tabindex: arrows move focus (and selection) among the enabled tabs only.
+  const onTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    const current = LIVE_TABS.indexOf(tab);
+    let nextIndex: number | null = null;
+    if (event.key === 'ArrowRight') nextIndex = (current + 1) % LIVE_TABS.length;
+    else if (event.key === 'ArrowLeft') nextIndex = (current - 1 + LIVE_TABS.length) % LIVE_TABS.length;
+    else if (event.key === 'Home') nextIndex = 0;
+    else if (event.key === 'End') nextIndex = LIVE_TABS.length - 1;
+    else return;
+    event.preventDefault();
+    const nextId = LIVE_TABS[nextIndex];
+    if (!nextId) return;
+    setTab(nextId);
+    tabRefs.current.get(nextId)?.focus();
+  };
 
   const projectQuery = useQuery({
     queryKey: queryKeys.project(projectId),
@@ -301,10 +319,14 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
           </Link>
 
           <Menu
-            trigger={(triggerProps) => (
+            trigger={({ ref: menuRef, ...triggerProps }) => (
               <button
                 type="button"
                 {...triggerProps}
+                ref={(node) => {
+                  menuRef(node);
+                  menuButtonRef.current = node;
+                }}
                 aria-label={tProject('actions.menu')}
                 className="flex size-10 items-center justify-center rounded-md border border-line-strong bg-surface text-ink-soft transition-colors hover:bg-paper"
               >
@@ -369,9 +391,15 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
               type="button"
               role="tab"
               id={`workspace-tab-${id}`}
+              ref={(node) => {
+                if (node) tabRefs.current.set(id, node);
+                else tabRefs.current.delete(id);
+              }}
               aria-selected={tab === id}
               aria-controls={`workspace-panel-${id}`}
+              tabIndex={tab === id ? 0 : -1}
               onClick={() => setTab(id)}
+              onKeyDown={onTabKeyDown}
               className={cn(
                 '-mb-px border-b-2 px-3 py-2.5 text-sm transition-colors',
                 tab === id
@@ -382,25 +410,30 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
               {t(`tabs.${id}`)}
             </button>
           ))}
-          {ROADMAP_TABS.map((id) => (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              aria-selected="false"
-              disabled
-              title={t('tabDisabled')}
-              className={cn(
-                '-mb-px flex cursor-not-allowed items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5',
-                'text-sm font-semibold text-ink-faint',
-              )}
-            >
-              {t(`tabs.${id}`)}
-              <Badge tone="faint" size="sm">
-                {tCommon('roadmap')}
-              </Badge>
-            </button>
-          ))}
+          {ROADMAP_TABS.map((id) => {
+            const roadmapName = t('tabRoadmap', { tab: t(`tabs.${id}`) });
+            return (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected="false"
+                aria-label={roadmapName}
+                disabled
+                tabIndex={-1}
+                title={roadmapName}
+                className={cn(
+                  '-mb-px flex cursor-not-allowed items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5',
+                  'text-sm font-semibold text-ink-faint',
+                )}
+              >
+                {t(`tabs.${id}`)}
+                <Badge tone="faint" size="sm">
+                  {tCommon('roadmap')}
+                </Badge>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -543,6 +576,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
             : tProject('confirmArchive.confirm')
         }
         pending={remove.isPending || toggleArchive.isPending}
+        triggerRef={menuButtonRef}
         onCancel={() => setPending(null)}
         onConfirm={() => {
           const action = pending;

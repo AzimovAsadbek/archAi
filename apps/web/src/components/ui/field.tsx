@@ -5,6 +5,7 @@ export interface FieldControlProps {
   id: string;
   'aria-describedby': string | undefined;
   'aria-invalid': true | undefined;
+  'aria-required': true | undefined;
 }
 
 export interface FieldProps {
@@ -38,7 +39,7 @@ export function Field({
         <label htmlFor={id} className="text-sm font-semibold text-ink">
           {label}
           {required ? (
-            <span className="ml-1 text-accent" aria-hidden="true">
+            <span className="ml-1 text-accent-strong" aria-hidden="true">
               *
             </span>
           ) : null}
@@ -50,6 +51,7 @@ export function Field({
         id,
         'aria-describedby': describedBy || undefined,
         'aria-invalid': error ? true : undefined,
+        'aria-required': required ? true : undefined,
       })}
 
       {hint ? (

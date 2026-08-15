@@ -6,7 +6,9 @@
   --color-surface: #ffffff;
   --color-ink: #191a1e;
   --color-ink-soft: #55575e;
-  --color-ink-faint: #8a8d95;
+  /* Darkened from #8a8d95 (3.07:1, fails AA) to clear 4.5:1 on paper/surface
+     while still reading as muted next to ink and ink-soft. */
+  --color-ink-faint: #63666e;
   --color-line: #e4e2db;
   --color-line-strong: #cfccc2;
 
@@ -16,7 +18,8 @@
   --color-accent-soft: #fbeee6;
 
   /* ── Status ─────────────────────────────────────────────────────── */
-  --color-success: #2f7d46;
+  /* Darkened from #2f7d46 (4.47:1 on success-soft, just under AA) to ~4.8:1. */
+  --color-success: #2d7743;
   --color-success-soft: #eaf3ec;
   --color-warning: #b0700f;
   --color-warning-soft: #fbf2e2;
@@ -39,6 +42,12 @@
 }
 
 @layer base {
+  /* The UI is light-only; declare it so dark-OS user agents don't auto-invert
+     native controls (form fields, scrollbars, date pickers). */
+  :root {
+    color-scheme: light;
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
   }
@@ -87,4 +96,18 @@
 @utility numeric {
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum';
+}
+
+/* Respect users who ask for less motion: near-zero every animation/transition
+   (covers Tailwind's spin/pulse, the stepper width tween, 3D CSS transitions).
+   Kept outside @layer so the !important overrides utility-level durations. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

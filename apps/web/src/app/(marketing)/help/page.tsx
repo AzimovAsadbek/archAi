@@ -36,7 +36,7 @@ export default async function HelpPage() {
   return (
     <div className="mx-auto max-w-3xl px-5 py-16 lg:py-20">
       <header className="max-w-2xl">
-        <p className="text-xs font-bold tracking-widest text-accent uppercase">{t('eyebrow')}</p>
+        <p className="text-xs font-bold tracking-widest text-accent-strong uppercase">{t('eyebrow')}</p>
         <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-balance text-ink sm:text-4xl">
           {t('title')}
         </h1>
@@ -60,7 +60,7 @@ export default async function HelpPage() {
       <section className="mt-8 rounded-md border border-line bg-paper p-6">
         <h2 className="text-base font-bold text-ink">{t('faqTitle')}</h2>
         <p className="mt-2 text-sm leading-relaxed text-ink-soft">{t('faqBody')}</p>
-        <Link href="/faq" className="mt-3 inline-block text-sm font-semibold text-accent hover:underline">
+        <Link href="/faq" className="mt-3 inline-block text-sm font-semibold text-accent-strong hover:underline">
           {t('faqCta')}
         </Link>
       </section>
@@ -73,7 +73,7 @@ export default async function HelpPage() {
         <p className="mt-2 text-sm leading-relaxed text-ink-soft">{t('contactBody')}</p>
         <a
           href={`mailto:${CONTACT_EMAIL}`}
-          className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:underline"
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-strong hover:underline"
         >
           <Mail className="size-4" aria-hidden="true" />
           {CONTACT_EMAIL}

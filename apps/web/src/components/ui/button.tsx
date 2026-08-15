@@ -12,7 +12,7 @@ const BASE =
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary: 'bg-ink text-paper hover:bg-ink-soft',
-  accent: 'bg-accent text-white hover:bg-accent-strong',
+  accent: 'bg-accent-strong text-white hover:bg-accent-strong/90',
   outline: 'border border-line-strong bg-surface text-ink hover:bg-paper',
   ghost: 'text-ink-soft hover:bg-line/60 hover:text-ink',
   danger: 'bg-danger text-white hover:bg-danger/90',

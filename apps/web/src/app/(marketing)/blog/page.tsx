@@ -74,7 +74,7 @@ export default async function BlogPage({
   return (
     <div className="mx-auto max-w-6xl px-5 py-16 lg:py-20">
       <header className="max-w-2xl">
-        <p className="text-xs font-bold tracking-widest text-accent uppercase">{t('eyebrow')}</p>
+        <p className="text-xs font-bold tracking-widest text-accent-strong uppercase">{t('eyebrow')}</p>
         <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-balance text-ink sm:text-4xl">
           {t('title')}
         </h1>
@@ -123,7 +123,7 @@ export default async function BlogPage({
           description={t('empty.body')}
           action={
             category ? (
-              <Link href={blogHref(undefined, 1)} className="text-sm font-semibold text-accent hover:underline">
+              <Link href={blogHref(undefined, 1)} className="text-sm font-semibold text-accent-strong hover:underline">
                 {t('empty.reset')}
               </Link>
             ) : undefined

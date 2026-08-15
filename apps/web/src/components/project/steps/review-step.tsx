@@ -43,7 +43,7 @@ function SummaryCard({
         <button
           type="button"
           onClick={() => onEditStep(stepIndex)}
-          className="inline-flex items-center gap-1.5 rounded-sm text-xs font-semibold text-ink-faint transition-colors hover:text-accent"
+          className="inline-flex items-center gap-1.5 rounded-sm text-xs font-semibold text-ink-faint transition-colors hover:text-accent-strong"
         >
           <Pencil className="size-3" aria-hidden="true" />
           {editLabel}

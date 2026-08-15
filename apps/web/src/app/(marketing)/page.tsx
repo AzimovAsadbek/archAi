@@ -45,7 +45,7 @@ export default function LandingPage() {
       <section className="border-b border-line">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:py-24">
           <div>
-            <p className="text-xs font-bold tracking-widest text-accent uppercase">
+            <p className="text-xs font-bold tracking-widest text-accent-strong uppercase">
               {t('hero.eyebrow')}
             </p>
             <h1 className="mt-4 text-4xl leading-[1.08] font-extrabold tracking-tight text-balance text-ink sm:text-5xl">
@@ -82,7 +82,7 @@ export default function LandingPage() {
           <ol className="mt-10 grid gap-px overflow-hidden rounded-md border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
             {HOW_STEPS.map((step, index) => (
               <li key={step} className="bg-surface p-6">
-                <span className="numeric text-xs font-bold tracking-widest text-accent">
+                <span className="numeric text-xs font-bold tracking-widest text-accent-strong">
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <h3 className="mt-3 text-base font-bold text-ink">{t(`how.steps.${step}.title`)}</h3>

@@ -103,7 +103,7 @@ export function RegisterForm({ next }: { next: string }) {
 
       <p className="mt-6 text-center text-sm text-ink-soft">
         {t('register.haveAccount')}{' '}
-        <Link href="/login" className="rounded-sm font-semibold text-accent hover:underline">
+        <Link href="/login" className="rounded-sm font-semibold text-accent-strong hover:underline">
           {t('register.signIn')}
         </Link>
       </p>

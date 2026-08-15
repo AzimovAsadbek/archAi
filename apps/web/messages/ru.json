@@ -11,7 +11,8 @@
     "retry": "Повторить",
     "loading": "Загрузка…",
     "roadmap": "скоро",
-    "live": "работает"
+    "live": "работает",
+    "skipToContent": "Перейти к содержанию"
   },
   "locale": {
     "label": "Язык",
@@ -35,7 +36,9 @@
     "blog": "Блог",
     "faq": "Вопросы",
     "help": "Помощь",
-    "about": "О нас"
+    "about": "О нас",
+    "openMenu": "Открыть меню",
+    "closeMenu": "Закрыть меню"
   },
   "marketing": {
     "hero": {
@@ -583,7 +586,6 @@
     "descriptionEmpty": "Описание не заполнено.",
     "loadError": "Не удалось загрузить проект",
     "tabsLabel": "Разделы проекта",
-    "tabDisabled": "На следующем этапе",
     "tabs": {
       "overview": "Обзор",
       "plans2d": "2D",
@@ -620,7 +622,8 @@
       "floorTotal": "Итого, {floor}-й этаж",
       "dimsValue": "{width} × {length} м",
       "areaValue": "{area} м²"
-    }
+    },
+    "tabRoadmap": "{tab} — на следующем этапе"
   },
   "floorPlan": {
     "loadError": "Не удалось загрузить план",
@@ -1265,5 +1268,13 @@
         }
       }
     }
+  },
+  "time": {
+    "now": "только что",
+    "minutesAgo": "{count, plural, one {# минуту назад} few {# минуты назад} many {# минут назад} other {# минуты назад}}",
+    "hoursAgo": "{count, plural, one {# час назад} few {# часа назад} many {# часов назад} other {# часа назад}}",
+    "daysAgo": "{count, plural, one {# день назад} few {# дня назад} many {# дней назад} other {# дня назад}}",
+    "monthsAgo": "{count, plural, one {# месяц назад} few {# месяца назад} many {# месяцев назад} other {# месяца назад}}",
+    "yearsAgo": "{count, plural, one {# год назад} few {# года назад} many {# лет назад} other {# года назад}}"
   }
 }

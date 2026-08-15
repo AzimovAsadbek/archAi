@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { buttonClasses } from '@/components/ui/button';
 import { LocaleSwitcher } from './locale-switcher';
 import { Logo } from './logo';
+import { MarketingMobileMenu } from './marketing-mobile-menu';
 
 export async function MarketingHeader() {
   const t = await getTranslations('nav');
@@ -40,16 +41,17 @@ export async function MarketingHeader() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <LocaleSwitcher className="hidden sm:inline-flex" />
+          <LocaleSwitcher className="hidden md:inline-flex" />
           <Link
             href="/login"
-            className="hidden text-sm font-semibold text-ink-soft transition-colors hover:text-ink sm:inline"
+            className="hidden text-sm font-semibold text-ink-soft transition-colors hover:text-ink md:inline"
           >
             {t('login')}
           </Link>
           <Link href="/register" className={buttonClasses('accent', 'sm')}>
             {t('getStarted')}
           </Link>
+          <MarketingMobileMenu />
         </div>
       </div>
     </header>

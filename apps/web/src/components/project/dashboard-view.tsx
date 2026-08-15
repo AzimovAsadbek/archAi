@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -44,6 +44,8 @@ export function DashboardView() {
   const [pending, setPending] = useState<PendingAction | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | undefined>();
+  // The ⋯ button of the card that opened the confirm dialog — focus returns here.
+  const triggerRef = useRef<HTMLElement | null>(null);
 
   const debouncedSearch = useDebouncedValue(search, 300);
 
@@ -204,8 +206,14 @@ export function DashboardView() {
             busyId={busyId}
             onDuplicate={(project) => duplicate.mutate(project)}
             onUnarchive={(project) => unarchive.mutate(project)}
-            onArchive={(project) => setPending({ kind: 'archive', project })}
-            onDelete={(project) => setPending({ kind: 'delete', project })}
+            onArchive={(project, trigger) => {
+              triggerRef.current = trigger;
+              setPending({ kind: 'archive', project });
+            }}
+            onDelete={(project, trigger) => {
+              triggerRef.current = trigger;
+              setPending({ kind: 'delete', project });
+            }}
           />
         )}
       </div>
@@ -259,6 +267,7 @@ export function DashboardView() {
             ? tProject('confirmDelete.confirm')
             : tProject('confirmArchive.confirm')
         }
+        triggerRef={triggerRef}
         onCancel={() => setPending(null)}
         onConfirm={() => void confirmPending()}
       />

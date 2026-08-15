@@ -11,7 +11,8 @@
     "retry": "Try again",
     "loading": "Loading…",
     "roadmap": "soon",
-    "live": "live"
+    "live": "live",
+    "skipToContent": "Skip to content"
   },
   "locale": {
     "label": "Language",
@@ -35,7 +36,9 @@
     "blog": "Blog",
     "faq": "FAQ",
     "help": "Help",
-    "about": "About"
+    "about": "About",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "marketing": {
     "hero": {
@@ -583,7 +586,6 @@
     "descriptionEmpty": "No description yet.",
     "loadError": "Could not load the project",
     "tabsLabel": "Project sections",
-    "tabDisabled": "Coming in a later stage",
     "tabs": {
       "overview": "Overview",
       "plans2d": "2D",
@@ -620,7 +622,8 @@
       "floorTotal": "Floor {floor} total",
       "dimsValue": "{width} × {length} m",
       "areaValue": "{area} m²"
-    }
+    },
+    "tabRoadmap": "{tab} — coming in a later stage"
   },
   "floorPlan": {
     "loadError": "Could not load the floor plan",
@@ -1265,5 +1268,13 @@
         }
       }
     }
+  },
+  "time": {
+    "now": "just now",
+    "minutesAgo": "{count, plural, one {# minute ago} other {# minutes ago}}",
+    "hoursAgo": "{count, plural, one {# hour ago} other {# hours ago}}",
+    "daysAgo": "{count, plural, one {# day ago} other {# days ago}}",
+    "monthsAgo": "{count, plural, one {# month ago} other {# months ago}}",
+    "yearsAgo": "{count, plural, one {# year ago} other {# years ago}}"
   }
 }

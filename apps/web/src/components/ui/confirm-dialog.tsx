@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useRef, type RefObject } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from './button';
 
@@ -14,6 +14,14 @@ export interface ConfirmDialogProps {
   pending?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
+  /**
+   * Element focus returns to on close — pass the control that opened the dialog
+   * (e.g. the ⋯ menu button). When the dialog is opened from a menu item, that
+   * item has already unmounted by `showModal()` time, so capturing
+   * `document.activeElement` restores focus to `<body>` instead. An explicit ref
+   * fixes that; without one, the active element at open time is the fallback.
+   */
+  triggerRef?: RefObject<HTMLElement | null>;
 }
 
 export function ConfirmDialog({
@@ -26,10 +34,11 @@ export function ConfirmDialog({
   pending = false,
   onConfirm,
   onCancel,
+  triggerRef,
 }: ConfirmDialogProps) {
   const t = useTranslations('common');
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const triggerRef = useRef<HTMLElement | null>(null);
+  const fallbackRef = useRef<HTMLElement | null>(null);
   const titleId = useId();
   const descriptionId = useId();
 
@@ -38,15 +47,16 @@ export function ConfirmDialog({
     if (!dialog) return;
 
     if (open && !dialog.open) {
-      triggerRef.current =
+      fallbackRef.current =
         document.activeElement instanceof HTMLElement ? document.activeElement : null;
       dialog.showModal();
     } else if (!open && dialog.open) {
       dialog.close();
-      triggerRef.current?.focus();
-      triggerRef.current = null;
+      const restoreTo = triggerRef?.current ?? fallbackRef.current;
+      restoreTo?.focus();
+      fallbackRef.current = null;
     }
-  }, [open]);
+  }, [open, triggerRef]);
 
   useEffect(() => {
     const dialog = dialogRef.current;

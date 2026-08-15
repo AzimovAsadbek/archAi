@@ -203,7 +203,7 @@ export function AdminBlogForm({ item, onDone }: { item: AdminBlogRow | null; onD
             <button
               type="button"
               onClick={() => setShowPreview((value) => !value)}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent-strong hover:underline"
             >
               {showPreview ? (
                 <EyeOff className="size-3.5" aria-hidden="true" />
