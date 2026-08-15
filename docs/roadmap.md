@@ -84,6 +84,18 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
     the free-tier daily quota then capped the remaining probes — confirming the
     rate-limit path. `ask` runs the identical proven pipeline (and parse's injection
     fencing was live-verified in the migration).
+13. **2D/3D professional upgrade (increment 1)** — DONE
+    From the same canonical plan: 2D room selection (keyboard-accessible, ring +
+    per-room dimension lines + details bar, click-vs-pan slop, progressive
+    disclosure below 64 px) and 3D camera presets (orbit/top/front/side/isometric),
+    style-aware materials (all 6 HouseStyles, geometry untouched, unit-tested) and
+    a one-frame contact shadow (demand-frameloop-safe). Verified live in-browser:
+    selection/Esc/Enter, room dims "10.4 m"/"5.05 m", preset cycling, zero console
+    errors. Deferred to later increments (explicitly, §94): furniture, roof-type
+    variants (needs a domain `roofType` + migration + configurator), adjacency/
+    scoring layout engine, CAD-style editing, architecture templates, polygon
+    rooms. The engine's rect-based model, wall/door/window/stair semantics and
+    5,000-config fuzz remain the validated foundation.
 
 ## Deferred decisions
 

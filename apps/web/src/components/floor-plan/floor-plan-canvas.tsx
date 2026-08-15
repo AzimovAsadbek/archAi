@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useMemo } from 'react';
+import { useId, useMemo, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   type FloorGeometry,
@@ -31,6 +31,10 @@ export interface FloorPlanCanvasProps {
   panZoom: PanZoom;
   /** Blank border around the footprint, in metres — the annotations live here. */
   marginM: number;
+  /** Key of the highlighted room; its own dimension lines are drawn (§20/§23). */
+  selectedRoomKey?: string | null;
+  /** Click/keyboard selection callback; `null` clears (background click, Esc). */
+  onSelectRoom?: (key: string | null) => void;
   className?: string;
 }
 
@@ -43,12 +47,28 @@ export function FloorPlanCanvas({
   floor,
   panZoom,
   marginM,
+  selectedRoomKey = null,
+  onSelectRoom,
   className,
 }: FloorPlanCanvasProps) {
   const t = useTranslations('floorPlan');
   const tRoomTypes = useTranslations('roomTypes');
   const hatchId = `${useId()}-hatch`;
   const { view, pxPerM, panning, svgRef, onPointerDown, onPointerMove, onPointerEnd } = panZoom;
+
+  // Where the pointer went down, in client px — a click that travelled further
+  // than a few pixels was a pan, not a selection.
+  const pointerOrigin = useRef<{ x: number; y: number } | null>(null);
+  const CLICK_SLOP_PX = 5;
+
+  const wasClick = (event: React.MouseEvent): boolean => {
+    const origin = pointerOrigin.current;
+    if (!origin) return true;
+    return (
+      Math.abs(event.clientX - origin.x) <= CLICK_SLOP_PX &&
+      Math.abs(event.clientY - origin.y) <= CLICK_SLOP_PX
+    );
+  };
 
   const wallsById = useMemo(() => {
     const map = new Map<string, Wall>();
@@ -86,10 +106,17 @@ export function FloorPlanCanvas({
         panning ? 'cursor-grabbing' : 'cursor-grab',
         className,
       )}
-      onPointerDown={onPointerDown}
+      onPointerDown={(event) => {
+        pointerOrigin.current = { x: event.clientX, y: event.clientY };
+        onPointerDown(event);
+      }}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerEnd}
       onPointerCancel={onPointerEnd}
+      onClick={(event) => {
+        // Background click (a real click, not the tail of a pan) clears selection.
+        if (onSelectRoom && wasClick(event)) onSelectRoom(null);
+      }}
     >
       <defs>
         <pattern id={hatchId} width={0.42} height={0.42} patternUnits="userSpaceOnUse">
@@ -200,6 +227,58 @@ export function FloorPlanCanvas({
         })}
       </g>
 
+      {(() => {
+        // Selection ring + the selected room's own dimensions (§20/§23), drawn
+        // inside the room so they never collide with neighbouring rooms.
+        const selected = floor.rooms.find((room) => room.key === selectedRoomKey);
+        if (!selected) return null;
+        const { rect } = selected;
+        const inset = Math.min(0.45, Math.min(rect.width, rect.height) * 0.18);
+        // Room dimensions appear once both sides can host the ~11 px labels
+        // legibly; below that only the ring shows (progressive disclosure, §66).
+        const showDims = rect.width * scale >= 64 && rect.height * scale >= 64;
+        return (
+          <g pointerEvents="none">
+            <rect
+              x={rect.x}
+              y={rect.y}
+              width={rect.width}
+              height={rect.height}
+              fill="none"
+              stroke={PLAN_COLORS.selection}
+              strokeWidth={2.5}
+              style={{ vectorEffect: 'non-scaling-stroke' }}
+            />
+            {showDims ? (
+              <>
+                <Dimension
+                  orientation="horizontal"
+                  from={rect.x}
+                  to={rect.x + rect.width}
+                  edge={rect.y + rect.height}
+                  offset={-inset}
+                  label={t('dimensionValue', { value: rect.width })}
+                  arrow={ARROW_PX * mPerPx}
+                  font={DIMENSION_PX * mPerPx}
+                  color={PLAN_COLORS.selection}
+                />
+                <Dimension
+                  orientation="vertical"
+                  from={rect.y}
+                  to={rect.y + rect.height}
+                  edge={rect.x}
+                  offset={inset}
+                  label={t('dimensionValue', { value: rect.height })}
+                  arrow={ARROW_PX * mPerPx}
+                  font={DIMENSION_PX * mPerPx}
+                  color={PLAN_COLORS.selection}
+                />
+              </>
+            ) : null}
+          </g>
+        );
+      })()}
+
       <g>
         {floor.rooms.map((room) => {
           const typeName = tRoomTypes(room.type);
@@ -234,16 +313,40 @@ export function FloorPlanCanvas({
               ? ` ${t('roomTooltipRequested', { requested: room.requestedAreaM2 })}`
               : '');
 
+          const selected = room.key === selectedRoomKey;
+
           return (
             <g key={room.key}>
               <title>{tooltip}</title>
-              {/* Transparent hit area so the tooltip covers the whole room. */}
+              {/* Transparent hit area = the room's accessible, selectable surface. */}
               <rect
                 x={room.rect.x}
                 y={room.rect.y}
                 width={room.rect.width}
                 height={room.rect.height}
                 fill="transparent"
+                {...(onSelectRoom
+                  ? {
+                      role: 'button',
+                      tabIndex: 0,
+                      'aria-label': tooltip,
+                      'aria-pressed': selected,
+                      style: { cursor: 'pointer', outline: 'none' },
+                      onClick: (event: React.MouseEvent) => {
+                        if (!wasClick(event)) return;
+                        event.stopPropagation();
+                        onSelectRoom(selected ? null : room.key);
+                      },
+                      onKeyDown: (event: React.KeyboardEvent) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          onSelectRoom(selected ? null : room.key);
+                        } else if (event.key === 'Escape' && selected) {
+                          onSelectRoom(null);
+                        }
+                      },
+                    }
+                  : {})}
               />
               {showName ? (
                 <text

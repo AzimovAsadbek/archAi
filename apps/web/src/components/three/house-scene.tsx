@@ -2,7 +2,7 @@
 
 import { type ReactNode, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { ContactShadows, OrbitControls } from '@react-three/drei';
 import {
   BufferAttribute,
   BufferGeometry,
@@ -13,8 +13,16 @@ import {
   Quaternion,
   Vector3,
 } from 'three';
+import { type HouseStyle } from '@archai/shared';
 import { cn } from '@/lib/cn';
-import { SCENE_COLORS, SCENE_LIGHTS, SCENE_SURFACES } from './scene-palette';
+import { type CameraPreset } from './camera-presets';
+import {
+  materialsForStyle,
+  SCENE_COLORS,
+  SCENE_LIGHTS,
+  SCENE_SURFACES,
+  type StyleMaterials,
+} from './scene-palette';
 import type { SceneBounds, SceneBox, SceneModel, SceneRoof } from './scene-builder';
 
 /**
@@ -28,12 +36,22 @@ import type { SceneBounds, SceneBox, SceneModel, SceneRoof } from './scene-build
  */
 
 /**
- * Camera framing: a 3/4 view direction and how much slack to leave around the
- * bounding sphere. The sphere circumscribes the house, so fitting it exactly
- * already guarantees nothing clips at any orbit angle — the padding is only a
- * hair of breathing room.
+ * View directions per camera preset (§31): each is the direction the camera sits
+ * along from the model centre, framed against the bounding sphere. The sphere
+ * circumscribes the house, so fitting it exactly already guarantees nothing
+ * clips at any orbit angle — the padding is only a hair of breathing room.
+ * "Top" stops shy of the pole so OrbitControls never gimbal-locks.
  */
-const VIEW_DIRECTION = new Vector3(1, 0.72, 1).normalize();
+const PRESET_DIRECTIONS: Record<CameraPreset, Vector3> = {
+  orbit: new Vector3(1, 0.72, 1).normalize(),
+  // Slightly off-axis so the polar angle clears MIN_POLAR_ANGLE (no clamp snap).
+  top: new Vector3(0.1, 1, 0.1).normalize(),
+  front: new Vector3(0, 0.22, 1).normalize(),
+  side: new Vector3(1, 0.22, 0).normalize(),
+  // The classic 30° architectural axonometric direction.
+  isometric: new Vector3(1, Math.tan(Math.PI / 6) * Math.SQRT2, 1).normalize(),
+};
+
 const FRAMING_PADDING = 1.02;
 /** Never look from below the horizon, and never straight down the pole. */
 const MIN_POLAR_ANGLE = 0.12;
@@ -85,7 +103,7 @@ function BoxCluster({ boxes, children }: { boxes: readonly SceneBox[]; children:
 
 // ── Roof ──────────────────────────────────────────────────────────────────
 
-function Roof({ roof }: { roof: SceneRoof }) {
+function Roof({ roof, materials }: { roof: SceneRoof; materials: StyleMaterials }) {
   const geometry = useMemo(() => {
     const buffer = new BufferGeometry();
     buffer.setAttribute('position', new BufferAttribute(new Float32Array(roof.positions), 3));
@@ -100,9 +118,10 @@ function Roof({ roof }: { roof: SceneRoof }) {
   return (
     <mesh geometry={geometry}>
       <meshStandardMaterial
-        color={SCENE_COLORS.roof}
+        color={materials.roof}
         side={DoubleSide}
-        {...SCENE_SURFACES.roof}
+        roughness={materials.roofRoughness}
+        metalness={0}
       />
     </mesh>
   );
@@ -119,10 +138,18 @@ interface OrbitLike {
 /**
  * Frames the building inside the bounding sphere the builder reports, using the
  * tighter of the horizontal and vertical field of view so a wide-but-short
- * canvas never clips the roof. Re-runs when the plan changes or the user asks
- * for a reset — not on resize, so an orbit survives a window drag.
+ * canvas never clips the roof. Re-runs when the plan, the preset or the reset
+ * token changes — not on resize, so an orbit survives a window drag.
  */
-function CameraRig({ bounds, resetToken }: { bounds: SceneBounds; resetToken: number }) {
+function CameraRig({
+  bounds,
+  preset,
+  resetToken,
+}: {
+  bounds: SceneBounds;
+  preset: CameraPreset;
+  resetToken: number;
+}) {
   const camera = useThree((state) => state.camera);
   const controls = useThree((state) => state.controls);
   const invalidate = useThree((state) => state.invalidate);
@@ -143,7 +170,7 @@ function CameraRig({ bounds, resetToken }: { bounds: SceneBounds; resetToken: nu
     const distance = (bounds.radius / Math.sin(usableFov / 2)) * FRAMING_PADDING;
 
     const target = new Vector3(bounds.center[0], bounds.center[1], bounds.center[2]);
-    camera.position.copy(VIEW_DIRECTION).multiplyScalar(distance).add(target);
+    camera.position.copy(PRESET_DIRECTIONS[preset]).multiplyScalar(distance).add(target);
     camera.lookAt(target);
     perspective.near = Math.max(0.05, distance / 200);
     perspective.far = distance * 8;
@@ -156,7 +183,7 @@ function CameraRig({ bounds, resetToken }: { bounds: SceneBounds; resetToken: nu
       orbit.update();
     }
     invalidate();
-  }, [bounds, resetToken, camera, controls, invalidate]);
+  }, [bounds, preset, resetToken, camera, controls, invalidate]);
 
   return null;
 }
@@ -167,9 +194,10 @@ interface BuildingProps {
   model: SceneModel;
   visibleFloorCount: number;
   showRoof: boolean;
+  materials: StyleMaterials;
 }
 
-function Building({ model, visibleFloorCount, showRoof }: BuildingProps) {
+function Building({ model, visibleFloorCount, showRoof, materials }: BuildingProps) {
   const invalidate = useThree((state) => state.invalidate);
 
   const groups = useMemo(() => {
@@ -192,23 +220,23 @@ function Building({ model, visibleFloorCount, showRoof }: BuildingProps) {
         <meshStandardMaterial color={SCENE_COLORS.slab} {...SCENE_SURFACES.slab} />
       </BoxCluster>
       <BoxCluster boxes={groups.finishes}>
-        <meshStandardMaterial color={SCENE_COLORS.floor} {...SCENE_SURFACES.floor} />
+        <meshStandardMaterial color={materials.floor} {...SCENE_SURFACES.floor} />
       </BoxCluster>
       <BoxCluster boxes={groups.walls}>
-        <meshStandardMaterial color={SCENE_COLORS.wall} {...SCENE_SURFACES.wall} />
+        <meshStandardMaterial color={materials.wall} {...SCENE_SURFACES.wall} />
       </BoxCluster>
       <BoxCluster boxes={groups.steps}>
         <meshStandardMaterial color={SCENE_COLORS.step} {...SCENE_SURFACES.step} />
       </BoxCluster>
       <BoxCluster boxes={groups.glass}>
         <meshStandardMaterial
-          color={SCENE_COLORS.glass}
+          color={materials.glass}
           transparent
           depthWrite={false}
           {...SCENE_SURFACES.glass}
         />
       </BoxCluster>
-      {showRoof && model.roof ? <Roof roof={model.roof} /> : null}
+      {showRoof && model.roof ? <Roof roof={model.roof} materials={materials} /> : null}
     </group>
   );
 }
@@ -220,6 +248,10 @@ export interface HouseSceneProps {
   /** Floors drawn from grade up; anything above is cut away. */
   visibleFloorCount: number;
   showRoof: boolean;
+  /** Architectural style — tunes materials only, never geometry (§56). */
+  style: HouseStyle | null;
+  /** Camera preset the rig frames from; orbiting away from it is free. */
+  preset: CameraPreset;
   /** Any change re-frames the camera — the reset-view control bumps it. */
   resetToken: number;
   /** Localized description of the view; the canvas is exposed as an image. */
@@ -231,12 +263,15 @@ export function HouseScene({
   model,
   visibleFloorCount,
   showRoof,
+  style,
+  preset,
   resetToken,
   ariaLabel,
   className,
 }: HouseSceneProps) {
   const { ground, bounds } = model;
   const lightDistance = Math.max(bounds.radius, 1) * 2.2;
+  const materials = materialsForStyle(style);
 
   return (
     <Canvas
@@ -265,9 +300,30 @@ export function HouseScene({
         <meshStandardMaterial color={SCENE_COLORS.ground} {...SCENE_SURFACES.ground} />
       </mesh>
 
-      <Building model={model} visibleFloorCount={visibleFloorCount} showRoof={showRoof} />
+      {/*
+       * Soft grounding shadow, rendered once per invalidation batch (`frames={1}`)
+       * so it stays compatible with the on-demand frame loop — no per-frame cost,
+       * no shadow maps. `key` re-bakes it when the building or cutaway changes.
+       */}
+      <ContactShadows
+        key={`${model.engineVersion}-${visibleFloorCount}-${showRoof}`}
+        frames={1}
+        position={[0, 0.01, 0]}
+        scale={Math.max(ground.size[0], ground.size[2]) * 1.1}
+        far={model.heightM + 1}
+        blur={2.4}
+        opacity={0.32}
+        resolution={512}
+      />
 
-      <CameraRig bounds={bounds} resetToken={resetToken} />
+      <Building
+        model={model}
+        visibleFloorCount={visibleFloorCount}
+        showRoof={showRoof}
+        materials={materials}
+      />
+
+      <CameraRig bounds={bounds} preset={preset} resetToken={resetToken} />
       {/* drei already calls invalidate() on every `change` event — required by frameloop="demand". */}
       <OrbitControls
         makeDefault

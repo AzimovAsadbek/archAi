@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Info, Maximize, ZoomIn, ZoomOut } from 'lucide-react';
+import { Info, Maximize, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { type FloorPlan } from '@archai/floor-plan-engine';
 import { IconButton } from '@/components/ui/button';
 import { cn } from '@/lib/cn';
@@ -31,9 +31,11 @@ export interface FloorPlanViewerProps {
 
 export function FloorPlanViewer({ plan, className }: FloorPlanViewerProps) {
   const t = useTranslations('floorPlan');
+  const tRoomTypes = useTranslations('roomTypes');
   const tFloor = useTranslations('workspace.rooms');
 
   const [floorIndex, setFloorIndex] = useState(0);
+  const [selectedRoomKey, setSelectedRoomKey] = useState<string | null>(null);
   const { widthM, lengthM } = plan.house;
   const marginM = marginFor(widthM, lengthM);
   const panZoom = usePanZoom(widthM, lengthM, marginM);
@@ -43,8 +45,15 @@ export function FloorPlanViewer({ plan, className }: FloorPlanViewerProps) {
     setFloorIndex((current) => (current < plan.floors.length ? current : 0));
   }, [plan.floors.length]);
 
+  // Selection is per-floor UI state; switching floors or plans clears it.
+  useEffect(() => {
+    setSelectedRoomKey(null);
+  }, [floorIndex, plan]);
+
   const floor = plan.floors[floorIndex] ?? plan.floors[0];
   if (!floor) return null;
+
+  const selectedRoom = floor.rooms.find((room) => room.key === selectedRoomKey) ?? null;
 
   const zoomPercent = Math.round(panZoom.zoom * 100);
 
@@ -119,8 +128,48 @@ export function FloorPlanViewer({ plan, className }: FloorPlanViewerProps) {
           className="max-h-[70vh] w-full"
           style={{ aspectRatio: frameRatio(widthM, lengthM, marginM) }}
         >
-          <FloorPlanCanvas house={plan.house} floor={floor} panZoom={panZoom} marginM={marginM} />
+          <FloorPlanCanvas
+            house={plan.house}
+            floor={floor}
+            panZoom={panZoom}
+            marginM={marginM}
+            selectedRoomKey={selectedRoomKey}
+            onSelectRoom={setSelectedRoomKey}
+          />
         </div>
+      </div>
+
+      {/* Selected-room details (§23), announced politely for screen readers. */}
+      <div aria-live="polite">
+        {selectedRoom ? (
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-md border border-line bg-surface px-4 py-2.5">
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <span className="text-sm font-bold text-ink">
+                {selectedRoom.label?.trim() ? selectedRoom.label : tRoomTypes(selectedRoom.type)}
+              </span>
+              <span className="text-xs font-semibold text-ink-faint">
+                {tRoomTypes(selectedRoom.type)} · {tFloor('floorGroup', { floor: floor.index + 1 })}
+              </span>
+              <span className="numeric text-xs font-semibold text-ink-soft">
+                {t('roomDims', {
+                  width: selectedRoom.rect.width,
+                  length: selectedRoom.rect.height,
+                })}{' '}
+                · {t('areaValue', { area: selectedRoom.areaM2 })}
+              </span>
+            </div>
+            <IconButton
+              variant="ghost"
+              size="sm"
+              aria-label={t('clearSelection')}
+              onClick={() => setSelectedRoomKey(null)}
+            >
+              <X className="size-4" aria-hidden="true" />
+            </IconButton>
+          </div>
+        ) : (
+          <p className="mt-3 text-xs text-ink-faint">{t('selectHint')}</p>
+        )}
       </div>
 
       <FloorPlanLegend className="mt-4" floor={floor} hasStairs={floor.stairs !== null} />

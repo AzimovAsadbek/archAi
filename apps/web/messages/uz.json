@@ -706,7 +706,10 @@
       "INVALID_INPUT": "Uy o'lchamlari noto'g'ri — eni, bo'yi va qavatlar sonini tekshiring.",
       "INTERNAL_ERROR": "Rejani hisoblashda kutilmagan xatolik yuz berdi. Birozdan so'ng qayta urinib ko'ring.",
       "unknown": "Rejani chizishda noma'lum muammo aniqlandi."
-    }
+    },
+    "roomDims": "{width} × {length} m",
+    "clearSelection": "Tanlovni bekor qilish",
+    "selectHint": "Xona haqida ma'lumot uchun rejadagi xonani bosing."
   },
   "three": {
     "floors": {
@@ -718,7 +721,15 @@
     "canvasLabel": "Uyning sxematik 3D ko'rinishi: {floors} qavat, {width} × {length} m",
     "disclaimerChip": "Sxematik 3D ko'rinish",
     "disclaimerBody": "Bu sxematik 3D ko'rinish: hajmlar o'sha rejadan avtomatik quriladi — devor balandligi, tom va zinapoya shartli. Bu me'moriy vizualizatsiya yoki qurilish hujjati emas.",
-    "hint": "Aylantirish uchun torting, masshtab uchun g'ildirakni aylantiring."
+    "hint": "Aylantirish uchun torting, masshtab uchun g'ildirakni aylantiring.",
+    "presets": {
+      "label": "Kamera ko'rinishi",
+      "orbit": "Aylanma",
+      "top": "Tepadan",
+      "front": "Old",
+      "side": "Yon",
+      "isometric": "Izometrik"
+    }
   },
   "estimate": {
     "levels": {

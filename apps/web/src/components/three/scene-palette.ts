@@ -1,3 +1,5 @@
+import type { HouseStyle } from '@archai/shared';
+
 /**
  * Every colour and surface property the 3D preview renders with, in one place.
  *
@@ -48,3 +50,78 @@ export const SCENE_LIGHTS = {
   /** Direction the sun sits in, relative to the model's bounding radius. */
   directionalOffset: [0.75, 1.25, 0.55] as const,
 } as const;
+
+// ── Style-aware materials ─────────────────────────────────────────────────
+
+export interface StyleMaterials {
+  wall: string;
+  roof: string;
+  /** Wood finish inside the cutaway views. */
+  floor: string;
+  glass: string;
+  /** Roughness override for the roof — metal reads shinier than clay. */
+  roofRoughness: number;
+}
+
+/**
+ * Presentation presets per architectural style (§56): the selected style tunes
+ * materials only — the geometry is identical for every style, so switching a
+ * style never moves a wall. Values are hand-tuned against the single-light
+ * setup; the default (no style chosen) is the MODERN set.
+ *
+ * MODERN      — cool white render walls, dark flat-seam roof, blue glazing.
+ * MINIMALIST  — restrained warm greys, near-black roof, neutral glass.
+ * CLASSIC     — cream plaster, clay-tile terracotta roof, warmer wood.
+ * TRADITIONAL — sandy lime-wash walls, deep clay roof, honey wood.
+ * EUROPEAN    — light stone walls, slate roof, cooler wood.
+ * NATIONAL    — warm adobe tones, weathered clay roof, rich wood.
+ */
+export const STYLE_MATERIALS: Record<HouseStyle, StyleMaterials> = {
+  MODERN: {
+    wall: '#f4f4f2',
+    roof: '#4a4d52',
+    floor: '#b7906a',
+    glass: '#7fa8c9',
+    roofRoughness: 0.55,
+  },
+  MINIMALIST: {
+    wall: '#efede8',
+    roof: '#2f3134',
+    floor: '#c4b49a',
+    glass: '#9fb2bd',
+    roofRoughness: 0.6,
+  },
+  CLASSIC: {
+    wall: '#f3ecdd',
+    roof: '#b0562a',
+    floor: '#a97e52',
+    glass: '#8fb3c4',
+    roofRoughness: 0.85,
+  },
+  TRADITIONAL: {
+    wall: '#efe3cd',
+    roof: '#9c4a22',
+    floor: '#b28352',
+    glass: '#93b0ba',
+    roofRoughness: 0.88,
+  },
+  EUROPEAN: {
+    wall: '#eeeae2',
+    roof: '#57606c',
+    floor: '#9d7a55',
+    glass: '#87a7c0',
+    roofRoughness: 0.7,
+  },
+  NATIONAL: {
+    wall: '#ead9bd',
+    roof: '#8f4d26',
+    floor: '#a2703f',
+    glass: '#98b1b8',
+    roofRoughness: 0.86,
+  },
+};
+
+/** Materials for a nullable style — the MODERN preset is the neutral default. */
+export function materialsForStyle(style: HouseStyle | null | undefined): StyleMaterials {
+  return style ? STYLE_MATERIALS[style] : STYLE_MATERIALS.MODERN;
+}

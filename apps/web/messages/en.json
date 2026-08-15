@@ -706,7 +706,10 @@
       "INVALID_INPUT": "The house dimensions are invalid — check the width, length and floor count.",
       "INTERNAL_ERROR": "Something went wrong while generating the plan. Please try again shortly.",
       "unknown": "An unknown problem stopped the plan from being generated."
-    }
+    },
+    "roomDims": "{width} × {length} m",
+    "clearSelection": "Clear selection",
+    "selectHint": "Click a room on the plan to see its details."
   },
   "three": {
     "floors": {
@@ -718,7 +721,15 @@
     "canvasLabel": "Schematic 3D view of the house: {floors} floor(s), {width} × {length} m",
     "disclaimerChip": "Schematic 3D view",
     "disclaimerBody": "This is a schematic 3D view: the massing is generated from the same plan — wall heights, roof and stairs are indicative. It is not an architectural visualization or construction documentation.",
-    "hint": "Drag to orbit, scroll to zoom."
+    "hint": "Drag to orbit, scroll to zoom.",
+    "presets": {
+      "label": "Camera view",
+      "orbit": "Orbit",
+      "top": "Top",
+      "front": "Front",
+      "side": "Side",
+      "isometric": "Isometric"
+    }
   },
   "estimate": {
     "levels": {

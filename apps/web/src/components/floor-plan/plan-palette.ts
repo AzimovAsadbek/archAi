@@ -23,6 +23,8 @@ export const PLAN_COLORS = {
   corridor: '#f1f0ea',
   corridorHatch: 'rgb(25 26 30 / 0.06)',
   stair: '#eae7e0',
+  /** Selected-room ring and its dimension lines — accent-strong (AA on paper). */
+  selection: 'var(--color-accent-strong)',
 } as const;
 
 /** Soft per-type washes. HALLWAY and OTHER stay deliberately neutral. */

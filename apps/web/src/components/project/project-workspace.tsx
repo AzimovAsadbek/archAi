@@ -461,6 +461,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
             projectId={projectId}
             projectUpdatedAt={project.updatedAt}
             land={project.land}
+            style={project.house?.style ?? null}
           />
         </div>
       ) : null}

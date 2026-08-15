@@ -254,6 +254,8 @@ export interface DimensionProps {
   /** Arrow size and font size, in metres, pre-scaled for constant screen size. */
   arrow: number;
   font: number;
+  /** Line/label colour; defaults to the annotation grey. */
+  color?: string;
 }
 
 /** Architectural dimension: extension lines, arrowed line, centred label. */
@@ -266,6 +268,7 @@ export function Dimension({
   label,
   arrow,
   font,
+  color = PLAN_COLORS.annotation,
 }: DimensionProps) {
   const horizontal = orientation === 'horizontal';
   const line = edge + offset;
@@ -294,7 +297,7 @@ export function Dimension({
             y1={a.y}
             x2={b.x}
             y2={b.y}
-            stroke={PLAN_COLORS.annotation}
+            stroke={color}
             strokeWidth={1}
             strokeDasharray="3 3"
             {...HAIRLINE}
@@ -306,23 +309,23 @@ export function Dimension({
         y1={lineStart.y}
         x2={lineEnd.x}
         y2={lineEnd.y}
-        stroke={PLAN_COLORS.annotation}
+        stroke={color}
         strokeWidth={1}
         {...HAIRLINE}
       />
       <path
         d={arrowHead(lineEnd.x, lineEnd.y, forward.dx, forward.dy, arrow)}
-        fill={PLAN_COLORS.annotation}
+        fill={color}
       />
       <path
         d={arrowHead(lineStart.x, lineStart.y, -forward.dx, -forward.dy, arrow)}
-        fill={PLAN_COLORS.annotation}
+        fill={color}
       />
       <text
         className="numeric"
         x={labelAnchor.x}
         y={labelAnchor.y}
-        fill={PLAN_COLORS.annotation}
+        fill={color}
         fontSize={font}
         fontWeight={600}
         textAnchor="middle"

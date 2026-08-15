@@ -132,3 +132,19 @@ plus meta. Inputs are assumed schema-valid (ranges) but the engine re-checks fea
   + zoom (wheel + buttons, 0.5–4×), room fills by type + localized labels + m²,
   dimension labels for footprint, door arcs/window ticks, loading/error/not-configured
   states, responsive + touch drag, keyboard-accessible zoom controls.
+  **Room selection (§23/§27):** every room is a keyboard-focusable button
+  (Enter/Space toggles, Esc clears, background click clears; a 5 px slop
+  separates clicks from pans). Selection draws an accent ring plus the room's
+  own width/length dimension lines (shown only when both sides are ≥ 64 px on
+  screen — progressive disclosure), and a details bar (name, type, floor,
+  W×L, m²) announced via `aria-live`. Selection is ephemeral UI state (§44) —
+  never persisted.
+- **Web 3D**: `ThreePanel`/`HouseScene` build the scene from the *same* persisted
+  plan (`scene-builder.ts`, pure + deterministic). Camera presets (§31):
+  orbit / top / front / side / isometric, framed against the model's bounding
+  sphere, plus reset; floor cutaway + roof toggle. Materials are style-aware
+  (§34/§56): the project's `HouseStyle` selects a preset (wall/roof/floor/glass
+  + roof roughness) in `scene-palette.ts` — presentation only, geometry is
+  byte-identical across styles (unit-tested). A one-frame `ContactShadows`
+  grounds the model without per-frame cost (compatible with
+  `frameloop="demand"`); instanced meshes keep one draw call per material.

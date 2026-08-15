@@ -4,13 +4,15 @@ import { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { Info, RotateCcw } from 'lucide-react';
-import { type LandConfig } from '@archai/shared';
+import { type HouseStyle, type LandConfig } from '@archai/shared';
 import { FloorPlanErrorState, useFloorPlanQuery } from '@/components/floor-plan/floor-plan-query';
 import { IconButton } from '@/components/ui/button';
 import { Select } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
+import { cn } from '@/lib/cn';
 import { buildScene } from './scene-builder';
+import { CAMERA_PRESETS, type CameraPreset } from './camera-presets';
 
 /**
  * The 3D tab. Mirrors `floor-plan-panel` — same query, same failure states —
@@ -57,14 +59,17 @@ export interface ThreePanelProps {
   projectUpdatedAt: string;
   /** Plot dimensions for the land plate; the model falls back to a margin. */
   land: LandConfig | null;
+  /** Project style — tunes 3D materials only, never geometry. */
+  style: HouseStyle | null;
   className?: string;
 }
 
-export function ThreePanel({ projectId, projectUpdatedAt, land, className }: ThreePanelProps) {
+export function ThreePanel({ projectId, projectUpdatedAt, land, style, className }: ThreePanelProps) {
   const t = useTranslations('three');
   const query = useFloorPlanQuery(projectId, projectUpdatedAt);
 
   const [visibility, setVisibility] = useState<string>(WHOLE_HOUSE);
+  const [preset, setPreset] = useState<CameraPreset>('orbit');
   const [resetToken, setResetToken] = useState(0);
 
   const model = useMemo(
@@ -116,14 +121,42 @@ export function ThreePanel({ projectId, projectUpdatedAt, land, className }: Thr
           ))}
         </Select>
 
-        <IconButton
-          variant="outline"
-          aria-label={t('resetView')}
-          title={t('resetView')}
-          onClick={() => setResetToken((token) => token + 1)}
-        >
-          <RotateCcw className="size-4" aria-hidden="true" />
-        </IconButton>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <div
+            role="group"
+            aria-label={t('presets.label')}
+            className="inline-flex items-center gap-0.5 rounded-md border border-line-strong bg-surface p-0.5"
+          >
+            {CAMERA_PRESETS.map((name) => (
+              <button
+                key={name}
+                type="button"
+                aria-pressed={preset === name}
+                onClick={() => {
+                  setPreset(name);
+                  // Re-frame even when the same preset is pressed again.
+                  setResetToken((token) => token + 1);
+                }}
+                className={cn(
+                  'rounded-sm px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors',
+                  preset === name
+                    ? 'bg-ink text-paper'
+                    : 'text-ink-soft hover:bg-paper hover:text-ink',
+                )}
+              >
+                {t(`presets.${name}`)}
+              </button>
+            ))}
+          </div>
+          <IconButton
+            variant="outline"
+            aria-label={t('resetView')}
+            title={t('resetView')}
+            onClick={() => setResetToken((token) => token + 1)}
+          >
+            <RotateCcw className="size-4" aria-hidden="true" />
+          </IconButton>
+        </div>
       </div>
 
       <div className="relative mt-3 overflow-hidden rounded-md border border-line bg-paper">
@@ -139,6 +172,8 @@ export function ThreePanel({ projectId, projectUpdatedAt, land, className }: Thr
             model={model}
             visibleFloorCount={visibleFloorCount}
             showRoof={cutawayIndex === null}
+            style={style}
+            preset={preset}
             resetToken={resetToken}
             ariaLabel={t('canvasLabel', {
               floors: floorCount,
