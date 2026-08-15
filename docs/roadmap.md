@@ -97,6 +97,17 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
     rooms. The engine's rect-based model, wall/door/window/stair semantics and
     5,000-config fuzz remain the validated foundation.
 
+14. **Intelligent layout engine (increment 1: candidates + scoring)** — DONE
+    Seeded candidate search over room orderings through the unchanged, fuzz-
+    hardened generator; normalized explainable scoring (area fit, shape quality,
+    type-preference adjacency, footprint efficiency, daylight potential); best
+    valid plan wins, ties keep identity, rooms never dropped, hard failures stay
+    structured issues. API generates via `generateBestFloorPlan` (seed pinned →
+    still deterministic per input); engine 1.1.0 regenerates stored plans lazily;
+    2D/3D/PDF/estimate inherit automatically. ADR-007. Deferred to next
+    increments: requirements model (min/target/max areas, priorities), zones,
+    circulation graph scoring, strategies, score UI (§72), AI layout hints.
+
 ## Deferred decisions
 
 - Worker/queue infra: not introduced yet — no long-running jobs until slice 3+.

@@ -4,7 +4,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { FLOOR_PLAN_ENGINE_VERSION, generateFloorPlan } from '@archai/floor-plan-engine';
+import { FLOOR_PLAN_ENGINE_VERSION, generateBestFloorPlan } from '@archai/floor-plan-engine';
 import { isConfigurationComplete } from '@archai/shared';
 import { ERROR_CODES } from '../common/error-codes';
 import { PrismaService } from '../prisma/prisma.service';
@@ -51,7 +51,10 @@ export class FloorPlansService {
       return toFloorPlanDto(toFloorPlan(stored.geometry), stored.generatedAt);
     }
 
-    const result = generateFloorPlan(input);
+    // Candidate-based layout optimization (seeded => still fully deterministic
+    // per input): several room orderings are generated, scored on adjacency,
+    // area fit, shape, efficiency and daylight, and the best valid plan wins.
+    const result = generateBestFloorPlan(input, { seed: 1 });
     if (!result.ok) {
       // Failures are never persisted, and geometry from an older configuration
       // must not survive it — the plan no longer describes this project.

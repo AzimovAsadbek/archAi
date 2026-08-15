@@ -4,7 +4,7 @@ import type { RoomType } from '@archai/shared';
  * Engine version — bump on ANY algorithm change. Persisted plans cite it for
  * provenance; consumers recompute when the stored version differs.
  */
-export const FLOOR_PLAN_ENGINE_VERSION = '1.0.0';
+export const FLOOR_PLAN_ENGINE_VERSION = '1.1.0';
 
 // ── Construction constants (metres) ───────────────────────────────────────
 
