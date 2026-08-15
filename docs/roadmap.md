@@ -108,6 +108,19 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
     increments: requirements model (min/target/max areas, priorities), zones,
     circulation graph scoring, strategies, score UI (§72), AI layout hints.
 
+15. **Intelligent layout engine (increment 2: requirements + strategies)** — DONE
+    Requirements layer distinct from geometry (ADR-008): `ROOM_PROFILES` registry
+    (zone, floor affinity, min/target/max bounds around the one canonical area
+    table), `deriveRoomRequirements` with explicit-dims-beat-defaults precedence,
+    pre-optimization feasibility gate (structured `INFEASIBLE_REQUIREMENTS` +
+    adjustment suggestions), and five layout strategies (BALANCED/COMPACT/OPEN/
+    PRIVACY/FAMILY) as normalized weight policies over a 7-component score
+    (+floorPreference, +zoneGrouping). Strategies cannot legitimize invalid
+    geometry; resolution explicit > suggested > BALANCED; engine 1.2.0.
+    Deferred next: strategy selection UI + score surfacing (§46), AI intent
+    mapping (ArchitectureIntent → requirements), circulation-graph scoring,
+    priority-driven optional rooms.
+
 ## Deferred decisions
 
 - Worker/queue infra: not introduced yet — no long-running jobs until slice 3+.

@@ -9,3 +9,21 @@ export {
 } from './layout/optimize';
 export { scoreFloorPlan, LAYOUT_WEIGHTS, type LayoutScore, type LayoutScoreComponent } from './layout/score';
 export { adjacencyScore, rectsAdjacent, DEFAULT_ADJACENCY } from './layout/adjacency';
+export {
+  deriveRoomRequirements,
+  ROOM_PROFILES,
+  type ArchitectureZone,
+  type FloorAffinity,
+  type RoomPriority,
+  type RoomProfile,
+  type RoomRequirement,
+} from './layout/requirements';
+export { checkFeasibility, type FeasibilityResult, type FeasibilitySuggestion } from './layout/feasibility';
+export {
+  LAYOUT_STRATEGIES,
+  resolveStrategy,
+  STRATEGY_CONFIGS,
+  type LayoutStrategy,
+  type LayoutStrategyConfig,
+  type LayoutWeights,
+} from './layout/strategies';

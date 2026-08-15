@@ -1,7 +1,10 @@
 import { generateFloorPlan } from '../generate-floor-plan';
 import type { EngineIssue, FloorPlan, FloorPlanInput, FloorPlanResult, RoomSpec } from '../types';
+import { checkFeasibility, type FeasibilitySuggestion } from './feasibility';
+import { deriveRoomRequirements } from './requirements';
 import { mulberry32, shuffle } from './rng';
 import { scoreFloorPlan, type LayoutScore } from './score';
+import { resolveStrategy, STRATEGY_CONFIGS, type LayoutStrategy } from './strategies';
 
 /**
  * Candidate-based layout optimization (§19–§23), built on the audited fact that
@@ -16,11 +19,19 @@ export interface LayoutGenerationOptions {
   seed?: number;
   /** Upper bound on generated candidates, identity ordering included (§23). */
   maxCandidates?: number;
+  /** Scoring policy (§27); invalid/absent values resolve to BALANCED. */
+  strategy?: string | null;
 }
 
 export type BestFloorPlanResult =
-  | { ok: true; plan: FloorPlan; score: LayoutScore; candidatesTried: number }
-  | { ok: false; issues: EngineIssue[] };
+  | {
+      ok: true;
+      plan: FloorPlan;
+      score: LayoutScore;
+      strategy: LayoutStrategy;
+      candidatesTried: number;
+    }
+  | { ok: false; issues: EngineIssue[]; suggestions?: FeasibilitySuggestion[] };
 
 const DEFAULT_SEED = 1;
 const DEFAULT_MAX_CANDIDATES = 16;
@@ -43,7 +54,17 @@ export function generateBestFloorPlan(
 ): BestFloorPlanResult {
   const seed = options.seed ?? DEFAULT_SEED;
   const maxCandidates = Math.max(1, options.maxCandidates ?? DEFAULT_MAX_CANDIDATES);
+  const strategy = resolveStrategy(options.strategy);
+  const weights = STRATEGY_CONFIGS[strategy].weights;
   const baseRooms = Array.isArray(input.rooms) ? input.rooms : [];
+
+  // Requirements-level feasibility gate (§25): impossible asks fail here with
+  // structured issues + adjustment suggestions before any candidate is built.
+  const requirements = deriveRoomRequirements(input);
+  const feasibility = checkFeasibility(input, requirements);
+  if (!feasibility.feasible) {
+    return { ok: false, issues: feasibility.issues, suggestions: feasibility.suggestions };
+  }
 
   const rng = mulberry32(seed);
   const seen = new Set<string>();
@@ -73,7 +94,7 @@ export function generateBestFloorPlan(
       if (index === 0) identityFailure = result;
       continue;
     }
-    const score = scoreFloorPlan(result.plan);
+    const score = scoreFloorPlan(result.plan, weights);
     if (best === null || score.total > best.score.total) {
       best = { plan: result.plan, score };
     }
@@ -95,5 +116,11 @@ export function generateBestFloorPlan(
     );
   }
 
-  return { ok: true, plan: best.plan, score: best.score, candidatesTried: orderings.length };
+  return {
+    ok: true,
+    plan: best.plan,
+    score: best.score,
+    strategy,
+    candidatesTried: orderings.length,
+  };
 }

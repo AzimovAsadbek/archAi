@@ -54,7 +54,7 @@ export class FloorPlansService {
     // Candidate-based layout optimization (seeded => still fully deterministic
     // per input): several room orderings are generated, scored on adjacency,
     // area fit, shape, efficiency and daylight, and the best valid plan wins.
-    const result = generateBestFloorPlan(input, { seed: 1 });
+    const result = generateBestFloorPlan(input, { seed: 1, strategy: 'BALANCED' });
     if (!result.ok) {
       // Failures are never persisted, and geometry from an older configuration
       // must not survive it — the plan no longer describes this project.

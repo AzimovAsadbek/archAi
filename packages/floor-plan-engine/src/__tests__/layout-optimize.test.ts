@@ -39,7 +39,7 @@ describe('scoreFloorPlan', () => {
     const score = scoreFloorPlan(result.plan);
     expect(score.total).toBeGreaterThan(0);
     expect(score.total).toBeLessThanOrEqual(100);
-    expect(score.components).toHaveLength(5);
+    expect(score.components).toHaveLength(7);
     for (const component of score.components) {
       expect(component.score).toBeGreaterThanOrEqual(0);
       expect(component.score).toBeLessThanOrEqual(1);

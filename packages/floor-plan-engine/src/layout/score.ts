@@ -1,5 +1,7 @@
-import type { FloorPlan } from '../types';
-import { adjacencyScore } from './adjacency';
+import type { FloorPlan, PlacedRoom } from '../types';
+import { adjacencyScore, rectsAdjacent } from './adjacency';
+import { ROOM_PROFILES } from './requirements';
+import { STRATEGY_CONFIGS, type LayoutWeights } from './strategies';
 
 /**
  * Deterministic, explainable layout scoring (§17/§18/§45). Every component is
@@ -9,7 +11,7 @@ import { adjacencyScore } from './adjacency';
  * constraint layer (§14); this ranks the already-valid.
  */
 export interface LayoutScoreComponent {
-  code: 'roomArea' | 'shapeQuality' | 'adjacency' | 'efficiency' | 'daylight';
+  code: keyof LayoutWeights;
   /** 0..1 — normalized quality. */
   score: number;
   weight: number;
@@ -23,14 +25,8 @@ export interface LayoutScore {
   components: LayoutScoreComponent[];
 }
 
-/** Centralized weights (§44) — tunable without touching the heuristics. */
-export const LAYOUT_WEIGHTS = {
-  roomArea: 0.3,
-  shapeQuality: 0.2,
-  adjacency: 0.25,
-  efficiency: 0.15,
-  daylight: 0.1,
-} as const;
+/** Default weights = the BALANCED strategy (§28); callers pass others. */
+export const LAYOUT_WEIGHTS: LayoutWeights = STRATEGY_CONFIGS.BALANCED.weights;
 
 /** Aspect ratios beyond this read as corridors, not rooms (§37). */
 const ASPECT_COMFORT = 1.8;
@@ -41,7 +37,59 @@ const EFFICIENCY_IDEAL = 0.82;
 
 const clamp01 = (value: number): number => Math.min(1, Math.max(0, value));
 
-export function scoreFloorPlan(plan: FloorPlan): LayoutScore {
+/**
+ * Floor-affinity satisfaction (§21): the share of affinity-carrying rooms that
+ * landed on a matching floor (GROUND → floor 0, UPPER → any floor above it).
+ * Neutral 1 for single-floor houses — there is nothing to satisfy.
+ */
+function floorPreferenceScore(plan: FloorPlan): number {
+  if (plan.house.floorCount <= 1) return 1;
+  let matched = 0;
+  let applicable = 0;
+  for (const floor of plan.floors) {
+    for (const room of floor.rooms) {
+      const affinity = (ROOM_PROFILES[room.type] ?? ROOM_PROFILES.OTHER).floorAffinity;
+      if (affinity === 'ANY') continue;
+      applicable += 1;
+      if (affinity === 'GROUND' ? floor.index === 0 : floor.index > 0) matched += 1;
+    }
+  }
+  return applicable === 0 ? 1 : matched / applicable;
+}
+
+/**
+ * Zone grouping (§18): within each floor, rooms of the same semantic zone
+ * should cluster — measured as the adjacent share of same-zone room pairs.
+ * Neutral 1 when no floor has two rooms of one zone.
+ */
+function zoneGroupingScore(plan: FloorPlan): number {
+  let adjacentPairs = 0;
+  let pairs = 0;
+  for (const floor of plan.floors) {
+    const byZone = new Map<string, PlacedRoom[]>();
+    for (const room of floor.rooms) {
+      const zone = (ROOM_PROFILES[room.type] ?? ROOM_PROFILES.OTHER).zone;
+      byZone.set(zone, [...(byZone.get(zone) ?? []), room]);
+    }
+    for (const rooms of byZone.values()) {
+      for (let i = 0; i < rooms.length; i++) {
+        for (let j = i + 1; j < rooms.length; j++) {
+          const a = rooms[i];
+          const b = rooms[j];
+          if (!a || !b) continue;
+          pairs += 1;
+          if (rectsAdjacent(a.rect, b.rect)) adjacentPairs += 1;
+        }
+      }
+    }
+  }
+  return pairs === 0 ? 1 : adjacentPairs / pairs;
+}
+
+export function scoreFloorPlan(
+  plan: FloorPlan,
+  weights: LayoutWeights = LAYOUT_WEIGHTS,
+): LayoutScore {
   const rooms = plan.floors.flatMap((floor) => floor.rooms);
 
   // Room area fit: placed vs requested area, when the user declared one (§8).
@@ -99,7 +147,7 @@ export function scoreFloorPlan(plan: FloorPlan): LayoutScore {
     {
       code: 'roomArea',
       score: areaScore,
-      weight: LAYOUT_WEIGHTS.roomArea,
+      weight: weights.roomArea,
       explanation:
         requested.length === 0
           ? 'No requested room areas to compare against'
@@ -108,26 +156,39 @@ export function scoreFloorPlan(plan: FloorPlan): LayoutScore {
     {
       code: 'shapeQuality',
       score: shapeScore,
-      weight: LAYOUT_WEIGHTS.shapeQuality,
+      weight: weights.shapeQuality,
       explanation: `Aspect-ratio comfort across ${rooms.length} room(s) (penalty beyond ${ASPECT_COMFORT}:1)`,
     },
     {
       code: 'adjacency',
       score: adjScore,
-      weight: LAYOUT_WEIGHTS.adjacency,
+      weight: weights.adjacency,
       explanation: 'Type-preference adjacency satisfaction (kitchen–dining, bedroom–bathroom, …)',
     },
     {
       code: 'efficiency',
       score: efficiencyScore,
-      weight: LAYOUT_WEIGHTS.efficiency,
+      weight: weights.efficiency,
       explanation: `Room area is ${Math.round(utilisation * 100)}% of usable area (ideal ≈ ${Math.round(EFFICIENCY_IDEAL * 100)}%)`,
     },
     {
       code: 'daylight',
       score: daylightScore,
-      weight: LAYOUT_WEIGHTS.daylight,
+      weight: weights.daylight,
       explanation: 'Share of rooms with a window opportunity (daylight potential, not a simulation)',
+    },
+    {
+      code: 'floorPreference',
+      score: floorPreferenceScore(plan),
+      weight: weights.floorPreference,
+      explanation:
+        'Share of rooms on their profile-preferred floor (living/kitchen ground, bedrooms upper)',
+    },
+    {
+      code: 'zoneGrouping',
+      score: zoneGroupingScore(plan),
+      weight: weights.zoneGrouping,
+      explanation: 'Same-zone rooms clustering per floor (public/private/service separation)',
     },
   ];
 

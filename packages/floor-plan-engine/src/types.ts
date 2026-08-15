@@ -128,6 +128,12 @@ export const ENGINE_ISSUE_CODES = [
   'ROOM_ON_MISSING_FLOOR',
   /** Structurally unusable input (non-finite or non-positive dimensions). */
   'INVALID_INPUT',
+  /**
+   * The requirements cannot fit before any layout is attempted: minimum room
+   * areas exceed the usable area budget. `meta` names the floor and the areas;
+   * the optimizer attaches machine-readable adjustment suggestions.
+   */
+  'INFEASIBLE_REQUIREMENTS',
   /** Guard rail: an unexpected internal error was caught and reported instead of thrown. */
   'INTERNAL_ERROR',
 ] as const;
