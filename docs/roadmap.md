@@ -20,15 +20,16 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
    "not configured" panel (verified live). When the key lands: run the manual uz/ru/en
    prompt evaluation checklist (docs/testing.md).
 4. **Slice 3: 2D floor-plan engine** — DONE
-   Deterministic geometry engine (37 tests + 12k-config fuzz), persisted plans with
-   inputHash/engineVersion provenance, GET floor-plan endpoint (8 e2e tests), SVG viewer
-   (pan/zoom/floors/legend/dimension lines) live in the workspace 2D tab. All three API
-   outcomes (200/409/422) verified in the browser. Spec: docs/floor-plan-engine.md.
+   Deterministic geometry engine (37 unit/invariant tests + a committed 5,000-config seeded
+   fuzz), persisted plans with inputHash/engineVersion provenance, GET floor-plan endpoint
+   (8 e2e tests), SVG viewer (pan/zoom/floors/legend/dimension lines) live in the workspace
+   2D tab. All three API outcomes (200/409/422) verified in the browser. Spec:
+   docs/floor-plan-engine.md.
 5. **Slice 4: 3D visualization** — DONE
    Pure scene-builder (plan→3D: split walls with openings, glass, stairs, gable roof,
    land plate) + R3F viewer (demand frameloop, orbit, floor cutaway, async-chunked —
-   +3 kB route First Load). Live-verified: geometry AABBs match spec, unmount cleanup,
-   uz/ru/en. Workspace tabs now live: Umumiy | 2D | 3D.
+   +3 kB route First Load). scene-builder is unit-tested (AABBs/determinism); the R3F
+   layer is verified by browser QA. Workspace tabs now live: Umumiy | 2D | 3D.
 6. **Slice 5: Interior/exterior concepts** — BLOCKED on `ANTHROPIC_API_KEY`
    (image generation + asset storage; workspace tabs reserved and honestly disabled)
 7. **Slice 6: Estimate engine** — DONE
@@ -51,8 +52,19 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
       (pushed 8dc9a3b). Documented in docs/security.md.
     - Docker production images: DONE — api + web multi-stage Dockerfiles +
       docker-compose.prod.yml, both smoke-tested (boot + serve). docs/deployment.md.
-    - Remaining: performance + accessibility QA passes; CI activation (needs gh token
-      `workflow` scope — workflow lives in .github/workflows-pending/).
+    - Accessibility & UX: independent a11y/UX audit done; fixes verified live — AA contrast
+      (ink-faint, accent→accent-strong buttons/links, success), skip links on every shell,
+      roving-tabindex tablist, dialog focus-return, prefers-reduced-motion, color-scheme,
+      mobile hamburger nav + locale switcher, aria-required, distinct roadmap-tab names.
+      Deferred (documented): `uz` long-form dates fall back to numeric because Chrome/Node
+      ship no `uz` CLDR month/relative-time data — relative time itself is fixed via a
+      catalog helper (see relative-time.ts); configurator step-level autosave; /admin index polish.
+    - Web unit tests: DONE — vitest suite (33 tests): safe-next-path open-redirect vectors,
+      relative-time bucketing + uz/ru/en catalog rendering, format helpers, i18n parity +
+      referenced-key guard, scene-builder AABB/determinism invariants.
+    - Performance: hot-path indexes added; two bounded notes documented in docs/architecture.md
+      (mutating floor-plan GET, PDF triple-fetch). CI activation still needs the gh token
+      `workflow` scope (workflow lives in .github/workflows-pending/).
 
 ## Deferred decisions
 

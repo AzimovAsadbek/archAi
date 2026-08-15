@@ -115,8 +115,10 @@ plus meta. Inputs are assumed schema-valid (ranges) but the engine re-checks fea
 - Extra issue codes: `ROOM_ON_MISSING_FLOOR`, `INVALID_INPUT`, `INTERNAL_ERROR`
   (top-level catch — the engine never throws). Duplicate room ids get `-2`/`-3` suffixes.
 - Stair direction: floor 0 `up`, top `down`, middle `both`.
-- Validated by 37 unit/invariant tests + a 12k-config fuzz (0 throws, 0 invalid
-  geometry, 0 non-determinism).
+- Validated by 37 unit/invariant tests plus a committed, seeded **5,000-config fuzz**
+  (`src/__tests__/fuzz.test.ts`; ~625 deep-validated against every invariant, the rest
+  shape-checked): 0 throws, 0 invalid geometry, both accept/reject branches exercised, and
+  determinism verified on a 250-config sample.
 
 ## Consumers (implemented with this slice)
 
