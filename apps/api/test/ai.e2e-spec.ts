@@ -71,6 +71,7 @@ const proposal = (overrides: Partial<ProjectProposal> = {}): ProjectProposal => 
     { type: 'BATHROOM', floor: 0, widthM: 2, lengthM: 2.5, label: null },
   ],
   features: { garage: true, terrace: null, balcony: null, pool: false, garden: null },
+  layoutStrategy: 'FAMILY',
   detectedLanguage: 'uz',
   assumptions: ['8 sotix 800 m² deb hisoblandi'],
   unmappable: ['Byudjet loyiha sxemasida saqlanmaydi'],

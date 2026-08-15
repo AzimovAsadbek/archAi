@@ -1,4 +1,4 @@
-import { HOUSE_STYLES, LIMITS, ROOM_TYPES } from '@archai/shared';
+import { HOUSE_STYLES, LAYOUT_STRATEGIES, LIMITS, ROOM_TYPES } from '@archai/shared';
 import { z } from 'zod';
 
 /**
@@ -155,6 +155,12 @@ export const projectProposalSchema = z.object({
     .max(PROPOSAL_LIMITS.maxRooms, 'too_many_rooms')
     .describe(`Requested rooms, at most ${PROPOSAL_LIMITS.maxRooms}. Empty when none are stated.`),
   features: featuresProposalSchema,
+  layoutStrategy: z
+    .enum(LAYOUT_STRATEGIES)
+    .nullable()
+    .describe(
+      'Layout policy the request clearly implies (family home → FAMILY, open plan → OPEN, privacy → PRIVACY, compact/economical → COMPACT), or null when none is implied. Never guess.',
+    ),
   detectedLanguage: z.enum(DETECTED_LANGUAGES),
   assumptions: z
     .array(noteSchema)
@@ -178,6 +184,7 @@ export function emptyProposal(detectedLanguage: DetectedLanguage = 'other'): Pro
     house: null,
     rooms: [],
     features: { garage: null, terrace: null, balcony: null, pool: null, garden: null },
+    layoutStrategy: null,
     detectedLanguage,
     assumptions: [],
     unmappable: [],

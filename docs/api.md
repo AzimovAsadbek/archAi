@@ -40,7 +40,7 @@ Base URL: `http://localhost:3001/api/v1`. JSON only. Swagger UI at `/docs` (non-
 | GET | `/projects` | query `listProjectsQuerySchema` | 200 `Paginated<ProjectListItemDto>` — only own, non-deleted; `search` matches name (insensitive); sorted by `updatedAt` desc. |
 | POST | `/projects` | `createProjectSchema` | 201 `ProjectDto` (status DRAFT) |
 | GET | `/projects/:id` | — | 200 `ProjectDto` (includes rooms + fresh `validation`) |
-| PATCH | `/projects/:id` | `updateProjectSchema` | 200 `ProjectDto`. Provided blocks replace stored blocks (rooms wholesale, in given order → `sortOrder`). Reject with 422 if domain validation yields errors. After update: status DRAFT→CONFIGURED when `isConfigurationComplete`; CONFIGURED→DRAFT when it stops being complete. ARCHIVED projects reject updates (409 `PROJECT_ARCHIVED`). |
+| PATCH | `/projects/:id` | `updateProjectSchema` | 200 `ProjectDto`. Provided blocks replace stored blocks (rooms wholesale, in given order → `sortOrder`). `layoutStrategy` (BALANCED\|COMPACT\|OPEN\|PRIVACY\|FAMILY, null = BALANCED default) selects the layout-optimization policy — it is part of the floor-plan cache key, so changing it regenerates the plan. Reject with 422 if domain validation yields errors. After update: status DRAFT→CONFIGURED when `isConfigurationComplete`; CONFIGURED→DRAFT when it stops being complete. ARCHIVED projects reject updates (409 `PROJECT_ARCHIVED`). |
 | DELETE | `/projects/:id` | — | 204 (soft delete: sets `deletedAt`; excluded everywhere) |
 | POST | `/projects/:id/archive` | — | 200 `ProjectDto` (status ARCHIVED) |
 | POST | `/projects/:id/unarchive` | — | 200 `ProjectDto` (status recomputed DRAFT/CONFIGURED) |

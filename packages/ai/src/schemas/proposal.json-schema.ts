@@ -1,4 +1,4 @@
-import { HOUSE_STYLES, LIMITS, ROOM_TYPES } from '@archai/shared';
+import { HOUSE_STYLES, LAYOUT_STRATEGIES, LIMITS, ROOM_TYPES } from '@archai/shared';
 import { DETECTED_LANGUAGES, PROPOSAL_LIMITS } from './proposal.schema';
 
 /**
@@ -112,6 +112,7 @@ export const PROPOSAL_JSON_SCHEMA: JsonSchema = {
     'house',
     'rooms',
     'features',
+    'layoutStrategy',
     'detectedLanguage',
     'assumptions',
     'unmappable',
@@ -145,6 +146,11 @@ export const PROPOSAL_JSON_SCHEMA: JsonSchema = {
         pool: featureFlag,
         garden: featureFlag,
       },
+    },
+    layoutStrategy: {
+      type: ['string', 'null'],
+      enum: [...LAYOUT_STRATEGIES, null],
+      description: 'Layout policy the request clearly implies, or null. Never guess.',
     },
     detectedLanguage: { type: 'string', enum: [...DETECTED_LANGUAGES] },
     assumptions: {

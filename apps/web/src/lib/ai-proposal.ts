@@ -154,6 +154,10 @@ export function proposalToUpdateInput(
   const features = proposalFeaturesPatch(proposal.features);
   if (Object.keys(features).length > 0) patch.features = features;
 
+  // AI-interpreted layout policy: applied only when the model stated one — an
+  // absent suggestion never clears a strategy the user may set elsewhere.
+  if (proposal.layoutStrategy !== null) patch.layoutStrategy = proposal.layoutStrategy;
+
   return patch;
 }
 

@@ -121,6 +121,25 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
     mapping (ArchitectureIntent → requirements), circulation-graph scoring,
     priority-driven optional rooms.
 
+16. **Intelligent layout engine (increment 3: AI intent → strategy)** — DONE
+    The runtime AI now extracts layout intent: parse-project prompt v2 maps
+    bounded qualitative phrases ("oilaviy uy" → FAMILY, "ochiq reja" → OPEN,
+    "compact" → COMPACT, privacy wording → PRIVACY) into a schema-constrained
+    `layoutStrategy` (null when nothing is implied — never guessed, never used
+    to invent sizes). The union lives in `@archai/shared`; the sanitizer
+    re-validates it; applying a proposal persists it on the project
+    (`layout_strategy` column + migration); floor-plan generation resolves
+    explicit > BALANCED and the strategy is part of the plan cache key, so a
+    strategy change regenerates deterministically (e2e-proven round trip:
+    PATCH → DTO reports strategy → hash changes → invalid 400 → null resets).
+    The AI review panel shows the interpreted strategy card (uz/ru/en).
+    Live-verified on real Gemini: "6 sotix yerga 2 qavatli oilaviy uy…" →
+    layoutStrategy FAMILY (prompt v2, schema-valid); the COMPACT and
+    no-preference cases hit the exhausted free-tier daily quota
+    (AI_RATE_LIMITED surfaced cleanly) and remain schema/pipeline-tested only —
+    re-verify live on a fresh quota day. Deferred next: manual strategy
+    selector in the configurator, circulation-graph scoring.
+
 ## Deferred decisions
 
 - Worker/queue infra: not introduced yet — no long-running jobs until slice 3+.

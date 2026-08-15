@@ -1,4 +1,4 @@
-import { type HouseStyle, type RoomType } from '../constants';
+import { type HouseStyle, type LayoutStrategy, type RoomType } from '../constants';
 import { type DomainValidationResult } from '../domain/validate-project';
 
 /**
@@ -44,6 +44,8 @@ export interface ProjectProposal {
   house: AiProposalHouse | null;
   rooms: AiProposalRoom[];
   features: AiProposalFeatures;
+  /** AI-suggested layout policy, or null when the request implies none. */
+  layoutStrategy: LayoutStrategy | null;
   detectedLanguage: 'uz' | 'ru' | 'en' | 'other';
   /** Model-stated guesses in the user's language; server-added notes are prefixed "[server] ". */
   assumptions: string[];

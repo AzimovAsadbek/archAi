@@ -1,4 +1,4 @@
-import { type ProjectStatus, type UserRole, type HouseStyle } from '../constants';
+import { type LayoutStrategy, type ProjectStatus, type UserRole, type HouseStyle } from '../constants';
 import {
   type FeaturesConfig,
   type HouseConfig,
@@ -32,6 +32,8 @@ export interface ProjectDto {
   house: HouseConfig | null;
   features: FeaturesConfig;
   rooms: RoomDto[];
+  /** Layout optimization policy; null means the BALANCED default. */
+  layoutStrategy: LayoutStrategy | null;
   validation: DomainValidationResult;
   createdAt: string;
   updatedAt: string;

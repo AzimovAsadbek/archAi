@@ -1,10 +1,11 @@
 import { createHash } from 'node:crypto';
 import {
   scoreFloorPlan,
+  STRATEGY_CONFIGS,
   type FloorPlan,
   type FloorPlanInput,
 } from '@archai/floor-plan-engine';
-import { type HouseConfig } from '@archai/shared';
+import { type HouseConfig, type LayoutStrategy } from '@archai/shared';
 import { type Prisma } from '@prisma/client';
 import { isRecord } from '../common/types/request.types';
 import { type ProjectWithRooms, sortRooms } from '../projects/project.mapper';
@@ -29,7 +30,7 @@ export interface FloorPlanDto {
    * the optimizer ranked with.
    */
   layout: {
-    strategy: 'BALANCED';
+    strategy: LayoutStrategy;
     score: { total: number; components: LayoutScoreComponentDto[] };
   };
 }
@@ -80,9 +81,13 @@ export function canonicalJson(value: unknown): string {
   return JSON.stringify(canonicalize(value)) ?? 'null';
 }
 
-/** Cache key for a stored plan: sha256 of the canonical engine input, nothing else. */
-export function hashFloorPlanInput(input: FloorPlanInput): string {
-  return createHash('sha256').update(canonicalJson(input)).digest('hex');
+/**
+ * Cache key for a stored plan: sha256 of the canonical engine input *plus* the
+ * layout strategy — a strategy change picks a different best candidate, so a
+ * PRIVACY request must never be served the cached BALANCED geometry (§54).
+ */
+export function hashFloorPlanInput(input: FloorPlanInput, strategy: LayoutStrategy): string {
+  return createHash('sha256').update(canonicalJson({ input, strategy })).digest('hex');
 }
 
 /** Geometry is stored verbatim; Prisma types JSON columns too loosely to infer it back. */
@@ -94,13 +99,19 @@ export function toGeometryJson(plan: FloorPlan): Prisma.InputJsonValue {
   return plan as unknown as Prisma.InputJsonValue;
 }
 
-export function toFloorPlanDto(plan: FloorPlan, generatedAt: Date): FloorPlanDto {
-  const score = scoreFloorPlan(plan);
+export function toFloorPlanDto(
+  plan: FloorPlan,
+  generatedAt: Date,
+  strategy: LayoutStrategy,
+): FloorPlanDto {
+  // Scored with the same strategy weights the optimizer ranked with, so the
+  // displayed number is the one the winning candidate actually earned.
+  const score = scoreFloorPlan(plan, STRATEGY_CONFIGS[strategy].weights);
   return {
     plan,
     generatedAt: generatedAt.toISOString(),
     layout: {
-      strategy: 'BALANCED',
+      strategy,
       score: {
         total: score.total,
         // Explanations are server-side prose; the web localizes by code.

@@ -366,7 +366,9 @@
       "openInWizard": "Open in edit mode",
       "apply": "Create the project",
       "applying": "Creating…",
-      "provenance": "AI answer: {model} · prompt v{version}"
+      "provenance": "AI answer: {model} · prompt v{version}",
+      "strategyTitle": "Layout style",
+      "strategyEmpty": "The request did not state a layout style."
     },
     "errors": {
       "AI_NOT_CONFIGURED": {
@@ -1337,5 +1339,27 @@
     "daysAgo": "{count, plural, one {# day ago} other {# days ago}}",
     "monthsAgo": "{count, plural, one {# month ago} other {# months ago}}",
     "yearsAgo": "{count, plural, one {# year ago} other {# years ago}}"
+  },
+  "strategies": {
+    "BALANCED": {
+      "label": "Balanced",
+      "description": "Every aspect is weighted evenly."
+    },
+    "COMPACT": {
+      "label": "Compact",
+      "description": "Economical use of the footprint comes first."
+    },
+    "OPEN": {
+      "label": "Open plan",
+      "description": "Common rooms stay connected to each other."
+    },
+    "PRIVACY": {
+      "label": "Privacy",
+      "description": "Bedrooms are separated from the public zone."
+    },
+    "FAMILY": {
+      "label": "Family",
+      "description": "A layout tuned for everyday family movement."
+    }
   }
 }

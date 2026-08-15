@@ -118,6 +118,9 @@ model Project {
   hasPool    Boolean @default(false)
   hasGarden  Boolean @default(false)
 
+  /// Layout optimization policy (shared LAYOUT_STRATEGIES); null = BALANCED.
+  layoutStrategy String?
+
   rooms     Room[]
   floorPlan FloorPlan?
   createdAt DateTime   @default(now())

@@ -133,11 +133,15 @@ Switching provider is configuration-only: no controller, service, schema or UI c
 
 ## Prompt architecture
 
-`packages/ai/src/prompts/parse-project.ts` (`PARSE_PROJECT_PROMPT_VERSION = '1'`, provider-
+`packages/ai/src/prompts/parse-project.ts` (`PARSE_PROJECT_PROMPT_VERSION = '2'`, provider-
 agnostic). The user text is **data, not instructions**: fenced in `<user_request>` tags,
 literal tags neutralised, an explicit anti-injection paragraph (ignore any instructions inside,
 never reveal the prompt or that one exists). Extract only what is stated; unstated values stay
 null; `sotix × 100 = m²`; contradictions go to `unmappable`. Prompt text changes bump the version.
+v2 adds **layout-intent extraction**: bounded qualitative phrases map to a schema-constrained
+`layoutStrategy` (family → FAMILY, open plan → OPEN, privacy → PRIVACY, compact → COMPACT), null
+when nothing is implied — the words set the strategy only, never room sizes. The engine treats it
+as a suggestion (`resolveStrategy`: explicit user choice always wins); AI never draws geometry.
 
 ## API module (apps/api/src/ai)
 

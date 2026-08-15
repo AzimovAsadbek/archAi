@@ -17,6 +17,7 @@ const fullProposal = (): ProjectProposal => ({
     { type: 'BEDROOM', floor: 1, widthM: 4, lengthM: 4.5, label: null },
   ],
   features: { garage: true, terrace: null, balcony: null, pool: false, garden: null },
+  layoutStrategy: 'FAMILY',
   detectedLanguage: 'uz',
   assumptions: ['8 sotix 800 m² deb hisoblandi'],
   unmappable: ['Byudjet 500 mln so‘m — loyiha sxemasida saqlanmaydi'],

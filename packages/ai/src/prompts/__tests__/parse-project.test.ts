@@ -6,8 +6,15 @@ import {
 } from '../parse-project';
 
 describe('parse-project prompt', () => {
-  it('is version 1', () => {
-    expect(PARSE_PROJECT_PROMPT_VERSION).toBe('1');
+  it('is version 2', () => {
+    expect(PARSE_PROJECT_PROMPT_VERSION).toBe('2');
+  });
+
+  it('bounds the layout-strategy interpretation (§38) and forbids guessing', () => {
+    expect(PARSE_PROJECT_SYSTEM_PROMPT).toContain('"layoutStrategy"');
+    expect(PARSE_PROJECT_SYSTEM_PROMPT).toContain('FAMILY');
+    expect(PARSE_PROJECT_SYSTEM_PROMPT).toContain('never invent room sizes from them');
+    expect(PARSE_PROJECT_SYSTEM_PROMPT).toContain('"layoutStrategy" is null');
   });
 
   it('states the anti-injection rules', () => {

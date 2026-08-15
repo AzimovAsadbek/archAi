@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { HOUSE_STYLES, LIMITS, PROJECT_STATUSES, ROOM_TYPES } from '../constants';
+import { HOUSE_STYLES, LAYOUT_STRATEGIES, LIMITS, PROJECT_STATUSES, ROOM_TYPES } from '../constants';
 
 // ── Configuration blocks ──────────────────────────────────────────────────
 
@@ -78,6 +78,8 @@ export const updateProjectSchema = z.object({
   house: houseConfigSchema.nullish(),
   rooms: z.array(roomConfigSchema).max(LIMITS.rooms.maxPerProject, 'too_many_rooms').optional(),
   features: featuresConfigSchema.partial().optional(),
+  /** Layout optimization policy; null clears back to the BALANCED default. */
+  layoutStrategy: z.enum(LAYOUT_STRATEGIES).nullish(),
 });
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
 

@@ -267,6 +267,10 @@ export class ProjectsService {
       data.hasPool = features.pool ?? false;
       data.hasGarden = features.garden ?? false;
     }
+    if (input.layoutStrategy !== undefined) {
+      // Validated by the shared enum; null clears back to the BALANCED default.
+      data.layoutStrategy = input.layoutStrategy ?? null;
+    }
 
     return data;
   }

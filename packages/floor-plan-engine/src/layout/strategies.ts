@@ -1,13 +1,15 @@
+import { LAYOUT_STRATEGIES, type LayoutStrategy } from '@archai/shared';
+
 /**
  * Layout strategies (§27–§29): optimization *policies*, not separate engines.
  * A strategy only re-weights the shared scoring components — generation and
  * validation are identical for every strategy, so a strategy can never make an
  * invalid layout valid (§32). Selection precedence (§30): explicit user choice
- * > AI-suggested > BALANCED.
+ * > AI-suggested > BALANCED. The name union lives in `@archai/shared` — the AI
+ * proposes it and the web displays it — and is re-exported here unchanged.
  */
 
-export const LAYOUT_STRATEGIES = ['BALANCED', 'COMPACT', 'OPEN', 'PRIVACY', 'FAMILY'] as const;
-export type LayoutStrategy = (typeof LAYOUT_STRATEGIES)[number];
+export { LAYOUT_STRATEGIES, type LayoutStrategy };
 
 export interface LayoutWeights {
   roomArea: number;

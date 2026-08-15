@@ -47,6 +47,14 @@ export const HOUSE_STYLES = [
 ] as const;
 export type HouseStyle = (typeof HOUSE_STYLES)[number];
 
+/**
+ * Layout optimization policies (docs/decisions/adr-008). Declared here — the
+ * contract layer — because the floor-plan engine optimizes with them, the AI
+ * proposes them and the web displays them. The engine re-exports this union.
+ */
+export const LAYOUT_STRATEGIES = ['BALANCED', 'COMPACT', 'OPEN', 'PRIVACY', 'FAMILY'] as const;
+export type LayoutStrategy = (typeof LAYOUT_STRATEGIES)[number];
+
 export const ROOM_TYPES = [
   'BEDROOM',
   'LIVING_ROOM',

@@ -4,7 +4,11 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { FLOOR_PLAN_ENGINE_VERSION, generateBestFloorPlan } from '@archai/floor-plan-engine';
+import {
+  FLOOR_PLAN_ENGINE_VERSION,
+  generateBestFloorPlan,
+  resolveStrategy,
+} from '@archai/floor-plan-engine';
 import { isConfigurationComplete } from '@archai/shared';
 import { ERROR_CODES } from '../common/error-codes';
 import { PrismaService } from '../prisma/prisma.service';
@@ -40,7 +44,10 @@ export class FloorPlansService {
     }
 
     const input = toFloorPlanInput(project, config.house);
-    const inputHash = hashFloorPlanInput(input);
+    // Explicit user choice > (future AI suggestion) > BALANCED; the strategy is
+    // part of the cache key — changing it regenerates the plan (§54).
+    const strategy = resolveStrategy(project.layoutStrategy);
+    const inputHash = hashFloorPlanInput(input, strategy);
 
     const stored = await this.prisma.floorPlan.findUnique({ where: { projectId: project.id } });
     if (
@@ -48,13 +55,13 @@ export class FloorPlansService {
       stored.inputHash === inputHash &&
       stored.engineVersion === FLOOR_PLAN_ENGINE_VERSION
     ) {
-      return toFloorPlanDto(toFloorPlan(stored.geometry), stored.generatedAt);
+      return toFloorPlanDto(toFloorPlan(stored.geometry), stored.generatedAt, strategy);
     }
 
     // Candidate-based layout optimization (seeded => still fully deterministic
-    // per input): several room orderings are generated, scored on adjacency,
-    // area fit, shape, efficiency and daylight, and the best valid plan wins.
-    const result = generateBestFloorPlan(input, { seed: 1, strategy: 'BALANCED' });
+    // per input + strategy): several room orderings are generated, scored with
+    // the strategy's weights, and the best valid plan wins.
+    const result = generateBestFloorPlan(input, { seed: 1, strategy });
     if (!result.ok) {
       // Failures are never persisted, and geometry from an older configuration
       // must not survive it — the plan no longer describes this project.
@@ -87,7 +94,7 @@ export class FloorPlansService {
       },
     });
 
-    return toFloorPlanDto(result.plan, row.generatedAt);
+    return toFloorPlanDto(result.plan, row.generatedAt, strategy);
   }
 
   /** Owner-scoped lookup; anything else (missing or foreign) is a 404. */

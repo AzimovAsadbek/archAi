@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { PARSE_PROJECT_PROMPT_VERSION } from '../../prompts/parse-project';
 import { emptyProposal } from '../../schemas/proposal.schema';
 import { AI_ERROR_CODES, type ProjectContext } from '../../types';
 import { ChatArchitectureAIProvider, type ChatOutcome, type ChatTurn } from '../chat.provider';
@@ -42,7 +43,7 @@ describe('ChatArchitectureAIProvider (shared pipeline)', () => {
     expect(parse.ok).toBe(true);
     if (parse.ok) {
       expect(parse.provenance.provider).toBe('fake');
-      expect(parse.provenance.promptVersion).toBe('1');
+      expect(parse.provenance.promptVersion).toBe(PARSE_PROJECT_PROMPT_VERSION);
       expect(parse.provenance.inputTokens).toBe(10);
       expect(parse.provenance.outputTokens).toBe(20);
     }

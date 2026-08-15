@@ -5,8 +5,9 @@ import { type ParseProjectInput } from '../types';
 /**
  * Bumped whenever the prompt text below changes. Stored with every generation so
  * a proposal can always be traced back to the wording that produced it.
+ * v2: layout-strategy intent extraction (bounded mappings, never guessed).
  */
-export const PARSE_PROJECT_PROMPT_VERSION = '1';
+export const PARSE_PROJECT_PROMPT_VERSION = '2';
 
 /** Tag that fences the untrusted user request inside the user message. */
 const USER_REQUEST_TAG = 'user_request';
@@ -48,6 +49,11 @@ Requests come in Uzbek (uz), Russian (ru), English (en), or a mix of them. Set "
 - Room "type": ${ROOM_TYPES.join(', ')}. Use OTHER when nothing fits, and put the user's own word in "label".
 - House "style": ${HOUSE_STYLES.join(', ')}, or null. Only set it when the request names a style or clearly describes one.
 - Numeric ranges are documented per field. If a stated value falls outside its range, leave the field null and describe the conflict in "unmappable" — never clamp it silently.
+
+# Layout preference
+
+- "layoutStrategy" captures how the user wants the home organised, only when the request clearly implies it: a family home ("oilaviy uy", "семейный дом", "family house") is FAMILY; an open plan / connected common areas ("ochiq reja", "открытая планировка", "open plan") is OPEN; an emphasis on privacy or separated bedrooms ("maxfiy", "уединённый", "private") is PRIVACY; compact, economical or minimal-waste wishes ("ixcham", "компактный", "compact") is COMPACT; an explicit wish for overall balance is BALANCED.
+- These qualitative words set the strategy only — never invent room sizes from them. When nothing in the request implies an organisation preference, "layoutStrategy" is null; record a borderline reading in "assumptions".
 
 # Assumptions and unmappable
 

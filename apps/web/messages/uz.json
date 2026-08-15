@@ -366,7 +366,9 @@
       "openInWizard": "Tahrirlash rejimida ochish",
       "apply": "Loyihani yaratish",
       "applying": "Yaratilmoqda…",
-      "provenance": "AI javobi: {model} · prompt v{version}"
+      "provenance": "AI javobi: {model} · prompt v{version}",
+      "strategyTitle": "Reja uslubi",
+      "strategyEmpty": "So'rovda reja uslubi aytilmagan."
     },
     "errors": {
       "AI_NOT_CONFIGURED": {
@@ -1337,5 +1339,27 @@
     "daysAgo": "{count} kun oldin",
     "monthsAgo": "{count} oy oldin",
     "yearsAgo": "{count} yil oldin"
+  },
+  "strategies": {
+    "BALANCED": {
+      "label": "Muvozanatli",
+      "description": "Barcha jihatlar teng hisobga olinadi."
+    },
+    "COMPACT": {
+      "label": "Ixcham",
+      "description": "Maydondan tejamkor foydalanish birinchi o'rinda."
+    },
+    "OPEN": {
+      "label": "Ochiq reja",
+      "description": "Umumiy xonalar o'zaro bog'langan bo'ladi."
+    },
+    "PRIVACY": {
+      "label": "Maxfiylik",
+      "description": "Yotoqxonalar umumiy zonadan ajratiladi."
+    },
+    "FAMILY": {
+      "label": "Oilaviy",
+      "description": "Oilaning kundalik harakati uchun qulay joylashuv."
+    }
   }
 }

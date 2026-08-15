@@ -270,6 +270,42 @@ describe('Floor plan (e2e)', () => {
     expect(stored?.generatedAt.toISOString()).toBe(res.body.generatedAt);
   });
 
+  it('persists a layout strategy and regenerates the plan under it (§54)', async () => {
+    const before = await prisma.floorPlan.findUnique({ where: { projectId } });
+    expect(before).not.toBeNull();
+
+    const patched = await request(server)
+      .patch(`${API}/projects/${projectId}`)
+      .set('Cookie', asOwner())
+      .send({ layoutStrategy: 'PRIVACY' })
+      .expect(200);
+    expect(patched.body.layoutStrategy).toBe('PRIVACY');
+
+    const res = await request(server).get(planUrl(projectId)).set('Cookie', asOwner()).expect(200);
+    // The DTO reports the active strategy and its score components.
+    expect(res.body.layout.strategy).toBe('PRIVACY');
+    expect(res.body.layout.score.total).toBeGreaterThan(0);
+    // The strategy is part of the cache key — the stored row was re-hashed.
+    const after = await prisma.floorPlan.findUnique({ where: { projectId } });
+    expect(after?.inputHash).not.toBe(before?.inputHash);
+
+    // An invalid strategy value is rejected by the shared schema.
+    await request(server)
+      .patch(`${API}/projects/${projectId}`)
+      .set('Cookie', asOwner())
+      .send({ layoutStrategy: 'FENG_SHUI' })
+      .expect(400);
+
+    // Null clears back to the BALANCED default.
+    await request(server)
+      .patch(`${API}/projects/${projectId}`)
+      .set('Cookie', asOwner())
+      .send({ layoutStrategy: null })
+      .expect(200);
+    const reset = await request(server).get(planUrl(projectId)).set('Cookie', asOwner()).expect(200);
+    expect(reset.body.layout.strategy).toBe('BALANCED');
+  });
+
   it('returns 404 for a project id containing a NUL byte', async () => {
     // A control byte in the id can crash the Prisma driver; IdParamPipe turns it
     // into an ordinary "not found" before the request reaches the service.

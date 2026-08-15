@@ -5,6 +5,7 @@ import {
   featuresConfigSchema,
   houseConfigSchema,
   landConfigSchema,
+  LAYOUT_STRATEGIES,
   LIMITS,
   type ProjectConfiguration,
   roomConfigSchema,
@@ -79,6 +80,14 @@ export function sanitizeProposal(raw: ProjectProposal): SanitizedProposal {
   const rooms = sanitizeRooms(raw.rooms, notes);
   const features = sanitizeFeatures(raw.features, notes);
 
+  // Defense in depth: the runtime schema already constrains the enum, but a
+  // fake/test provider could hand anything through the DI token.
+  let layoutStrategy = raw.layoutStrategy ?? null;
+  if (layoutStrategy !== null && !(LAYOUT_STRATEGIES as readonly string[]).includes(layoutStrategy)) {
+    notes.push(`${SERVER_NOTE_PREFIX} the proposed layout strategy was not recognised and was dropped`);
+    layoutStrategy = null;
+  }
+
   const proposal: ProjectProposal = {
     name: name ?? null,
     description: description ?? null,
@@ -97,6 +106,7 @@ export function sanitizeProposal(raw: ProjectProposal): SanitizedProposal {
           },
     rooms,
     features: features.proposal,
+    layoutStrategy,
     detectedLanguage: raw.detectedLanguage,
     assumptions: [...raw.assumptions, ...notes],
     unmappable: raw.unmappable,

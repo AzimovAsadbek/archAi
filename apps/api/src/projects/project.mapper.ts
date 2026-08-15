@@ -2,6 +2,8 @@ import {
   type FeaturesConfig,
   type HouseConfig,
   type LandConfig,
+  LAYOUT_STRATEGIES,
+  type LayoutStrategy,
   type ProjectConfiguration,
   type ProjectDto,
   type ProjectListItemDto,
@@ -69,6 +71,13 @@ export function toRoomDtos(rooms: Room[]): RoomDto[] {
   return sortRooms(rooms).map((room) => ({ id: room.id, ...toRoomConfig(room) }));
 }
 
+/** DB string → shared union; an unknown stored value degrades to null (BALANCED). */
+export function toLayoutStrategy(value: string | null): LayoutStrategy | null {
+  return (LAYOUT_STRATEGIES as readonly string[]).includes(value ?? '')
+    ? (value as LayoutStrategy)
+    : null;
+}
+
 export function toProjectConfiguration(project: ProjectWithRooms): ProjectConfiguration {
   return {
     land: toLandConfig(project),
@@ -88,6 +97,7 @@ export function toProjectDto(project: ProjectWithRooms): ProjectDto {
     house: toHouseConfig(project),
     features: toFeaturesConfig(project),
     rooms: toRoomDtos(project.rooms),
+    layoutStrategy: toLayoutStrategy(project.layoutStrategy),
     validation: validateProjectConfiguration(toProjectConfiguration(project)),
     createdAt: project.createdAt.toISOString(),
     updatedAt: project.updatedAt.toISOString(),

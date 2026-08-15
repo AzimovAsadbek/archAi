@@ -39,6 +39,7 @@ export function ProposalSummary({ proposal }: { proposal: ProjectProposal }) {
   const tRoomTypes = useTranslations('roomTypes');
   const tStyles = useTranslations('styles');
   const tFeatures = useTranslations('features');
+  const tStrategies = useTranslations('strategies');
 
   const { land, house, rooms } = proposal;
   const notSet = t('notSet');
@@ -182,6 +183,21 @@ export function ProposalSummary({ proposal }: { proposal: ProjectProposal }) {
               <p className="text-sm font-bold text-ink">{tStyles(`${house.style}.label`)}</p>
               <p className="mt-1 text-xs leading-relaxed text-ink-soft">
                 {tStyles(`${house.style}.description`)}
+              </p>
+            </div>
+          )}
+        </SummaryCard>
+
+        <SummaryCard title={t('strategyTitle')}>
+          {proposal.layoutStrategy === null ? (
+            <p className="text-sm text-ink-faint">{t('strategyEmpty')}</p>
+          ) : (
+            <div>
+              <p className="text-sm font-bold text-ink">
+                {tStrategies(`${proposal.layoutStrategy}.label`)}
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-ink-soft">
+                {tStrategies(`${proposal.layoutStrategy}.description`)}
               </p>
             </div>
           )}
