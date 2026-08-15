@@ -65,3 +65,42 @@ export interface AiParseProjectResponse {
   validation: DomainValidationResult;
   provenance: AiProvenance;
 }
+
+// ── Assistant: suggestions + Q&A over an existing project ───────────────────
+// Transport mirror of the runtime schemas in packages/ai (asserted equal at
+// compile time by @archai/ai's shared-contract check). Web renders these; it
+// never imports @archai/ai, which bundles a provider SDK.
+
+export type AiSuggestionCategory = 'ROOM' | 'STYLE' | 'FEATURE' | 'LAYOUT' | 'GENERAL';
+export type AiSuggestionPriority = 'HIGH' | 'MEDIUM' | 'LOW';
+
+/** One advisory suggestion the user reads and applies by hand — never auto-applied. */
+export interface AiSuggestion {
+  category: AiSuggestionCategory;
+  title: string;
+  detail: string;
+  priority: AiSuggestionPriority;
+}
+
+export interface AiSuggestionsOutput {
+  detectedLanguage: 'uz' | 'ru' | 'en' | 'other';
+  summary: string | null;
+  suggestions: AiSuggestion[];
+}
+
+export interface AiSuggestResponse {
+  suggestions: AiSuggestionsOutput;
+  provenance: AiProvenance;
+}
+
+/** `addressable` is false for off-topic / out-of-scope / injection questions. */
+export interface AiAnswerOutput {
+  detectedLanguage: 'uz' | 'ru' | 'en' | 'other';
+  addressable: boolean;
+  answer: string;
+}
+
+export interface AiAnswerResponse {
+  answer: AiAnswerOutput;
+  provenance: AiProvenance;
+}

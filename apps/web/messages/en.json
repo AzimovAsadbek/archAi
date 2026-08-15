@@ -596,7 +596,8 @@
       "view3d": "3D",
       "interior": "Interior",
       "exterior": "Exterior",
-      "estimate": "Estimate"
+      "estimate": "Estimate",
+      "assistant": "Assistant"
     },
     "stats": {
       "land": "Land area",
@@ -627,7 +628,39 @@
       "dimsValue": "{width} × {length} m",
       "areaValue": "{area} m²"
     },
-    "tabRoadmap": "{tab} — coming in a later stage"
+    "tabRoadmap": "{tab} — coming in a later stage",
+    "assistant": {
+      "suggest": {
+        "title": "AI suggestions",
+        "description": "Advice to improve your project. These are recommendations — you apply changes yourself.",
+        "focusLabel": "What to focus on? (optional)",
+        "focusPlaceholder": "e.g. the kitchen or lighting",
+        "action": "Get suggestions",
+        "idle": "Press the button to get advice for your project.",
+        "none": "The project looks complete — no further suggestions for now."
+      },
+      "ask": {
+        "title": "Ask a question",
+        "description": "Ask a question about your project.",
+        "label": "Your question",
+        "placeholder": "e.g. is the house too big for this plot?",
+        "action": "Ask",
+        "outOfScope": "This question is outside the project's scope."
+      },
+      "categories": {
+        "ROOM": "Rooms",
+        "STYLE": "Style",
+        "FEATURE": "Features",
+        "LAYOUT": "Layout",
+        "GENERAL": "General"
+      },
+      "priorities": {
+        "HIGH": "High",
+        "MEDIUM": "Medium",
+        "LOW": "Low"
+      },
+      "disclaimer": "AI can make mistakes — review suggestions and answers."
+    }
   },
   "floorPlan": {
     "loadError": "Could not load the floor plan",

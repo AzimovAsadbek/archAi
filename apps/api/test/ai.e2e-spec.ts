@@ -1,9 +1,13 @@
 import {
+  type AnswerResult,
   type ArchitectureAIProvider,
   type ParseProjectInput,
   type ParseProjectResult,
   PARSE_PROJECT_PROMPT_VERSION,
   type ProjectProposal,
+  type QuestionInput,
+  type SuggestInput,
+  type SuggestResult,
 } from '@archai/ai';
 import { type INestApplication } from '@nestjs/common';
 import { type Server } from 'node:http';
@@ -86,15 +90,66 @@ const success = (override?: Partial<ProjectProposal>): ParseProjectResult => ({
   },
 });
 
+const suggestSuccess = (): SuggestResult => ({
+  ok: true,
+  suggestions: {
+    detectedLanguage: 'uz',
+    summary: 'Yaxshi boshlanish.',
+    suggestions: [
+      {
+        category: 'ROOM',
+        title: 'Birinchi qavatga hammom',
+        detail: 'Birinchi qavatda hammom kerak — mehmonlar uchun qulay.',
+        priority: 'HIGH',
+      },
+    ],
+  },
+  provenance: {
+    provider: 'fake',
+    model: 'fake-1',
+    promptVersion: '1',
+    inputTokens: 120,
+    outputTokens: 60,
+    durationMs: 310,
+  },
+});
+
+const answerSuccess = (): AnswerResult => ({
+  ok: true,
+  answer: { detectedLanguage: 'uz', addressable: true, answer: 'Uyingiz ikki qavatli.' },
+  provenance: {
+    provider: 'fake',
+    model: 'fake-1',
+    promptVersion: '1',
+    inputTokens: 80,
+    outputTokens: 24,
+    durationMs: 190,
+  },
+});
+
 /** Stands in for a real provider — bound through the DI token, no network. */
 class FakeAiProvider implements ArchitectureAIProvider {
   readonly name = 'fake';
   result: ParseProjectResult = success();
+  suggestResult: SuggestResult = suggestSuccess();
+  answerResult: AnswerResult = answerSuccess();
   lastInput: ParseProjectInput | null = null;
+  lastSuggest: SuggestInput | null = null;
+  lastQuestion: QuestionInput | null = null;
 
   parseProjectRequest(input: ParseProjectInput): Promise<ParseProjectResult> {
     this.lastInput = input;
     return Promise.resolve(this.result);
+  }
+
+  suggestImprovements(input: SuggestInput): Promise<SuggestResult> {
+    this.lastSuggest = input;
+    return Promise.resolve(this.suggestResult);
+  }
+
+  answerQuestion(input: QuestionInput): Promise<AnswerResult> {
+    this.lastQuestion = input;
+    return Promise.resolve(this.answerResult);
   }
 }
 
@@ -185,11 +240,14 @@ describe('AI parse-project — fake provider (e2e)', () => {
   let server: Server;
   let cookies: Cookies = {};
   let userId = '';
+  let projectId = '';
   const provider = new FakeAiProvider();
 
   const asUser = (): string => cookieHeader(cookies);
   const parse = (body: string | object): request.Test =>
     request(server).post(PARSE_URL).set('Cookie', asUser()).send(body);
+  const suggestUrl = (): string => `${API}/ai/projects/${projectId}/suggest`;
+  const askUrl = (): string => `${API}/ai/projects/${projectId}/ask`;
 
   beforeAll(async () => {
     app = await createTestApp((builder) =>
@@ -210,7 +268,11 @@ describe('AI parse-project — fake provider (e2e)', () => {
 
   beforeEach(async () => {
     provider.result = success();
+    provider.suggestResult = suggestSuccess();
+    provider.answerResult = answerSuccess();
     provider.lastInput = null;
+    provider.lastSuggest = null;
+    provider.lastQuestion = null;
     await prisma.aiGeneration.deleteMany();
   });
 
@@ -385,6 +447,113 @@ describe('AI parse-project — fake provider (e2e)', () => {
     expect(typeof res.body.dailyRequestLimitPerUser).toBe('number');
     // No key material anywhere in the payload.
     expect(JSON.stringify(res.body)).not.toMatch(/secret|gsk_|AIza|Ab8RN6/i);
+  });
+
+  describe('assistant on an existing project', () => {
+    beforeAll(async () => {
+      const project = await prisma.project.create({
+        data: {
+          ownerId: userId,
+          name: 'Test uy',
+          landAreaM2: 800,
+          landWidthM: 20,
+          landLengthM: 40,
+          houseWidthM: 12,
+          houseLengthM: 10,
+          floorCount: 2,
+          style: 'MODERN',
+          hasGarage: true,
+          rooms: {
+            create: [
+              { type: 'KITCHEN', floor: 0 },
+              { type: 'BEDROOM', floor: 1 },
+            ],
+          },
+        },
+      });
+      projectId = project.id;
+    });
+
+    it('returns advisory suggestions from the persisted project and records a row', async () => {
+      const res = await request(server)
+        .post(suggestUrl())
+        .set('Cookie', asUser())
+        .send({ focus: 'kitchen', localeHint: 'uz' })
+        .expect(200);
+
+      expect(res.body.suggestions.suggestions[0]).toMatchObject({
+        category: 'ROOM',
+        priority: 'HIGH',
+      });
+      expect(res.body.provenance.provider).toBe('fake');
+      // The server built the context from the DB, not from the client body.
+      expect(provider.lastSuggest?.project.house).toMatchObject({
+        widthM: 12,
+        lengthM: 10,
+        floorCount: 2,
+      });
+      expect(provider.lastSuggest?.project.rooms).toHaveLength(2);
+      expect(provider.lastSuggest?.focus).toBe('kitchen');
+
+      const rows = await prisma.aiGeneration.findMany();
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).toMatchObject({
+        kind: 'SUGGEST_IMPROVEMENTS',
+        status: 'SUCCEEDED',
+        provider: 'fake',
+      });
+    });
+
+    it('answers a question about the project and records a row', async () => {
+      const res = await request(server)
+        .post(askUrl())
+        .set('Cookie', asUser())
+        .send({ question: 'How many floors does it have?' })
+        .expect(200);
+
+      expect(res.body.answer).toMatchObject({ addressable: true });
+      expect(provider.lastQuestion?.question).toBe('How many floors does it have?');
+      const rows = await prisma.aiGeneration.findMany();
+      expect(rows[0]).toMatchObject({ kind: 'ANSWER_QUESTION', status: 'SUCCEEDED' });
+    });
+
+    it('rejects a too-short question with 400 and never reaches the provider', async () => {
+      await request(server)
+        .post(askUrl())
+        .set('Cookie', asUser())
+        .send({ question: 'x' })
+        .expect(400);
+      expect(provider.lastQuestion).toBeNull();
+      expect(await prisma.aiGeneration.count()).toBe(0);
+    });
+
+    it('404s a project the user does not own, with no provenance row', async () => {
+      await request(server)
+        .post(`${API}/ai/projects/does-not-exist/suggest`)
+        .set('Cookie', asUser())
+        .send({})
+        .expect(404);
+      expect(provider.lastSuggest).toBeNull();
+      expect(await prisma.aiGeneration.count()).toBe(0);
+    });
+
+    it('maps a provider failure on suggest to 502 and records FAILED', async () => {
+      provider.suggestResult = {
+        ok: false,
+        error: 'AI_PROVIDER_ERROR',
+        message: 'upstream boom',
+        provenance: { provider: 'fake', model: 'fake-1', promptVersion: '1', durationMs: 15 },
+      };
+
+      await request(server).post(suggestUrl()).set('Cookie', asUser()).send({}).expect(502);
+
+      const rows = await prisma.aiGeneration.findMany();
+      expect(rows[0]).toMatchObject({
+        kind: 'SUGGEST_IMPROVEMENTS',
+        status: 'FAILED',
+        errorCode: 'AI_PROVIDER_ERROR',
+      });
+    });
   });
 });
 

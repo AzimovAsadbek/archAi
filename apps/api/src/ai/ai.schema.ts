@@ -1,7 +1,13 @@
-import { LOCALE_HINTS, type AiProvenance, type ProjectProposal } from '@archai/ai';
+import {
+  LOCALE_HINTS,
+  type AiProvenance,
+  type AnswerOutput,
+  type ProjectProposal,
+  type SuggestionsOutput,
+} from '@archai/ai';
 import { type DomainValidationResult } from '@archai/shared';
 import { z } from 'zod';
-import { AI_REQUEST_TEXT } from './ai.constants';
+import { AI_FOCUS_TEXT, AI_QUESTION_TEXT, AI_REQUEST_TEXT } from './ai.constants';
 
 /**
  * Request body of `POST /ai/parse-project`. It lives here rather than in
@@ -26,5 +32,36 @@ export interface ParseProjectResponseDto {
   proposal: ProjectProposal;
   /** Domain validation of the proposal, computed exactly as for a real project. */
   validation: DomainValidationResult;
+  provenance: AiProvenance;
+}
+
+/**
+ * Body of `POST /ai/projects/:id/suggest`. `focus` is an optional user steer;
+ * the project itself is loaded server-side from the id, never sent by the client.
+ */
+export const suggestRequestSchema = z.object({
+  focus: z.string().trim().max(AI_FOCUS_TEXT.max, 'ai_focus_max').optional(),
+  localeHint: z.enum(LOCALE_HINTS).optional(),
+});
+export type SuggestRequestInput = z.infer<typeof suggestRequestSchema>;
+
+export interface SuggestResponseDto {
+  suggestions: SuggestionsOutput;
+  provenance: AiProvenance;
+}
+
+/** Body of `POST /ai/projects/:id/ask`. */
+export const askRequestSchema = z.object({
+  question: z
+    .string()
+    .trim()
+    .min(AI_QUESTION_TEXT.min, 'ai_question_min')
+    .max(AI_QUESTION_TEXT.max, 'ai_question_max'),
+  localeHint: z.enum(LOCALE_HINTS).optional(),
+});
+export type AskRequestInput = z.infer<typeof askRequestSchema>;
+
+export interface AnswerResponseDto {
+  answer: AnswerOutput;
   provenance: AiProvenance;
 }

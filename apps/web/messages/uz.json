@@ -596,7 +596,8 @@
       "view3d": "3D",
       "interior": "Interyer",
       "exterior": "Eksteryer",
-      "estimate": "Smeta"
+      "estimate": "Smeta",
+      "assistant": "Yordamchi"
     },
     "stats": {
       "land": "Yer maydoni",
@@ -627,7 +628,39 @@
       "dimsValue": "{width} × {length} m",
       "areaValue": "{area} m²"
     },
-    "tabRoadmap": "{tab} — keyingi bosqichda"
+    "tabRoadmap": "{tab} — keyingi bosqichda",
+    "assistant": {
+      "suggest": {
+        "title": "AI takliflari",
+        "description": "Loyihangizni yaxshilash bo'yicha maslahatlar. Ular tavsiya — o'zgarishlarni o'zingiz kiritasiz.",
+        "focusLabel": "Nimaga e'tibor qaratilsin? (ixtiyoriy)",
+        "focusPlaceholder": "masalan, oshxona yoki yorug'lik",
+        "action": "Takliflar olish",
+        "idle": "Loyihangiz uchun maslahat olish uchun tugmani bosing.",
+        "none": "Loyiha to'liq ko'rinmoqda — hozircha qo'shimcha takliflar yo'q."
+      },
+      "ask": {
+        "title": "Savol berish",
+        "description": "Loyihangiz haqida savol bering.",
+        "label": "Savolingiz",
+        "placeholder": "masalan, bu yer maydoni uchun uy juda kattami?",
+        "action": "So'rash",
+        "outOfScope": "Bu savol loyiha doirasidan tashqarida."
+      },
+      "categories": {
+        "ROOM": "Xonalar",
+        "STYLE": "Uslub",
+        "FEATURE": "Qulayliklar",
+        "LAYOUT": "Joylashuv",
+        "GENERAL": "Umumiy"
+      },
+      "priorities": {
+        "HIGH": "Muhim",
+        "MEDIUM": "O'rtacha",
+        "LOW": "Past"
+      },
+      "disclaimer": "AI xato qilishi mumkin — takliflar va javoblarni tekshiring."
+    }
   },
   "floorPlan": {
     "loadError": "Rejani yuklab bo'lmadi",

@@ -1,9 +1,13 @@
 import {
   AI_ERROR_CODES,
   type AiErrorCode,
+  type AnswerResult,
   type ArchitectureAIProvider,
   type ParseProjectInput,
   type ParseProjectResult,
+  type QuestionInput,
+  type SuggestInput,
+  type SuggestResult,
 } from './types';
 
 /**
@@ -28,6 +32,9 @@ const FALLBACKABLE: ReadonlySet<AiErrorCode> = new Set([
   AI_ERROR_CODES.AI_PROVIDER_ERROR,
 ]);
 
+/** The shape every operation result shares: routing only needs ok + error code. */
+type OperationResult = { ok: true } | { ok: false; error: AiErrorCode };
+
 export interface RoutingOptions {
   primary: ArchitectureAIProvider;
   /** Tried only when the primary fails with a fallbackable error. */
@@ -45,8 +52,10 @@ const realSleep = (ms: number): Promise<void> => new Promise((resolve) => setTim
 /**
  * Deterministic provider router. It is itself an `ArchitectureAIProvider`, so
  * the application service depends only on the interface and never learns whether
- * one provider or two answered. Provenance flows through unchanged: the returned
- * result's `provenance.provider` names whichever provider actually produced it.
+ * one provider or two answered. The retry-then-fallback policy is operation-
+ * agnostic: every method routes through the same `route` helper, so a new
+ * operation inherits identical resilience. Provenance flows through unchanged —
+ * the returned result names whichever provider actually produced it.
  */
 export class RoutingArchitectureAIProvider implements ArchitectureAIProvider {
   readonly name: string;
@@ -67,25 +76,40 @@ export class RoutingArchitectureAIProvider implements ArchitectureAIProvider {
     this.name = options.primary.name;
   }
 
-  async parseProjectRequest(input: ParseProjectInput): Promise<ParseProjectResult> {
-    const primaryResult = await this.attempt(this.primary, input);
-    if (primaryResult.ok) return primaryResult;
+  parseProjectRequest(input: ParseProjectInput): Promise<ParseProjectResult> {
+    return this.route((provider) => provider.parseProjectRequest(input));
+  }
 
-    if (this.fallback && FALLBACKABLE.has(primaryResult.error)) {
-      return this.attempt(this.fallback, input);
+  suggestImprovements(input: SuggestInput): Promise<SuggestResult> {
+    return this.route((provider) => provider.suggestImprovements(input));
+  }
+
+  answerQuestion(input: QuestionInput): Promise<AnswerResult> {
+    return this.route((provider) => provider.answerQuestion(input));
+  }
+
+  /** primary (with retries) → fallback (with retries) on a fallbackable error. */
+  private async route<R extends OperationResult>(
+    call: (provider: ArchitectureAIProvider) => Promise<R>,
+  ): Promise<R> {
+    const primary = await this.attempt(call, this.primary);
+    if (primary.ok) return primary;
+
+    if (this.fallback && FALLBACKABLE.has(primary.error)) {
+      return this.attempt(call, this.fallback);
     }
-    return primaryResult;
+    return primary;
   }
 
   /** One call plus up to `maxRetries` backed-off retries on a retryable error. */
-  private async attempt(
+  private async attempt<R extends OperationResult>(
+    call: (provider: ArchitectureAIProvider) => Promise<R>,
     provider: ArchitectureAIProvider,
-    input: ParseProjectInput,
-  ): Promise<ParseProjectResult> {
-    let result = await provider.parseProjectRequest(input);
+  ): Promise<R> {
+    let result = await call(provider);
     for (let retry = 0; !result.ok && RETRYABLE.has(result.error) && retry < this.maxRetries; retry++) {
       await this.sleep(this.backoffMs * 2 ** retry);
-      result = await provider.parseProjectRequest(input);
+      result = await call(provider);
     }
     return result;
   }

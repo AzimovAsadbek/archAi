@@ -2,18 +2,26 @@ import {
   type AiErrorCode,
   type AiProvenance,
   type ArchitectureAIProvider,
+  type ProjectContext,
   PARSE_PROJECT_PROMPT_VERSION,
 } from '@archai/ai';
 import { validateProjectConfiguration } from '@archai/shared';
 import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
-import { type AiGenerationStatus } from '@prisma/client';
+import { type AiGenerationKind, type AiGenerationStatus } from '@prisma/client';
 import { ERROR_CODES } from '../common/error-codes';
 import { AppConfigService } from '../config/app-config.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ARCHITECTURE_AI_PROVIDER } from './ai.constants';
 import { toAiHttpException } from './ai.errors';
 import { resolveAiWiring } from './ai.wiring';
-import { type ParseProjectRequestInput, type ParseProjectResponseDto } from './ai.schema';
+import {
+  type AnswerResponseDto,
+  type AskRequestInput,
+  type ParseProjectRequestInput,
+  type ParseProjectResponseDto,
+  type SuggestRequestInput,
+  type SuggestResponseDto,
+} from './ai.schema';
 import { sanitizeProposal } from './proposal.sanitizer';
 
 /** Safe, secrets-free view of runtime AI wiring for the product UI and admin. */
@@ -57,15 +65,74 @@ export class AiService {
       // The provider message is a server-side diagnostic (never user text); the
       // client only ever sees the stable code.
       this.logger.error(`parse-project failed [${result.error}] ${result.message}`);
-      await this.record(userId, 'FAILED', result.provenance, result.error);
+      await this.record(userId, 'PARSE_PROJECT', 'FAILED', result.provenance, result.error);
       throw toAiHttpException(result.error);
     }
 
     const { proposal, configuration } = sanitizeProposal(result.proposal);
     const validation = validateProjectConfiguration(configuration);
-    await this.record(userId, 'SUCCEEDED', result.provenance);
+    await this.record(userId, 'PARSE_PROJECT', 'SUCCEEDED', result.provenance);
 
     return { proposal, validation, provenance: result.provenance };
+  }
+
+  /**
+   * Advisory design suggestions for an existing, owned project. The project is
+   * loaded server-side from its id (never trusted from the client), summarised
+   * into a compact context, and the model returns suggestions the user reviews
+   * and applies by hand — nothing here mutates the project.
+   */
+  async suggestImprovements(
+    userId: string,
+    projectId: string,
+    input: SuggestRequestInput,
+  ): Promise<SuggestResponseDto> {
+    await this.enforceDailyQuota(userId);
+    const project = await this.loadProjectContext(userId, projectId);
+
+    const result = await this.provider.suggestImprovements({
+      project,
+      focus: input.focus,
+      localeHint: input.localeHint,
+    });
+
+    if (!result.ok) {
+      this.logger.error(`suggest-improvements failed [${result.error}] ${result.message}`);
+      await this.record(userId, 'SUGGEST_IMPROVEMENTS', 'FAILED', result.provenance, result.error);
+      throw toAiHttpException(result.error);
+    }
+
+    await this.record(userId, 'SUGGEST_IMPROVEMENTS', 'SUCCEEDED', result.provenance);
+    return { suggestions: result.suggestions, provenance: result.provenance };
+  }
+
+  /**
+   * Answers a question about an existing, owned project, grounded in its data.
+   * Off-topic, out-of-scope or injection questions come back with
+   * `answer.addressable === false` and a safe redirect — never a leak.
+   */
+  async answerQuestion(
+    userId: string,
+    projectId: string,
+    input: AskRequestInput,
+  ): Promise<AnswerResponseDto> {
+    await this.enforceDailyQuota(userId);
+    const project = await this.loadProjectContext(userId, projectId);
+
+    const result = await this.provider.answerQuestion({
+      project,
+      question: input.question,
+      localeHint: input.localeHint,
+    });
+
+    if (!result.ok) {
+      this.logger.error(`answer-question failed [${result.error}] ${result.message}`);
+      await this.record(userId, 'ANSWER_QUESTION', 'FAILED', result.provenance, result.error);
+      throw toAiHttpException(result.error);
+    }
+
+    await this.record(userId, 'ANSWER_QUESTION', 'SUCCEEDED', result.provenance);
+    return { answer: result.answer, provenance: result.provenance };
   }
 
   /** Configuration-derived AI status; carries no secrets. */
@@ -78,6 +145,56 @@ export class AiService {
       fallbackAvailable: wiring.fallbackAvailable,
       primaryModel: wiring.primaryModel,
       dailyRequestLimitPerUser: wiring.dailyRequestLimitPerUser,
+    };
+  }
+
+  /**
+   * Loads an owned, non-deleted project and reduces it to the compact
+   * `ProjectContext` the assistant reasons over. Cross-user or missing ids are a
+   * 404 (no existence leak), exactly like every other project-scoped route.
+   */
+  private async loadProjectContext(userId: string, projectId: string): Promise<ProjectContext> {
+    const project = await this.prisma.project.findFirst({
+      where: { id: projectId, ownerId: userId, deletedAt: null },
+      include: { rooms: { orderBy: [{ floor: 'asc' }, { sortOrder: 'asc' }] } },
+    });
+
+    if (!project) {
+      throw new HttpException(
+        { code: ERROR_CODES.NOT_FOUND, message: 'Project not found' },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return {
+      name: project.name,
+      land:
+        project.landAreaM2 != null
+          ? { areaM2: project.landAreaM2, widthM: project.landWidthM, lengthM: project.landLengthM }
+          : null,
+      house:
+        project.houseWidthM != null && project.houseLengthM != null && project.floorCount != null
+          ? {
+              widthM: project.houseWidthM,
+              lengthM: project.houseLengthM,
+              floorCount: project.floorCount,
+              style: project.style,
+            }
+          : null,
+      rooms: project.rooms.map((room) => ({
+        type: room.type,
+        floor: room.floor,
+        widthM: room.widthM,
+        lengthM: room.lengthM,
+        label: room.label,
+      })),
+      features: {
+        garage: project.hasGarage,
+        terrace: project.hasTerrace,
+        balcony: project.hasBalcony,
+        pool: project.hasPool,
+        garden: project.hasGarden,
+      },
     };
   }
 
@@ -114,6 +231,7 @@ export class AiService {
    */
   private async record(
     userId: string,
+    kind: AiGenerationKind,
     status: AiGenerationStatus,
     provenance: AiProvenance | undefined,
     errorCode?: AiErrorCode,
@@ -123,7 +241,7 @@ export class AiService {
       await this.prisma.aiGeneration.create({
         data: {
           userId,
-          kind: 'PARSE_PROJECT',
+          kind,
           provider: run.provider,
           model: run.model,
           promptVersion: run.promptVersion,

@@ -70,6 +70,20 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
       Live-verified: a real Gemini request succeeded, fallback + prompt-injection resistance
       checked. The brief's `gemini-2.5-flash` / `llama-3.3-70b-versatile` were both retired by
       the live check, so the models were switched to current verified ones. docs/ai-architecture.md.
+12. **AI project assistant** — DONE
+    Two more AI operations on the free-tier stack: advisory design suggestions
+    (`POST /ai/projects/:id/suggest`) and grounded Q&A (`POST /ai/projects/:id/ask`)
+    for an existing project, surfaced in the workspace "Assistant" tab. Built on a
+    base `ChatArchitectureAIProvider`, so a new operation is one method, not one per
+    provider; the same validate→correct pipeline, per-user daily quota, provenance
+    and honest degradation apply. Advisory only — the user reviews and applies by
+    hand (§25, no auto-mutation); prompts are injection-hardened and scope-limited.
+    `packages/ai` 88 unit tests; api e2e covers both endpoints (success, ownership
+    404, validation, provider failure). Live-verified on Gemini: `suggest` returned
+    valid, on-point output (flagged the missing kitchen/bathroom on a stub project);
+    the free-tier daily quota then capped the remaining probes — confirming the
+    rate-limit path. `ask` runs the identical proven pipeline (and parse's injection
+    fencing was live-verified in the migration).
 
 ## Deferred decisions
 

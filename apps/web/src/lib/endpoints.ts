@@ -1,6 +1,8 @@
 import type { FloorPlan } from '@archai/floor-plan-engine';
 import type {
+  AiAnswerResponse,
   AiParseProjectResponse,
+  AiSuggestResponse,
   AuthResponse,
   BlogListQuery,
   BlogListResponse,
@@ -152,6 +154,46 @@ export function parseProjectRequest(
   signal?: AbortSignal,
 ): Promise<AiParseProjectResponse> {
   return apiRequest<AiParseProjectResponse>('/ai/parse-project', {
+    method: 'POST',
+    body,
+    signal,
+  });
+}
+
+/** Optional focus for the assistant; mirrors `AI_FOCUS_TEXT`/`AI_QUESTION_TEXT`. */
+export const AI_FOCUS_MAX = 500;
+export const AI_QUESTION_LIMITS = { min: 3, max: 500 } as const;
+
+export interface SuggestRequestBody {
+  focus?: string;
+  localeHint?: 'uz' | 'ru' | 'en';
+}
+
+/** Advisory design suggestions for an existing project (nothing is mutated). */
+export function suggestImprovements(
+  projectId: string,
+  body: SuggestRequestBody,
+  signal?: AbortSignal,
+): Promise<AiSuggestResponse> {
+  return apiRequest<AiSuggestResponse>(`/ai/projects/${projectId}/suggest`, {
+    method: 'POST',
+    body,
+    signal,
+  });
+}
+
+export interface AskRequestBody {
+  question: string;
+  localeHint?: 'uz' | 'ru' | 'en';
+}
+
+/** A grounded answer to a question about an existing project. */
+export function askProjectQuestion(
+  projectId: string,
+  body: AskRequestBody,
+  signal?: AbortSignal,
+): Promise<AiAnswerResponse> {
+  return apiRequest<AiAnswerResponse>(`/ai/projects/${projectId}/ask`, {
     method: 'POST',
     body,
     signal,

@@ -1,15 +1,6 @@
 import { GoogleGenAI, type GenerateContentResponse } from '@google/genai';
-import { buildParseProjectPrompt, PARSE_PROJECT_PROMPT_VERSION } from '../prompts/parse-project';
-import { jsonOutputInstruction } from '../schemas/proposal.json-schema';
-import { correctionInstruction, parseProposal } from './proposal-parsing';
-import {
-  AI_ERROR_CODES,
-  type AiErrorCode,
-  type AiProvenance,
-  type ArchitectureAIProvider,
-  type ParseProjectInput,
-  type ParseProjectResult,
-} from '../types';
+import { ChatArchitectureAIProvider, type ChatOutcome, type ChatTurn } from './chat.provider';
+import { AI_ERROR_CODES, type AiErrorCode } from '../types';
 
 /**
  * Self-updating alias to the current Flash tier — verified available on the free
@@ -25,12 +16,13 @@ const DEFAULT_TIMEOUT_MS = 30_000;
 const MAX_OUTPUT_TOKENS = 8_192;
 
 /**
- * Thinking off (`thinkingBudget: 0`): this is bounded extraction, not reasoning,
- * so disabling it cuts latency and free-tier token spend without hurting quality.
+ * Thinking off (`thinkingBudget: 0`): these are bounded extraction and advisory
+ * tasks, not open reasoning, so disabling it cuts latency and free-tier token
+ * spend without hurting quality.
  */
 const THINKING_BUDGET = 0;
 
-/** Low temperature — extraction should be near-deterministic, not creative. */
+/** Low temperature — structured output should be near-deterministic. */
 const TEMPERATURE = 0.2;
 
 export interface GeminiProviderOptions {
@@ -47,97 +39,53 @@ interface Turn {
   parts: { text: string }[];
 }
 
-const userTurn = (text: string): Turn => ({ role: 'user', parts: [{ text }] });
-const modelTurn = (text: string): Turn => ({ role: 'model', parts: [{ text }] });
-
 /**
- * Gemini-backed structured-output provider (primary runtime AI).
- *
- * Contract, shared with every provider: it never throws and never logs user
- * text. Pipeline: prompt → Gemini (`responseJsonSchema` constrained decoding) →
- * Zod validation → one correction pass on a schema miss → `ParseProjectResult`.
- * Every SDK, network, safety or validation failure returns `{ ok: false }` with
- * a stable `AiErrorCode`.
+ * Gemini-backed provider (primary runtime AI). It implements only the `complete`
+ * primitive; every operation — parse, suggest, answer — is inherited from
+ * `ChatArchitectureAIProvider`, which validates each reply against that
+ * operation's schema. Never throws, never logs user text.
  */
-export class GeminiArchitectureAIProvider implements ArchitectureAIProvider {
+export class GeminiArchitectureAIProvider extends ChatArchitectureAIProvider {
   readonly name = 'gemini';
+  protected readonly model: string;
 
   private readonly client: GoogleGenAI;
-  private readonly model: string;
   private readonly timeoutMs: number;
 
   constructor(options: GeminiProviderOptions) {
+    super();
     const model = options.model?.trim();
     this.model = model !== undefined && model.length > 0 ? model : DEFAULT_GEMINI_MODEL;
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.client = options.client ?? new GoogleGenAI({ apiKey: options.apiKey });
   }
 
-  async parseProjectRequest(input: ParseProjectInput): Promise<ParseProjectResult> {
-    const startedAt = Date.now();
-    const prompt = buildParseProjectPrompt(input);
-    const system = prompt.system + jsonOutputInstruction();
-    let inputTokens = 0;
-    let outputTokens = 0;
-
-    const provenance = (): AiProvenance => ({
-      provider: this.name,
-      model: this.model,
-      promptVersion: PARSE_PROJECT_PROMPT_VERSION,
-      inputTokens,
-      outputTokens,
-      durationMs: Date.now() - startedAt,
-    });
-
+  protected async complete(system: string, turns: ChatTurn[]): Promise<ChatOutcome> {
     try {
-      let response = await this.generate(system, [userTurn(prompt.userMessage)]);
-      inputTokens += response.usageMetadata?.promptTokenCount ?? 0;
-      outputTokens += response.usageMetadata?.candidatesTokenCount ?? 0;
+      const contents: Turn[] = turns.map((turn) => ({ role: turn.role, parts: [{ text: turn.text }] }));
+      const response = await this.generate(system, contents);
+      const inputTokens = response.usageMetadata?.promptTokenCount ?? 0;
+      const outputTokens = response.usageMetadata?.candidatesTokenCount ?? 0;
 
       const blocked = this.refusalReason(response);
       if (blocked) {
-        return { ok: false, error: AI_ERROR_CODES.AI_REFUSED, message: blocked, provenance: provenance() };
+        return { ok: false, error: AI_ERROR_CODES.AI_REFUSED, message: blocked, inputTokens, outputTokens };
       }
 
-      let text = response.text;
+      const text = response.text;
       if (text === undefined || text.trim().length === 0) {
         return {
           ok: false,
           error: AI_ERROR_CODES.AI_INVALID_OUTPUT,
           message: 'Gemini returned an empty response',
-          provenance: provenance(),
+          inputTokens,
+          outputTokens,
         };
       }
-
-      let parsed = parseProposal(text);
-
-      // Single correction pass on a schema miss (never on non-JSON — constrained
-      // decoding makes that a provider fault, not something a retry fixes).
-      if (!parsed.ok && parsed.kind === 'schema') {
-        response = await this.generate(system, [
-          userTurn(prompt.userMessage),
-          modelTurn(text),
-          userTurn(correctionInstruction(parsed.detail)),
-        ]);
-        inputTokens += response.usageMetadata?.promptTokenCount ?? 0;
-        outputTokens += response.usageMetadata?.candidatesTokenCount ?? 0;
-        text = response.text ?? '';
-        parsed = parseProposal(text);
-      }
-
-      if (!parsed.ok) {
-        return {
-          ok: false,
-          error: AI_ERROR_CODES.AI_INVALID_OUTPUT,
-          message: `Gemini output did not match the proposal schema: ${parsed.detail}`,
-          provenance: provenance(),
-        };
-      }
-
-      return { ok: true, proposal: parsed.proposal, provenance: provenance() };
+      return { ok: true, text, inputTokens, outputTokens };
     } catch (error) {
       const failure = this.classify(error);
-      return { ok: false, error: failure.code, message: failure.message, provenance: provenance() };
+      return { ok: false, error: failure.code, message: failure.message, inputTokens: 0, outputTokens: 0 };
     }
   }
 

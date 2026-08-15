@@ -13,3 +13,9 @@ export const AI_THROTTLE = { default: { limit: AI_RATE_LIMIT, ttl: RATE_LIMIT_TT
 
 /** Bounds for the free-text request accepted by `POST /ai/parse-project`. */
 export const AI_REQUEST_TEXT = { min: 5, max: 2_000 } as const;
+
+/** Optional steer for `POST /ai/projects/:id/suggest` ("focus on the kitchen"). */
+export const AI_FOCUS_TEXT = { max: 500 } as const;
+
+/** Bounds for the question accepted by `POST /ai/projects/:id/ask`. */
+export const AI_QUESTION_TEXT = { min: 3, max: 500 } as const;

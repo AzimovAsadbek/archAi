@@ -29,7 +29,8 @@ proposal before it is applied.
 interface ArchitectureAIProvider {
   readonly name: string;                 // 'gemini' | 'groq' | 'mock' | 'unconfigured'
   parseProjectRequest(input: ParseProjectInput): Promise<ParseProjectResult>;
-  // suggestLayout / generate*Concept arrive with later slices — never stubbed as fakes.
+  suggestImprovements(input: SuggestInput): Promise<SuggestResult>;   // advisory design suggestions
+  answerQuestion(input: QuestionInput): Promise<AnswerResult>;        // grounded Q&A
 }
 
 ParseProjectResult =
@@ -45,9 +46,18 @@ validation failure returns `{ ok: false }` with a stable code and the attempt's 
 `ProjectProposal` is the zod schema in `packages/ai/src/schemas/proposal.schema.ts` (the
 single source of truth); all numeric bounds mirror `LIMITS` from `@archai/shared`.
 
+The two **assistant** operations — `suggestImprovements` (advisory design suggestions) and
+`answerQuestion` (grounded Q&A) — take a compact, server-built `ProjectContext` for an existing
+project and their own output schemas (`suggestions.schema.ts`, `answer.schema.ts`). All three
+operations share one code path: the real providers extend `ChatArchitectureAIProvider`, which
+implements every operation on a single abstract `complete(system, turns)` primitive, so adding
+an operation is one method here — not one per provider. Suggestions are **advisory only** (the
+user applies them by hand, §25); the Q&A `answer.addressable` flag is false for off-topic,
+out-of-scope or injection questions, with a safe redirect that leaks nothing.
+
 ## The shared output pipeline
 
-Both real providers run the identical normalization pipeline, which is the whole point of the
+All three operations run the identical normalization pipeline, which is the whole point of the
 abstraction:
 
 ```

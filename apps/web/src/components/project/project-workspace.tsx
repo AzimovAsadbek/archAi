@@ -46,11 +46,12 @@ import { coveragePercent, m2ToSotix, round } from '@/lib/format';
 import { FEATURE_ICONS, FEATURE_KEYS } from '@/lib/project-options';
 import { queryKeys } from '@/lib/query-keys';
 import { useApiErrorMessage } from '@/lib/use-api-error';
+import { AssistantPanel } from './assistant-panel';
 import { StatCard } from './stat-card';
 import { ValidationPanel } from './validation-panel';
 
 /** Tabs backed by a real panel today. */
-const LIVE_TABS = ['overview', 'plans2d', 'view3d', 'estimate'] as const;
+const LIVE_TABS = ['overview', 'plans2d', 'view3d', 'estimate', 'assistant'] as const;
 const ROADMAP_TABS = ['interior', 'exterior'] as const;
 
 type LiveTab = (typeof LIVE_TABS)[number];
@@ -472,6 +473,17 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
           className="mt-8"
         >
           <EstimatePanel projectId={projectId} projectUpdatedAt={project.updatedAt} />
+        </div>
+      ) : null}
+
+      {tab === 'assistant' ? (
+        <div
+          role="tabpanel"
+          id="workspace-panel-assistant"
+          aria-labelledby="workspace-tab-assistant"
+          className="mt-8"
+        >
+          <AssistantPanel projectId={projectId} />
         </div>
       ) : null}
 

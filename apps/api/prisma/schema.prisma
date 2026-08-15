@@ -45,6 +45,8 @@ enum RoomType {
 
 enum AiGenerationKind {
   PARSE_PROJECT
+  SUGGEST_IMPROVEMENTS
+  ANSWER_QUESTION
 }
 
 enum AiGenerationStatus {
