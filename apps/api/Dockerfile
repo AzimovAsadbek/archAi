@@ -26,9 +26,11 @@ RUN pnpm --filter @archai/shared build \
 
 # Deploy the api as a self-contained tree in /out. `pnpm deploy` rebuilds
 # node_modules from the lockfile, which does NOT carry the generated Prisma
-# client (a post-install artifact), so regenerate it from *inside* /out where
-# its own prisma CLI and @prisma/client resolve consistently. Kept non-pruned so
-# that CLI is present; the tradeoff is a larger image than a --prod prune.
+# client (a post-install artifact), so regenerate it from *inside* /out. This
+# build stage deliberately leaves NODE_ENV unset, so `deploy` keeps
+# devDependencies — the Prisma CLI among them — which the in-tree `prisma
+# generate` here and the compose `migrate` one-shot (which reuses this stage)
+# both need. Tradeoff: a larger image than a production-only prune; acceptable.
 RUN pnpm --filter @archai/api deploy /out \
  && cd /out \
  && node_modules/.bin/prisma generate
@@ -38,8 +40,8 @@ FROM node:22-bookworm-slim AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
 
-# The pruned deploy carries node_modules, dist and prisma; copy the built assets
-# (fonts for PDF) and the Prisma schema/migrations for `migrate deploy` at boot.
+# The deploy tree carries node_modules (with the regenerated Prisma client), dist
+# and prisma; copy the built assets (fonts for PDF) alongside.
 COPY --from=build /out/node_modules ./node_modules
 COPY --from=build /out/dist ./dist
 COPY --from=build /out/prisma ./prisma
@@ -47,7 +49,6 @@ COPY --from=build /repo/apps/api/assets ./assets
 
 USER node
 EXPOSE 3001
-# Migrations run as a separate one-shot service (see docker-compose.prod.yml),
-# which uses the `build` stage where the Prisma CLI is present — the pruned
-# runtime deps here intentionally exclude it. The app just serves.
+# Migrations run as a separate one-shot service (see docker-compose.prod.yml)
+# against the `build` stage, so the app container itself just serves.
 CMD ["node", "dist/main.js"]

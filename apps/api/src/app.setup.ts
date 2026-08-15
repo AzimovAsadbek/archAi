@@ -16,6 +16,16 @@ export const SWAGGER_PATH = 'docs';
 export function configureApp(app: INestApplication): void {
   const config = app.get(AppConfigService);
 
+  // Trust exactly the configured number of proxy hops so the rate limiter and
+  // `req.ip` see the real client IP behind a TLS-terminating proxy, not the
+  // proxy's address (which would collapse every user into one per-IP bucket).
+  // Default 0 = no proxy trusted.
+  const httpAdapter = app.getHttpAdapter();
+  if (typeof httpAdapter.getInstance === 'function') {
+    const instance = httpAdapter.getInstance() as { set?: (k: string, v: unknown) => void };
+    instance.set?.('trust proxy', config.trustProxyHops);
+  }
+
   app.use(helmet());
   app.use(cookieParser());
   app.enableCors({

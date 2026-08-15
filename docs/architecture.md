@@ -28,6 +28,20 @@ apps/web  (Next.js 15)  ──HTTP──▶  apps/api (NestJS 11) ──Prisma�
 - Heavy future domains (floor-plan engine, AI, estimates) live in their own packages with
   deterministic cores — AI proposes, domain validates, application executes.
 
+## Known performance notes (bounded, deferred)
+
+Surfaced by the independent audit; each is bounded by a per-IP throttle today and none
+affects correctness. Documented rather than silently carried:
+
+- **`GET /projects/:id/floor-plan` mutates on a cache miss.** It regenerates and upserts the
+  plan when the config `inputHash`/engine version changes (or deletes a stale row on engine
+  failure). Steady state is a pure read; throttled 30/min/IP. A cleaner design moves
+  regeneration to the write path (project create/update) or an explicit POST — deferred.
+- **PDF export re-reads the project three times** (once directly, once each inside the
+  reused floor-plan and estimate services) and renders pdfkit synchronously on the request
+  tick. Bounded 10/min/IP. A single shared fetch + a worker-thread render are the fix if
+  export volume grows.
+
 ## Future extraction lines (do not build now)
 
 AI service / generation workers / media service — only when scaling or isolation demands it.

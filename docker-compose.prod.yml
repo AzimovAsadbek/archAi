@@ -52,12 +52,13 @@ services:
     ports:
       - '3001:3001'
     healthcheck:
-      # slim image has no curl/wget — probe /health with node.
+      # slim image has no curl/wget — probe /ready with node (503 when DB is down,
+      # so the container is only "healthy" when it can actually serve traffic).
       test:
         - CMD
         - node
         - -e
-        - "require('http').get('http://127.0.0.1:3001/api/v1/health',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"
+        - "require('http').get('http://127.0.0.1:3001/api/v1/ready',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"
       interval: 10s
       timeout: 5s
       retries: 6

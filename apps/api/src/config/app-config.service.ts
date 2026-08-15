@@ -53,6 +53,10 @@ export class AppConfigService {
     return this.env.COOKIE_SECURE;
   }
 
+  get trustProxyHops(): number {
+    return this.env.TRUST_PROXY_HOPS;
+  }
+
   /** Undefined when AI is not configured — a supported deployment state. */
   get anthropicApiKey(): string | undefined {
     return this.env.ANTHROPIC_API_KEY;

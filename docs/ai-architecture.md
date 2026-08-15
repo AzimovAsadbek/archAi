@@ -36,9 +36,14 @@ schema cannot express). All numeric bounds mirror `LIMITS` from `@archai/shared`
 
 ## Anthropic provider
 
-- SDK `@anthropic-ai/sdk`; model from `ANTHROPIC_MODEL` env, default **`claude-opus-5`**.
-- Structured outputs via `client.messages.parse()` + `zodOutputFormat(proposalSchema)`
-  (client-side validation covers min/max constraints the API strips). `max_tokens` 16000.
+- SDK `@anthropic-ai/sdk` (0.70.x); model from `ANTHROPIC_MODEL` env, default **`claude-opus-5`**.
+- Structured outputs via the **beta** helpers that version exposes:
+  `client.beta.messages.parse({ …, output_format: betaZodOutputFormat(proposalSchema) })`
+  (`import { betaZodOutputFormat } from '@anthropic-ai/sdk/helpers/beta/zod'`; `parse()`
+  sends the `structured-outputs-2025-11-13` beta header itself). Client-side zod validation
+  covers the min/max constraints the wire schema strips. `max_tokens` 16000 — note that
+  thinking is on by default on claude-opus-5, so a very large proposal could truncate to
+  `AI_INVALID_OUTPUT`; revisit if live evaluation shows truncation.
 - Handle `stop_reason === 'refusal'` → `AI_REFUSED`. Typed SDK errors map:
   RateLimitError → `AI_RATE_LIMITED`, APIConnectionError/timeout → `AI_TIMEOUT`/
   `AI_PROVIDER_ERROR`, anything else → `AI_PROVIDER_ERROR`. `parsed_output === null` →

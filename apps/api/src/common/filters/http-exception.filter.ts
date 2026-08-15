@@ -42,6 +42,8 @@ const CLIENT_SAFE_5XX_CODES: ReadonlySet<string> = new Set<string>([
   ERROR_CODES.AI_NOT_CONFIGURED,
   ERROR_CODES.AI_PROVIDER_ERROR,
   ERROR_CODES.AI_TIMEOUT,
+  // Readiness probe: the 503 must reach orchestrators/LBs with its status intact.
+  ERROR_CODES.NOT_READY,
 ]);
 
 function isClientSafe5xx(payload: unknown): boolean {

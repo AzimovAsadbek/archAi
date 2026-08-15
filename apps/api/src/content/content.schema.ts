@@ -54,6 +54,20 @@ export interface AdminFaqItemDto {
 
 // ── Blog ────────────────────────────────────────────────────────────────────
 
+/**
+ * A cover image is emitted into public `<img src>`, `og:image` and JSON-LD, so it
+ * must be an absolute https URL (blocks trackers over http, `javascript:`/`data:`
+ * junk, and mixed content) or a same-origin path.
+ */
+export const coverImageUrlSchema = z
+  .string()
+  .trim()
+  .max(500)
+  .refine(
+    (value) => /^https:\/\/\S+$/i.test(value) || /^\/[^/]/.test(value),
+    'invalid_cover_image_url',
+  );
+
 /** Lowercase kebab slug — the only shape `GET /blog/:slug` will ever match. */
 export const blogSlugSchema = z
   .string()
@@ -82,7 +96,7 @@ export const createBlogSchema = z.object({
   authorName: z.string().trim().min(1).max(120),
   category: z.string().trim().max(80).nullish(),
   tags: z.array(z.string().trim().min(1).max(40)).max(20).optional(),
-  coverImageUrl: z.string().trim().max(500).nullish(),
+  coverImageUrl: coverImageUrlSchema.nullish(),
   status: z.enum(BLOG_STATUSES).optional(),
   metaTitle: z.string().trim().max(200).nullish(),
   metaDescription: z.string().trim().max(400).nullish(),

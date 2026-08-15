@@ -32,6 +32,8 @@ export const ERROR_CODES = {
   AI_INVALID_OUTPUT: 'AI_INVALID_OUTPUT',
   RATE_LIMITED: 'RATE_LIMITED',
   BAD_REQUEST: 'BAD_REQUEST',
+  /** Readiness probe: the database is unreachable — 503. */
+  NOT_READY: 'NOT_READY',
   INTERNAL: 'INTERNAL',
 } as const;
 

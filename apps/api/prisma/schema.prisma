@@ -71,6 +71,8 @@ model User {
   aiGenerations AiGeneration[]
   auditLogs     AuditLog[]
 
+  // Backs the admin users list (ORDER BY createdAt desc, no owner filter).
+  @@index([createdAt])
   @@map("users")
 }
 
@@ -122,6 +124,8 @@ model Project {
 
   @@index([ownerId, status])
   @@index([ownerId, updatedAt])
+  // Backs the admin projects list (global ORDER BY updatedAt desc, no owner filter).
+  @@index([updatedAt])
   @@map("projects")
 }
 

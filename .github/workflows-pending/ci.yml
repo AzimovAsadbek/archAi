@@ -59,8 +59,11 @@ jobs:
       - name: Create test database
         run: PGPASSWORD=archai_dev_password psql -h localhost -U archai -d archai -c 'CREATE DATABASE archai_test OWNER archai;'
 
-      - name: Build shared package
-        run: pnpm --filter @archai/shared build
+      # apps/api and apps/web value-import these compiled libraries (dist is
+      # gitignored), so they must be built before lint/typecheck/test can resolve
+      # them — not just @archai/shared.
+      - name: Build workspace libraries
+        run: pnpm --filter @archai/shared --filter @archai/floor-plan-engine --filter @archai/ai build
 
       - name: Generate Prisma client
         run: pnpm --filter @archai/api prisma:generate
