@@ -709,7 +709,20 @@
     },
     "roomDims": "{width} × {length} m",
     "clearSelection": "Tanlovni bekor qilish",
-    "selectHint": "Xona haqida ma'lumot uchun rejadagi xonani bosing."
+    "selectHint": "Xona haqida ma'lumot uchun rejadagi xonani bosing.",
+    "quality": {
+      "title": "Reja sifati",
+      "scoreValue": "{score} / 100",
+      "components": {
+        "roomArea": "Xona maydonlari mos",
+        "shapeQuality": "Xona shakllari qulay",
+        "adjacency": "Xonalar joylashuvi o'zaro mos",
+        "efficiency": "Maydondan samarali foydalanish",
+        "daylight": "Tabiiy yorug'lik imkoniyati",
+        "floorPreference": "Qavatlar bo'yicha joylashuv",
+        "zoneGrouping": "Hududlar guruhlangan"
+      }
+    }
   },
   "three": {
     "floors": {

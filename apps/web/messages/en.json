@@ -709,7 +709,20 @@
     },
     "roomDims": "{width} × {length} m",
     "clearSelection": "Clear selection",
-    "selectHint": "Click a room on the plan to see its details."
+    "selectHint": "Click a room on the plan to see its details.",
+    "quality": {
+      "title": "Layout quality",
+      "scoreValue": "{score} / 100",
+      "components": {
+        "roomArea": "Room areas fit",
+        "shapeQuality": "Comfortable room proportions",
+        "adjacency": "Good room adjacency",
+        "efficiency": "Efficient footprint use",
+        "daylight": "Daylight potential",
+        "floorPreference": "Sensible floor placement",
+        "zoneGrouping": "Zones grouped well"
+      }
+    }
   },
   "three": {
     "floors": {

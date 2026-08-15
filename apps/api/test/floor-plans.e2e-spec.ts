@@ -243,7 +243,10 @@ describe('Floor plan (e2e)', () => {
     const issues = res.body.details.issues as { code: string }[];
     expect(Array.isArray(issues)).toBe(true);
     expect(issues.length).toBeGreaterThan(0);
-    expect(issues.map((issue) => issue.code)).toContain('TOO_MANY_ROOMS_PER_FLOOR');
+    // The feasibility gate (engine 1.2.0) rejects the overload before the band
+    // layout runs, with machine-readable adjustment suggestions.
+    expect(issues.map((issue) => issue.code)).toContain('INFEASIBLE_REQUIREMENTS');
+    expect(res.body.details.suggestions).toContain('increase_footprint');
 
     // A rejected configuration must not leave geometry from the previous one behind.
     const after = await prisma.floorPlan.findUnique({ where: { projectId } });

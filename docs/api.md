@@ -48,7 +48,7 @@ Base URL: `http://localhost:3001/api/v1`. JSON only. Swagger UI at `/docs` (non-
 
 ### Floor plan (`/projects/:id/floor-plan`) — authenticated, owner-scoped
 
-| GET | `/projects/:id/floor-plan` | — | 200 `{ plan: FloorPlan, generatedAt }`. Deterministic engine output persisted in `floor_plans` (regenerated when config inputHash or engine version changes). 409 `PROJECT_NOT_CONFIGURED` when configuration incomplete; 422 `FLOOR_PLAN_UNAVAILABLE` `{ details: { issues } }` when the engine rejects the configuration. Full contract: docs/floor-plan-engine.md §Consumers. |
+| GET | `/projects/:id/floor-plan` | — | 200 `{ plan: FloorPlan, generatedAt, layout: { strategy, score: { total, components[] } } }`. Deterministic engine output persisted in `floor_plans` (regenerated when config inputHash or engine version changes); `layout` is the explainable quality score, recomputed from the plan on every read (pure + deterministic, never persisted) — components are `{ code, score 0..1, weight }`, localized by code. 409 `PROJECT_NOT_CONFIGURED` when configuration incomplete; 422 `FLOOR_PLAN_UNAVAILABLE` `{ details: { issues, suggestions? } }` when the engine rejects the configuration or the feasibility gate fails (`INFEASIBLE_REQUIREMENTS`). Full contract: docs/floor-plan-engine.md §Consumers. |
 
 ### AI (`/ai`) — authenticated
 

@@ -3,6 +3,7 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { FloorPlanErrorState, useFloorPlanQuery } from './floor-plan-query';
 import { FloorPlanViewer } from './floor-plan-viewer';
+import { LayoutQuality } from './layout-quality';
 
 function PanelSkeleton() {
   return (
@@ -40,5 +41,10 @@ export function FloorPlanPanel({ projectId, projectUpdatedAt, className }: Floor
     );
   }
 
-  return <FloorPlanViewer className={className} plan={query.data.plan} />;
+  return (
+    <div className={className}>
+      {query.data.layout ? <LayoutQuality layout={query.data.layout} className="mb-3" /> : null}
+      <FloorPlanViewer plan={query.data.plan} />
+    </div>
+  );
 }

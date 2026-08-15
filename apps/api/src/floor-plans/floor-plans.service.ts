@@ -62,7 +62,9 @@ export class FloorPlansService {
       throw new UnprocessableEntityException({
         code: ERROR_CODES.FLOOR_PLAN_UNAVAILABLE,
         message: 'The floor-plan engine cannot lay out this configuration',
-        details: { issues: result.issues },
+        // `suggestions` (feasibility gate): machine-readable adjustments the
+        // UI can offer — increase_footprint / add_floor / reduce_rooms / …
+        details: { issues: result.issues, ...(result.suggestions ? { suggestions: result.suggestions } : {}) },
       });
     }
 

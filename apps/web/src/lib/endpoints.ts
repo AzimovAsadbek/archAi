@@ -102,6 +102,11 @@ export interface FloorPlanResponse {
   plan: FloorPlan;
   /** ISO timestamp of the persisted engine run. */
   generatedAt: string;
+  /** Explainable layout quality, deterministic per plan (localize by code). */
+  layout: {
+    strategy: string;
+    score: { total: number; components: { code: string; score: number; weight: number }[] };
+  };
 }
 
 export function getFloorPlan(
