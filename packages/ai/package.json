@@ -11,8 +11,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.70.0",
     "@archai/shared": "workspace:*",
+    "@google/genai": "^2.17.1",
+    "groq-sdk": "^1.5.0",
     "zod": "^4.1.0"
   },
   "devDependencies": {

@@ -49,6 +49,16 @@ export function useAiErrorView(): (error: unknown) => AiErrorView {
             retryable: true,
             notConfigured: false,
           };
+        // A daily per-user cap, distinct from a momentary rate limit: retrying
+        // now will not help, so it is not offered as retryable.
+        case 'AI_QUOTA_EXCEEDED':
+          return {
+            tone: 'warning',
+            title: t('AI_QUOTA_EXCEEDED.title'),
+            body: t('AI_QUOTA_EXCEEDED.body'),
+            retryable: false,
+            notConfigured: false,
+          };
         case 'AI_TIMEOUT':
           return {
             tone: 'danger',

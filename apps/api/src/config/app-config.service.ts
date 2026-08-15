@@ -57,12 +57,41 @@ export class AppConfigService {
     return this.env.TRUST_PROXY_HOPS;
   }
 
-  /** Undefined when AI is not configured — a supported deployment state. */
-  get anthropicApiKey(): string | undefined {
-    return this.env.ANTHROPIC_API_KEY;
+  // ── Runtime AI (server-side only; keys never reach the client) ──────────
+  get aiProvider(): string {
+    return this.env.AI_PROVIDER;
   }
 
-  get anthropicModel(): string | undefined {
-    return this.env.ANTHROPIC_MODEL;
+  get aiFallbackProvider(): string {
+    return this.env.AI_FALLBACK_PROVIDER;
+  }
+
+  /** Undefined when the key is not set — a supported deployment state. */
+  get geminiApiKey(): string | undefined {
+    return this.env.GEMINI_API_KEY;
+  }
+
+  get groqApiKey(): string | undefined {
+    return this.env.GROQ_API_KEY;
+  }
+
+  get aiPrimaryModel(): string | undefined {
+    return this.env.AI_PRIMARY_MODEL;
+  }
+
+  get aiFallbackModel(): string | undefined {
+    return this.env.AI_FALLBACK_MODEL;
+  }
+
+  get aiMaxRequestsPerUserPerDay(): number {
+    return this.env.AI_MAX_REQUESTS_PER_USER_PER_DAY;
+  }
+
+  get aiTimeoutMs(): number {
+    return this.env.AI_TIMEOUT_MS;
+  }
+
+  get aiMaxRetries(): number {
+    return this.env.AI_MAX_RETRIES;
   }
 }

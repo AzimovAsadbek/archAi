@@ -33,13 +33,27 @@ export const envSchema = z
      * per-IP rate limiter keys on the forwarded client IP, not the proxy.
      */
     TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(10).default(0),
+    // ── Runtime AI (free-tier-first; server-side only) ────────────────────
+    /** Primary runtime provider. `mock` needs no key. */
+    AI_PROVIDER: z.enum(['gemini', 'groq', 'mock']).default('gemini'),
+    /** Runtime fallback, tried only when the primary errors. `none` disables it. */
+    AI_FALLBACK_PROVIDER: z.enum(['gemini', 'groq', 'mock', 'none']).default('groq'),
     /**
-     * Server-side only. Empty or missing is a supported state: the AI provider
-     * then answers `AI_NOT_CONFIGURED` (503) instead of the app refusing to boot.
+     * Provider keys. Empty/missing is supported: if the *primary* key is absent
+     * the AI endpoint answers `AI_NOT_CONFIGURED` (503) rather than refusing to
+     * boot — the rest of the product still works.
      */
-    ANTHROPIC_API_KEY: optionalString,
-    /** Model override; `@archai/ai` falls back to its own default. */
-    ANTHROPIC_MODEL: optionalString,
+    GEMINI_API_KEY: optionalString,
+    GROQ_API_KEY: optionalString,
+    /** Model overrides; each provider falls back to its own verified default. */
+    AI_PRIMARY_MODEL: optionalString,
+    AI_FALLBACK_MODEL: optionalString,
+    /** Per-user requests/day; 0 disables the app-level quota. Provider limits still apply. */
+    AI_MAX_REQUESTS_PER_USER_PER_DAY: z.coerce.number().int().min(0).default(20),
+    /** Per-provider request timeout. */
+    AI_TIMEOUT_MS: z.coerce.number().int().min(1_000).max(120_000).default(30_000),
+    /** Same-provider retries on a transient error before falling back. */
+    AI_MAX_RETRIES: z.coerce.number().int().min(0).max(5).default(1),
   })
   // Session cookies must be Secure in production, or auth rides plain HTTP.
   .refine((env) => env.NODE_ENV !== 'production' || env.COOKIE_SECURE, {

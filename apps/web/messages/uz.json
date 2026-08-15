@@ -371,7 +371,7 @@
     "errors": {
       "AI_NOT_CONFIGURED": {
         "title": "AI hali ulanmagan",
-        "body": "Serverda ANTHROPIC_API_KEY o'rnatilmagan — buni administrator qiladi. Shu paytgacha loyihani oddiy usulda yaratib, konfiguratorda sozlashingiz mumkin."
+        "body": "AI serverda sozlanmagan — buni administrator qiladi. Shu paytgacha loyihani oddiy usulda yaratib, konfiguratorda sozlashingiz mumkin."
       },
       "AI_RATE_LIMITED": {
         "title": "Juda ko'p so'rov",
@@ -410,7 +410,11 @@
         "body": "So'rovni bajarib bo'lmadi. Qayta urinib ko'ring."
       },
       "retry": "Qayta urinish",
-      "useSimple": "Oddiy usulga o'tish"
+      "useSimple": "Oddiy usulga o'tish",
+      "AI_QUOTA_EXCEEDED": {
+        "title": "Kunlik limit tugadi",
+        "body": "Bugungi AI so'rovlari limiti tugadi. Ertaga qayta urinib ko'ring — matningiz saqlanib turibdi."
+      }
     }
   },
   "wizard": {

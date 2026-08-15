@@ -16,12 +16,14 @@
 
 - A feature without tests for its failure modes is not done (see Definition of Done).
 - Tests assert error *contracts* (status + `code`), not message strings (strings are localized).
-- AI slice: `packages/ai` unit tests use fake SDK clients (54 tests: schema fixtures,
-  refusal/rate-limit/invalid-output mapping, factory); API e2e binds a fake provider via
-  the `ARCHITECTURE_AI_PROVIDER` DI token (unconfigured 503, success, failure + provenance
-  rows). **No live API calls in CI.** Live uz/ru/en prompt evaluation (real key) is a
-  manual checklist run when `ANTHROPIC_API_KEY` lands: mixed-language, vague,
-  contradictory, injection-attempt, and oversized prompts per docs/ai-architecture.md.
+- AI slice: `packages/ai` unit tests use fake SDK clients (69 tests: schema fixtures,
+  wire-schema drift guard, parsing, Gemini/Groq provider mapping, router fallback, factory);
+  API e2e binds a fake provider via the `ARCHITECTURE_AI_PROVIDER` DI token (unconfigured
+  503, success + provenance, every error mapping, `/ai/status`, per-user quota → 429). **No
+  suite makes a live provider call** (provider keys neutralised at module scope). Live
+  provider verification (real Gemini/Groq keys) is manual and opt-in, never in CI:
+  mixed-language, vague, contradictory, injection-attempt prompts + fallback, per
+  docs/ai-architecture.md.
 - CI (`.github/workflows/ci.yml`): install → shared build → prisma generate → lint →
   typecheck → tests (unit + e2e with service Postgres) → builds. Must be green before a
   milestone is called complete.

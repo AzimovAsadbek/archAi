@@ -54,7 +54,8 @@ Base URL: `http://localhost:3001/api/v1`. JSON only. Swagger UI at `/docs` (non-
 
 | Method | Path | Body | Response |
 |---|---|---|---|
-| POST | `/ai/parse-project` | `{ text: string (trim 5..2000), localeHint?: 'uz'\|'ru'\|'en' }` | 200 `AiParseProjectResponse { proposal, validation, provenance }` (shared types). Throttled 10/min/IP. Never creates/modifies projects — applying is the client's explicit follow-up via POST /projects + PATCH. Errors (ApiErrorShape): 503 `AI_NOT_CONFIGURED`, 429 `AI_RATE_LIMITED` (or `RATE_LIMITED` from the throttler), 502 `AI_PROVIDER_ERROR`/`AI_TIMEOUT`, 422 `AI_REFUSED`/`AI_INVALID_OUTPUT`, 400 `VALIDATION_ERROR` (keys `ai_text_min`/`ai_text_max`). Contract details: docs/ai-architecture.md. |
+| POST | `/ai/parse-project` | `{ text: string (trim 5..2000), localeHint?: 'uz'\|'ru'\|'en' }` | 200 `AiParseProjectResponse { proposal, validation, provenance }` (shared types). Throttled 10/min/IP + a per-user daily quota (`AI_MAX_REQUESTS_PER_USER_PER_DAY`). Never creates/modifies projects — applying is the client's explicit follow-up via POST /projects + PATCH. Errors (ApiErrorShape): 503 `AI_NOT_CONFIGURED`, 429 `AI_RATE_LIMITED`/`AI_QUOTA_EXCEEDED` (or `RATE_LIMITED` from the throttler), 502 `AI_PROVIDER_ERROR`/`AI_TIMEOUT`, 422 `AI_REFUSED`/`AI_INVALID_OUTPUT`, 400 `VALIDATION_ERROR` (keys `ai_text_min`/`ai_text_max`). Contract details: docs/ai-architecture.md. |
+| GET | `/ai/status` | — | 200 `{ provider, available, fallbackProvider, fallbackAvailable, primaryModel, dailyRequestLimitPerUser }` — secrets-free runtime-AI diagnostic (never returns keys). |
 
 ### Estimate — authenticated, owner-scoped
 

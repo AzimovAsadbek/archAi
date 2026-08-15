@@ -45,7 +45,7 @@ export type ParseProjectResult =
  * absent until they are really implemented.
  */
 export interface ArchitectureAIProvider {
-  /** 'anthropic' | 'unconfigured' | test fakes. */
+  /** 'gemini' | 'groq' | 'mock' | 'unconfigured'. */
   readonly name: string;
   parseProjectRequest(input: ParseProjectInput): Promise<ParseProjectResult>;
 }

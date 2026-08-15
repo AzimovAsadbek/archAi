@@ -209,7 +209,7 @@ model AiGeneration {
   userId        String
   user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   kind          AiGenerationKind
-  /// ArchitectureAIProvider.name, e.g. 'anthropic' | 'unconfigured'.
+  /// ArchitectureAIProvider.name, e.g. 'gemini' | 'groq' | 'mock' | 'unconfigured'.
   provider      String
   model         String
   /// PARSE_PROJECT_PROMPT_VERSION of the run.

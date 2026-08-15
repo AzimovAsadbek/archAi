@@ -30,7 +30,11 @@ WEB_ORIGIN=https://your-domain
 NEXT_PUBLIC_API_URL=https://api.your-domain
 JWT_ACCESS_SECRET=…            # 64+ random chars
 JWT_REFRESH_SECRET=…           # different 64+ random chars
-ANTHROPIC_API_KEY=             # optional; AI features degrade gracefully without it
+AI_PROVIDER=gemini             # gemini | groq | mock
+AI_FALLBACK_PROVIDER=groq      # runtime fallback, or none
+GEMINI_API_KEY=                # primary; AI degrades to an honest 503 when empty
+GROQ_API_KEY=                  # fallback provider key
+AI_MAX_REQUESTS_PER_USER_PER_DAY=20   # per-user daily quota (0 = off)
 ```
 
 `COOKIE_SECURE` is forced `true` in the compose (HTTPS assumed in production). Put a

@@ -12,13 +12,11 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
    Auth → dashboard → configurator → workspace. 12 unit + 28 e2e tests, browser-QA'd
    (desktop+mobile). 3 defects found in QA and fixed (relativeTime now, 422 details
    shape, stale-closure room adds).
-3. **Slice 2: AI parsing** — DONE (code + tests); live-key evaluation PENDING
-   packages/ai (provider abstraction, claude-opus-5 structured outputs, versioned
-   injection-hardened prompt, 54 unit tests), POST /ai/parse-project (provenance rows,
-   full error contract, 11 e2e tests), AI creation path on /projects/new (review panel,
-   assumptions/unmappable, apply flow). Without `ANTHROPIC_API_KEY` the UI shows an honest
-   "not configured" panel (verified live). When the key lands: run the manual uz/ru/en
-   prompt evaluation checklist (docs/testing.md).
+3. **Slice 2: AI parsing** — DONE; runtime AI now free-tier-first (see Runtime-AI note under Hardening)
+   packages/ai (provider abstraction, versioned injection-hardened prompt, 69 unit tests),
+   POST /ai/parse-project (provenance rows, full error contract, 13 e2e tests incl. `/ai/status`
+   + per-user quota), AI creation path on /projects/new (review panel, assumptions/unmappable,
+   apply flow). Without a provider key the UI shows an honest "not configured" panel.
 4. **Slice 3: 2D floor-plan engine** — DONE
    Deterministic geometry engine (37 unit/invariant tests + a committed 5,000-config seeded
    fuzz), persisted plans with inputHash/engineVersion provenance, GET floor-plan endpoint
@@ -30,8 +28,9 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
    land plate) + R3F viewer (demand frameloop, orbit, floor cutaway, async-chunked —
    +3 kB route First Load). scene-builder is unit-tested (AABBs/determinism); the R3F
    layer is verified by browser QA. Workspace tabs now live: Umumiy | 2D | 3D.
-6. **Slice 5: Interior/exterior concepts** — BLOCKED on `ANTHROPIC_API_KEY`
-   (image generation + asset storage; workspace tabs reserved and honestly disabled)
+6. **Slice 5: Interior/exterior concepts** — BLOCKED (needs a genuinely free image-generation
+   provider; the runtime text model is text-only — §28 of the migration brief). Image
+   generation + asset storage; workspace tabs reserved and honestly disabled.
 7. **Slice 6: Estimate engine** — DONE
    Pure calculateEstimate in shared (13 unit tests, exact-sum contract), estimate_rules
    JSONB versioning with single-active index, GET /projects/:id/estimate, Smeta tab
@@ -65,6 +64,12 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
     - Performance: hot-path indexes added; two bounded notes documented in docs/architecture.md
       (mutating floor-plan GET, PDF triple-fetch). CI activation still needs the gh token
       `workflow` scope (workflow lives in .github/workflows-pending/).
+    - Runtime AI: migrated off Anthropic to a free-tier-first, provider-agnostic stack —
+      Gemini `gemini-flash-latest` primary + Groq `openai/gpt-oss-120b` fallback + Mock, with a
+      router (retry/fallback), per-user daily quota, usage tracking and honest degradation.
+      Live-verified: a real Gemini request succeeded, fallback + prompt-injection resistance
+      checked. The brief's `gemini-2.5-flash` / `llama-3.3-70b-versatile` were both retired by
+      the live check, so the models were switched to current verified ones. docs/ai-architecture.md.
 
 ## Deferred decisions
 

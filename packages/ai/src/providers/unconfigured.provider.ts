@@ -18,7 +18,8 @@ export class UnconfiguredArchitectureAIProvider implements ArchitectureAIProvide
     return Promise.resolve({
       ok: false,
       error: AI_ERROR_CODES.AI_NOT_CONFIGURED,
-      message: 'AI provider is not configured — ANTHROPIC_API_KEY is missing on the server',
+      message:
+        'AI provider is not configured — set the API key for AI_PROVIDER (e.g. GEMINI_API_KEY) on the server',
       provenance: {
         provider: this.name,
         model: 'none',

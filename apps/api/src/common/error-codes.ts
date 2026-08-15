@@ -30,6 +30,8 @@ export const ERROR_CODES = {
   AI_TIMEOUT: 'AI_TIMEOUT',
   AI_REFUSED: 'AI_REFUSED',
   AI_INVALID_OUTPUT: 'AI_INVALID_OUTPUT',
+  /** Per-user daily AI quota reached — enforced by the app, not a provider (429). */
+  AI_QUOTA_EXCEEDED: 'AI_QUOTA_EXCEEDED',
   RATE_LIMITED: 'RATE_LIMITED',
   BAD_REQUEST: 'BAD_REQUEST',
   /** Readiness probe: the database is unreachable — 503. */

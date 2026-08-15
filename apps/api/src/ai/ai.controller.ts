@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -10,7 +10,7 @@ import {
   parseProjectRequestSchema,
   type ParseProjectResponseDto,
 } from './ai.schema';
-import { AiService } from './ai.service';
+import { AiService, type AiStatusDto } from './ai.service';
 
 @ApiTags('ai')
 @ApiCookieAuth()
@@ -29,5 +29,11 @@ export class AiController {
     @Body(new ZodValidationPipe(parseProjectRequestSchema)) body: ParseProjectRequestInput,
   ): Promise<ParseProjectResponseDto> {
     return this.ai.parseProject(user.id, body);
+  }
+
+  @Get('status')
+  @ApiOperation({ summary: 'Runtime AI availability and per-user limit (no secrets)' })
+  status(): AiStatusDto {
+    return this.ai.getStatus();
   }
 }

@@ -22,6 +22,14 @@ import {
   resetDatabase,
 } from './utils/test-app';
 
+// Neutralise real provider keys for the whole file: no e2e suite may make a live
+// AI call. Every suite either binds a fake provider or expects the unconfigured
+// one. dotenv does not override an already-set process.env value.
+process.env.GEMINI_API_KEY = '';
+process.env.GROQ_API_KEY = '';
+process.env.AI_PROVIDER = 'gemini';
+process.env.AI_FALLBACK_PROVIDER = 'none';
+
 const PARSE_URL = `${API}/ai/parse-project`;
 
 const REQUEST_TEXT = '8 sotix yerda ikki qavatli uy, 3 ta yotoqxona va garaj kerak';
@@ -70,7 +78,7 @@ const success = (override?: Partial<ProjectProposal>): ParseProjectResult => ({
   proposal: proposal(override),
   provenance: {
     provider: 'fake',
-    model: 'claude-opus-5',
+    model: 'gemini-2.5-flash',
     promptVersion: PARSE_PROJECT_PROMPT_VERSION,
     inputTokens: 1_234,
     outputTokens: 567,
@@ -78,7 +86,7 @@ const success = (override?: Partial<ProjectProposal>): ParseProjectResult => ({
   },
 });
 
-/** Stands in for the Anthropic provider — bound through the DI token, no network. */
+/** Stands in for a real provider — bound through the DI token, no network. */
 class FakeAiProvider implements ArchitectureAIProvider {
   readonly name = 'fake';
   result: ParseProjectResult = success();
@@ -100,10 +108,8 @@ describe('AI parse-project — unconfigured (e2e)', () => {
   const asUser = (): string => cookieHeader(cookies);
 
   beforeAll(async () => {
-    // The dev/test default: no key configured. Pinned here so a developer's own
-    // key in .env cannot turn this suite green for the wrong reason.
-    process.env.ANTHROPIC_API_KEY = '';
-
+    // Keys are neutralised at module scope, so the real factory yields the
+    // unconfigured provider here — no key can turn this green for the wrong reason.
     app = await createTestApp();
     prisma = app.get(PrismaService);
     server = httpServer(app);
@@ -223,7 +229,7 @@ describe('AI parse-project — fake provider (e2e)', () => {
     expect(res.body.validation).toMatchObject({ valid: true, errors: [] });
     expect(res.body.provenance).toEqual({
       provider: 'fake',
-      model: 'claude-opus-5',
+      model: 'gemini-2.5-flash',
       promptVersion: PARSE_PROJECT_PROMPT_VERSION,
       inputTokens: 1_234,
       outputTokens: 567,
@@ -249,7 +255,7 @@ describe('AI parse-project — fake provider (e2e)', () => {
       status: 'SUCCEEDED',
       errorCode: null,
       provider: 'fake',
-      model: 'claude-opus-5',
+      model: 'gemini-2.5-flash',
       promptVersion: PARSE_PROJECT_PROMPT_VERSION,
       inputTokens: 1_234,
       outputTokens: 567,
@@ -306,10 +312,10 @@ describe('AI parse-project — fake provider (e2e)', () => {
     provider.result = {
       ok: false,
       error: 'AI_PROVIDER_ERROR',
-      message: 'Anthropic API error (status=529): overloaded',
+      message: 'Gemini API error (status=503): service unavailable',
       provenance: {
         provider: 'fake',
-        model: 'claude-opus-5',
+        model: 'gemini-2.5-flash',
         promptVersion: PARSE_PROJECT_PROMPT_VERSION,
         durationMs: 812,
       },
@@ -337,10 +343,10 @@ describe('AI parse-project — fake provider (e2e)', () => {
     provider.result = {
       ok: false,
       error: 'AI_RATE_LIMITED',
-      message: 'Anthropic rate limit reached',
+      message: 'Gemini rate limit or quota reached',
       provenance: {
         provider: 'fake',
-        model: 'claude-opus-5',
+        model: 'gemini-2.5-flash',
         promptVersion: PARSE_PROJECT_PROMPT_VERSION,
         durationMs: 120,
       },
@@ -360,7 +366,7 @@ describe('AI parse-project — fake provider (e2e)', () => {
       message: 'The model declined to answer this request',
       provenance: {
         provider: 'fake',
-        model: 'claude-opus-5',
+        model: 'gemini-2.5-flash',
         promptVersion: PARSE_PROJECT_PROMPT_VERSION,
         durationMs: 900,
       },
@@ -371,5 +377,51 @@ describe('AI parse-project — fake provider (e2e)', () => {
     expect(res.body).toMatchObject({ statusCode: 422, code: 'AI_REFUSED' });
     const rows = await prisma.aiGeneration.findMany();
     expect(rows[0]).toMatchObject({ status: 'FAILED', errorCode: 'AI_REFUSED' });
+  });
+
+  it('reports runtime AI status without leaking secrets', async () => {
+    const res = await request(server).get(`${API}/ai/status`).set('Cookie', asUser()).expect(200);
+    expect(res.body).toMatchObject({ provider: 'gemini', available: true });
+    expect(typeof res.body.dailyRequestLimitPerUser).toBe('number');
+    // No key material anywhere in the payload.
+    expect(JSON.stringify(res.body)).not.toMatch(/secret|gsk_|AIza|Ab8RN6/i);
+  });
+});
+
+describe('AI parse-project — per-user daily quota (e2e)', () => {
+  let app: INestApplication;
+  let prisma: PrismaService;
+  let server: Server;
+  let cookies: Cookies = {};
+  const provider = new FakeAiProvider();
+  const asUser = (): string => cookieHeader(cookies);
+  const parse = (body: string | object): request.Test =>
+    request(server).post(PARSE_URL).set('Cookie', asUser()).send(body);
+
+  beforeAll(async () => {
+    process.env.AI_MAX_REQUESTS_PER_USER_PER_DAY = '2';
+    app = await createTestApp((builder) =>
+      builder.overrideProvider(ARCHITECTURE_AI_PROVIDER).useValue(provider),
+    );
+    prisma = app.get(PrismaService);
+    server = httpServer(app);
+    await resetDatabase(prisma);
+    cookies = (await registerUser(server, USER)).cookies;
+  });
+
+  afterAll(async () => {
+    delete process.env.AI_MAX_REQUESTS_PER_USER_PER_DAY;
+    await app.close();
+  });
+
+  it('allows requests up to the limit, then answers 429 AI_QUOTA_EXCEEDED', async () => {
+    await parse({ text: REQUEST_TEXT }).expect(200);
+    await parse({ text: REQUEST_TEXT }).expect(200);
+
+    const res = await parse({ text: REQUEST_TEXT }).expect(429);
+    expect(res.body).toMatchObject({ statusCode: 429, code: 'AI_QUOTA_EXCEEDED' });
+
+    // The blocked request never reached the provider, so no third row was written.
+    expect(await prisma.aiGeneration.count()).toBe(2);
   });
 });

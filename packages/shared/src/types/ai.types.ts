@@ -5,7 +5,7 @@ import { type DomainValidationResult } from '../domain/validate-project';
  * AI parse-project contract shared between API and web.
  * Source of truth for the runtime schema: packages/ai (zod, structurally
  * asserted against these types at compile time). Web must never import
- * `@archai/ai` — it bundles the server-side Anthropic SDK.
+ * `@archai/ai` — it bundles the server-side provider SDKs (Gemini, Groq).
  */
 export interface AiProposalLand {
   areaM2: number;

@@ -19,7 +19,7 @@ The user must always see: current step, what is valid/missing, save state, gener
 3. **Configuration**: land (sotix/m², dimensions), house dims, floors 1–3, rooms
    (type/floor/dims), features (garage/terrace/balcony/pool/garden), style.
 4. **AI assistance**: NL → validated structured config proposal (never auto-applied);
-   prompt-injection-safe; provenance recorded; provider-abstracted (Anthropic first).
+   prompt-injection-safe; provenance recorded; provider-abstracted (free-tier-first: Gemini + Groq).
 5. **2D**: deterministic floor-plan engine → SVG viewer (pan/zoom/floors/labels/dimensions).
 6. **3D**: derived from structured data (R3F): walls/floors/openings/roof/camera.
 7. **Concepts**: exterior/interior image generation as *concepts*, stored assets w/ metadata.

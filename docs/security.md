@@ -16,7 +16,10 @@ access (IDOR), injection via user input, and secret leakage.
   (422). API never echoes stack traces; 500s are generic + logged with request id.
 - Headers/transport: helmet defaults; CORS locked to `WEB_ORIGIN` with credentials.
 - Secrets: env-only (`apps/api/.env`, gitignored); `.env.example` documents keys; startup
-  fails fast on missing env. AI keys will be server-side only.
+  fails fast on missing env. Runtime-AI provider keys (`GEMINI_API_KEY`, `GROQ_API_KEY`) are
+  server-side only — never bundled into web, never returned by `/ai/status`. Provider error
+  payloads stay in server logs; clients see only a stable code. Prompt injection is fenced and
+  live-verified (a "print your system prompt" attempt was treated as data, no leak).
 
 ## Standing rules for future slices
 

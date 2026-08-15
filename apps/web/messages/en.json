@@ -371,7 +371,7 @@
     "errors": {
       "AI_NOT_CONFIGURED": {
         "title": "AI is not connected yet",
-        "body": "ANTHROPIC_API_KEY is not set on the server — an administrator has to do that. Until then you can create the project manually and configure it in the configurator."
+        "body": "AI is not configured on the server — an administrator has to set it up. Until then you can create the project manually and configure it in the configurator."
       },
       "AI_RATE_LIMITED": {
         "title": "Too many requests",
@@ -410,7 +410,11 @@
         "body": "The request could not be completed. Please try again."
       },
       "retry": "Try again",
-      "useSimple": "Switch to the manual way"
+      "useSimple": "Switch to the manual way",
+      "AI_QUOTA_EXCEEDED": {
+        "title": "Daily limit reached",
+        "body": "You've reached today's AI request limit. Try again tomorrow — your text is kept."
+      }
     }
   },
   "wizard": {
