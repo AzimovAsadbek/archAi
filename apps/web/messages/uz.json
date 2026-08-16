@@ -176,6 +176,44 @@
       "submit": "Loyiha yaratishni boshlash",
       "tooBig": "Uy yer maydonidan katta.",
       "note": "Ro'yxatdan o'tganingizdan so'ng shu ma'lumotlar bilan davom etasiz."
+    },
+    "showcase": {
+      "title": "Mana, natija",
+      "subtitle": "Quyidagi reja va smeta shu sahifa ochilganda haqiqiy archAI dvigateli tomonidan hisoblandi — bu tayyor rasm emas.",
+      "tabs": {
+        "plan": "2D reja",
+        "rooms": "Xonalar",
+        "estimate": "Smeta"
+      },
+      "floor": "{n}-qavat",
+      "planAlt": "{n}-qavat rejasi — archAI dvigateli chiqargan",
+      "table": {
+        "room": "Xona",
+        "floor": "Qavat",
+        "size": "O'lchami",
+        "area": "Maydon"
+      },
+      "estimateTotal": "Taxminiy umumiy qiymat",
+      "currency": "so'm",
+      "lines": {
+        "structure": "Qurilish ishlari",
+        "finish": "Pardoz ishlari",
+        "features": "Qo'shimchalar",
+        "contingency": "Zaxira",
+        "labor-info": "Ish haqi"
+      },
+      "estimateNote": "Dastlabki mo'ljal. Haqiqiy narxlar mintaqa, materiallar va pudratchiga qarab farq qiladi.",
+      "briefLabel": "Boshlang'ich talab",
+      "briefText": "6 sotix yerga 2 qavatli, 4 xonali modern uy, garaj va terrasa",
+      "facts": {
+        "land": "Yer",
+        "house": "Uy",
+        "floors": "Qavatlar",
+        "rooms": "Xonalar"
+      },
+      "deterministicLabel": "Determinstik",
+      "deterministicBody": "Bir xil talab har doim bir xil rejani beradi. Tasodifiylik yo'q — geometriya 0.01 m aniqlikda hisoblanadi.",
+      "engineVersion": "Dvigatel versiyasi {version}"
     }
   },
   "auth": {
@@ -294,7 +332,8 @@
       "title": "Loyihani arxivlash",
       "body": "«{name}» arxivga o'tadi va tahrirlash to'xtatiladi. Keyin arxivdan qaytarish mumkin.",
       "confirm": "Arxivlash"
-    }
+    },
+    "footprintAlt": "{name} — uy va yer uchastkasi sxemasi"
   },
   "projectNew": {
     "back": "Loyihalarga qaytish",

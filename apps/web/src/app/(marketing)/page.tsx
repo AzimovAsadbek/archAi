@@ -20,6 +20,8 @@ import { buttonClasses } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BriefPanel } from '@/components/marketing/brief-panel';
 import { HeroSchematic } from '@/components/marketing/hero-schematic';
+import { Showcase } from '@/components/marketing/showcase';
+import { SHOWCASE_BRIEF, buildShowcase } from '@/lib/showcase-project';
 
 const HOW_STEPS = ['describe', 'validate', 'visualize', 'export'] as const;
 
@@ -58,6 +60,9 @@ const VALUE_ITEMS: Array<{ key: string; icon: LucideIcon }> = [
 export default function LandingPage() {
   const t = useTranslations('marketing');
   const tCommon = useTranslations('common');
+  // Computed per render from the real engine + estimate functions. Both are
+  // pure, so this costs no database and no network call.
+  const showcase = buildShowcase();
 
   return (
     <>
@@ -132,6 +137,11 @@ export default function LandingPage() {
           </ol>
         </div>
       </section>
+
+      {/* ── Showcase: real engine output, not a mock-up ──────────────── */}
+      {showcase ? (
+        <Showcase plan={showcase.plan} estimate={showcase.estimate} brief={SHOWCASE_BRIEF} />
+      ) : null}
 
       {/* ── Features ─────────────────────────────────────────────────── */}
       <section id="features" className="scroll-mt-20 border-b border-line">

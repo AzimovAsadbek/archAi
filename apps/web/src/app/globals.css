@@ -32,6 +32,28 @@
   --font-sans:
     var(--font-manrope), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
+  /* One editorial scale for the whole product. Before these existed, sizes were
+     ad-hoc per page and the same role drifted (a page title was 48px on the
+     landing and 30px in the workspace). Each step pairs a size with the
+     line-height and tracking it needs at that size. */
+  --text-display: 3rem; /* 48 — landing hero only */
+  --text-display--line-height: 1.06;
+  --text-display--letter-spacing: -0.022em;
+  --text-title: 1.875rem; /* 30 — page title */
+  --text-title--line-height: 1.15;
+  --text-title--letter-spacing: -0.018em;
+  --text-section: 1.4375rem; /* 23 — section heading */
+  --text-section--line-height: 1.25;
+  --text-section--letter-spacing: -0.014em;
+  --text-panel: 1.0625rem; /* 17 — panel / card title */
+  --text-panel--line-height: 1.4;
+  --text-panel--letter-spacing: -0.006em;
+  --text-meta: 0.84375rem; /* 13.5 — table cells, secondary rows */
+  --text-meta--line-height: 1.5;
+  --text-caption: 0.71875rem; /* 11.5 — labels, badges, annotations */
+  --text-caption--line-height: 1.45;
+  --text-caption--letter-spacing: 0.01em;
+
   /* ── Geometry ───────────────────────────────────────────────────── */
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -39,6 +61,44 @@
 
   /* ── Elevation (exactly one card shadow) ────────────────────────── */
   --shadow-card: 0 1px 2px rgb(25 26 30 / 0.05), 0 10px 26px -18px rgb(25 26 30 / 0.35);
+
+  /* ── Stacking ───────────────────────────────────────────────────── */
+  /* The workspace stacks a canvas under floating tools under a docked rail
+     under sticky chrome. Named steps stop those colliding by accident. */
+  --z-canvas: 0;
+  --z-canvas-ui: 10;
+  --z-rail: 20;
+  --z-header: 30;
+  --z-sheet: 40;
+  --z-dialog: 50;
+  --z-toast: 60;
+
+  /* ── Motion ─────────────────────────────────────────────────────── */
+  /* Durations are shared so a tab change and a panel slide feel like the same
+     product. `prefers-reduced-motion` still overrides all of them below. */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-instant: 90ms;
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --duration-slow: 380ms;
+
+  /* ── Workspace chrome ───────────────────────────────────────────── */
+  /* The canvas is sized by subtracting these from the viewport, so they must be
+     tokens rather than magic numbers scattered across the workspace. */
+  --size-app-header: 3.5rem; /* 56 */
+  --size-workspace-tabs: 2.75rem; /* 44 */
+  --size-workspace-toolbar: 2.5rem; /* 40 */
+  --size-workspace-status: 1.75rem; /* 28 */
+  --size-workspace-rail: 20rem; /* 320 */
+
+  /* ── Drawing weights (metres, so they survive zoom) ─────────────── */
+  /* The 2D plan is drawn in metres; a stroke expressed in px would thicken as
+     the user zooms out. These keep the drawing hierarchy stable at any scale. */
+  --stroke-structure: 0.3;
+  --stroke-partition: 0.15;
+  --stroke-detail: 0.045;
+  --stroke-annotation: 0.025;
 }
 
 @layer base {

@@ -44,6 +44,14 @@ export interface ProjectListItemDto {
   name: string;
   status: ProjectStatus;
   landAreaM2: number | null;
+  /**
+   * House footprint, so a card can draw the building on its plot without
+   * fetching the floor plan. This is configuration, not geometry: it describes
+   * the same inputs the engine consumes and lays out no rooms, so it introduces
+   * no second geometry source.
+   */
+  houseWidthM: number | null;
+  houseLengthM: number | null;
   floorCount: number | null;
   style: HouseStyle | null;
   roomCount: number;

@@ -110,6 +110,8 @@ export function toProjectListItemDto(project: ProjectListRow): ProjectListItemDt
     name: project.name,
     status: project.status,
     landAreaM2: project.landAreaM2,
+    houseWidthM: project.houseWidthM,
+    houseLengthM: project.houseLengthM,
     floorCount: project.floorCount,
     style: project.style,
     roomCount: project._count.rooms,

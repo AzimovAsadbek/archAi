@@ -18,6 +18,7 @@ import { type ProjectListItemDto } from '@archai/shared';
 import { Card } from '@/components/ui/card';
 import { Menu, MenuItem, MenuSeparator } from '@/components/ui/menu';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { ProjectFootprint } from '@/components/project/project-footprint';
 import { relativeTimeParts } from '@/lib/relative-time';
 
 export interface ProjectCardProps {
@@ -54,10 +55,27 @@ export function ProjectCard({
   const updatedLabel = updated.key === 'now' ? tTime('now') : tTime(updated.key, { count: updated.count });
 
   return (
-    <Card interactive className="relative flex flex-col p-5">
+    <Card interactive className="relative flex flex-col overflow-hidden p-0">
+      {/* The building leads. Everything textual is secondary to it — this is the
+          card's whole reason to exist as a card rather than a table row. */}
+      <div className="relative aspect-[16/9] border-b border-line">
+        <ProjectFootprint
+          landAreaM2={project.landAreaM2}
+          houseWidthM={project.houseWidthM}
+          houseLengthM={project.houseLengthM}
+          floorCount={project.floorCount}
+          style={project.style}
+          label={t('footprintAlt', { name: project.name })}
+        />
+        <div className="absolute top-3 left-3">
+          <StatusBadge status={project.status} size="sm" />
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="truncate text-base leading-snug font-bold text-ink">
+          <h3 className="truncate text-panel font-bold text-ink">
             <Link
               href={`/projects/${project.id}`}
               className="rounded-sm after:absolute after:inset-0 after:content-['']"
@@ -65,9 +83,6 @@ export function ProjectCard({
               {project.name}
             </Link>
           </h3>
-          <div className="mt-2">
-            <StatusBadge status={project.status} size="sm" />
-          </div>
         </div>
 
         <Menu
@@ -170,13 +185,13 @@ export function ProjectCard({
         </div>
       </dl>
 
-      <div className="mt-5 flex items-center justify-between gap-3 border-t border-line pt-4">
-        <span className="truncate text-xs font-semibold text-ink-faint">
+      <div className="mt-auto flex items-center justify-between gap-3 border-t border-line pt-4">
+        <span className="truncate text-caption font-semibold text-ink-faint">
           {project.style ? tStyles(`${project.style}.label`) : t('meta.noStyle')}
         </span>
         <time
           dateTime={project.updatedAt}
-          className="shrink-0 text-xs text-ink-faint"
+          className="shrink-0 text-caption text-ink-faint"
           title={format.dateTime(new Date(project.updatedAt), {
             day: '2-digit',
             month: '2-digit',
@@ -187,6 +202,7 @@ export function ProjectCard({
         >
           {updatedLabel}
         </time>
+      </div>
       </div>
     </Card>
   );

@@ -176,6 +176,44 @@
       "submit": "Start creating",
       "tooBig": "The house is larger than the plot.",
       "note": "After you register you continue with these values."
+    },
+    "showcase": {
+      "title": "Here is the output",
+      "subtitle": "The plan and estimate below were computed by the real archAI engine when this page loaded — not a prepared image.",
+      "tabs": {
+        "plan": "2D plan",
+        "rooms": "Rooms",
+        "estimate": "Estimate"
+      },
+      "floor": "Floor {n}",
+      "planAlt": "Floor {n} plan — produced by the archAI engine",
+      "table": {
+        "room": "Room",
+        "floor": "Floor",
+        "size": "Size",
+        "area": "Area"
+      },
+      "estimateTotal": "Preliminary total",
+      "currency": "UZS",
+      "lines": {
+        "structure": "Structure",
+        "finish": "Finishing",
+        "features": "Features",
+        "contingency": "Contingency",
+        "labor-info": "Labour"
+      },
+      "estimateNote": "A preliminary figure. Real prices vary by region, materials and contractor.",
+      "briefLabel": "The brief",
+      "briefText": "6 sotix, two floors, four rooms, modern, garage and terrace",
+      "facts": {
+        "land": "Land",
+        "house": "House",
+        "floors": "Floors",
+        "rooms": "Rooms"
+      },
+      "deterministicLabel": "Deterministic",
+      "deterministicBody": "The same brief always produces the same plan. No randomness — geometry is computed to 0.01 m.",
+      "engineVersion": "Engine version {version}"
     }
   },
   "auth": {
@@ -294,7 +332,8 @@
       "title": "Archive project",
       "body": "“{name}” moves to the archive and editing stops. You can restore it later.",
       "confirm": "Archive"
-    }
+    },
+    "footprintAlt": "{name} — house and plot diagram"
   },
   "projectNew": {
     "back": "Back to projects",
