@@ -4,6 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { FloorPlanErrorState, useFloorPlanQuery } from './floor-plan-query';
 import { FloorPlanViewer } from './floor-plan-viewer';
 import { LayoutQuality } from './layout-quality';
+import { StrategySelect } from './strategy-select';
 
 function PanelSkeleton() {
   return (
@@ -43,7 +44,13 @@ export function FloorPlanPanel({ projectId, projectUpdatedAt, className }: Floor
 
   return (
     <div className={className}>
-      {query.data.layout ? <LayoutQuality layout={query.data.layout} className="mb-3" /> : null}
+      {query.data.layout ? (
+        <LayoutQuality
+          layout={query.data.layout}
+          className="mb-3"
+          action={<StrategySelect projectId={projectId} current={query.data.layout.strategy} />}
+        />
+      ) : null}
       <FloorPlanViewer plan={query.data.plan} />
     </div>
   );

@@ -723,7 +723,8 @@
         "daylight": "Tabiiy yorug'lik imkoniyati",
         "floorPreference": "Qavatlar bo'yicha joylashuv",
         "zoneGrouping": "Hududlar guruhlangan"
-      }
+      },
+      "strategyLabel": "Reja uslubi"
     }
   },
   "three": {

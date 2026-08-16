@@ -1,5 +1,6 @@
 'use client';
 
+import { type ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
 import { CircleAlert, CircleCheck } from 'lucide-react';
 import { type FloorPlanResponse } from '@/lib/endpoints';
@@ -12,6 +13,8 @@ const MAX_INSIGHTS = 2;
 
 export interface LayoutQualityProps {
   layout: FloorPlanResponse['layout'];
+  /** Optional trailing control (the strategy selector), kept on the same row. */
+  action?: ReactNode;
   className?: string;
 }
 
@@ -20,7 +23,7 @@ export interface LayoutQualityProps {
  * plus at most two strengths and two warnings, localized by component code.
  * Raw engine internals (weights, every component) stay out of the default UI.
  */
-export function LayoutQuality({ layout, className }: LayoutQualityProps) {
+export function LayoutQuality({ layout, action, className }: LayoutQualityProps) {
   const t = useTranslations('floorPlan.quality');
   const { total, components } = layout.score;
 
@@ -65,6 +68,8 @@ export function LayoutQuality({ layout, className }: LayoutQualityProps) {
           </span>
         ))}
       </span>
+
+      {action ? <span className="ml-auto">{action}</span> : null}
     </div>
   );
 }

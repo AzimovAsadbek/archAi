@@ -723,7 +723,8 @@
         "daylight": "Daylight potential",
         "floorPreference": "Sensible floor placement",
         "zoneGrouping": "Zones grouped well"
-      }
+      },
+      "strategyLabel": "Layout style"
     }
   },
   "three": {

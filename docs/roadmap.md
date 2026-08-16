@@ -137,8 +137,17 @@ Status: DONE / IN_PROGRESS / TODO / BLOCKED
     layoutStrategy FAMILY (prompt v2, schema-valid); the COMPACT and
     no-preference cases hit the exhausted free-tier daily quota
     (AI_RATE_LIMITED surfaced cleanly) and remain schema/pipeline-tested only —
-    re-verify live on a fresh quota day. Deferred next: manual strategy
-    selector in the configurator, circulation-graph scoring.
+    re-verify live on a fresh quota day.
+17. **Intelligent layout engine (increment 4: manual strategy selector)** — DONE
+    A compact selector beside the layout-quality score in the 2D tab (where its
+    effect is visible), all five strategies localized from the shared
+    `strategies` namespace. Choosing one PATCHes `layoutStrategy`; prefix query
+    invalidation refetches project + plan; the strategy-keyed cache regenerates
+    the geometry and rescores under the new policy. Verified live in-browser:
+    BALANCED 55/100 → PRIVACY 61/100, PATCH→GET→refetch trace clean, superseded
+    request correctly aborted, zero console errors. An explicit selection here
+    outranks the AI's suggestion by construction (`resolveStrategy`).
+    Deferred next: circulation-graph scoring; re-run quota-blocked live probes.
 
 ## Deferred decisions
 
