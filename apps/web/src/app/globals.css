@@ -2,20 +2,33 @@
 
 @theme {
   /* ── Surfaces & ink ─────────────────────────────────────────────── */
-  --color-paper: #f7f6f2;
-  --color-surface: #ffffff;
-  --color-ink: #191a1e;
-  --color-ink-soft: #55575e;
+  /* Studio off-white over warm ivory: the drawing sheet sits on the desk. */
+  --color-paper: #f4f4f0;
+  --color-surface: #fbfbfa;
+  --color-ink: #1a1a18;
+  --color-ink-soft: #55564f;
   /* Darkened from #8a8d95 (3.07:1, fails AA) to clear 4.5:1 on paper/surface
      while still reading as muted next to ink and ink-soft. */
-  --color-ink-faint: #63666e;
-  --color-line: #e4e2db;
-  --color-line-strong: #cfccc2;
+  --color-ink-faint: #64655d;
+  --color-line: #e3e2da;
+  --color-line-strong: #cbc9be;
 
-  /* ── Accent (terracotta) ────────────────────────────────────────── */
-  --color-accent: #c2571e;
-  --color-accent-strong: #a64312;
-  --color-accent-soft: #fbeee6;
+  /* ── Accent (architectural terracotta) ──────────────────────────── */
+  --color-accent: #c85a32;
+  /* AA-safe pairing for text and hairlines on paper/surface. */
+  --color-accent-strong: #a8461f;
+  --color-accent-soft: #f9ece5;
+
+  /* ── Studio shell (obsidian) ────────────────────────────────────── */
+  /* The workspace chrome is dark so the drawing reads as lit. These are shell
+     tokens, not a dark theme: the canvas and every document surface stay light,
+     which is why `color-scheme` below is still `light`. */
+  --color-shell: #1a1a18;
+  --color-shell-raised: #24241f;
+  --color-shell-line: #33332c;
+  --color-shell-ink: #f0efe9;
+  --color-shell-ink-soft: #a3a299;
+  --color-shell-ink-faint: #7a7970;
 
   /* ── Status ─────────────────────────────────────────────────────── */
   /* Darkened from #2f7d46 (4.47:1 on success-soft, just under AA) to ~4.8:1. */
@@ -31,6 +44,11 @@
   /* ── Typography ─────────────────────────────────────────────────── */
   --font-sans:
     var(--font-manrope), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Every measured value — areas, dimensions, scale, cursor coordinates —
+     is set in mono so digits align in a column and a changing readout does not
+     reflow the control next to it. */
+  --font-mono:
+    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
   /* One editorial scale for the whole product. Before these existed, sizes were
      ad-hoc per page and the same role drifted (a page title was 48px on the
@@ -58,6 +76,10 @@
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
+  /* Workspace containers stay tight — a CAD panel with a 14px radius reads as a
+     consumer card, not an instrument. Capped at 8px by design. */
+  --radius-panel: 8px;
+  --radius-tool: 4px;
 
   /* ── Elevation (exactly one card shadow) ────────────────────────── */
   --shadow-card: 0 1px 2px rgb(25 26 30 / 0.05), 0 10px 26px -18px rgb(25 26 30 / 0.35);

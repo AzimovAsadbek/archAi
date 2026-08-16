@@ -666,12 +666,12 @@
     "tabsLabel": "Разделы проекта",
     "tabs": {
       "overview": "Обзор",
-      "plans2d": "2D",
-      "view3d": "3D",
+      "plans2d": "2D-план",
+      "view3d": "3D-вид",
       "interior": "Интерьер",
       "exterior": "Экстерьер",
       "estimate": "Смета",
-      "assistant": "Помощник"
+      "assistant": "ИИ-архитектор"
     },
     "stats": {
       "land": "Площадь участка",
@@ -734,7 +734,14 @@
         "LOW": "Низко"
       },
       "disclaimer": "AI может ошибаться — проверяйте советы и ответы."
-    }
+    },
+    "backToProjects": "К проектам",
+    "modes": "Режимы работы",
+    "collapseRail": "Свернуть",
+    "scale": "Масштаб",
+    "cursorX": "X",
+    "cursorY": "Y",
+    "zoom": "Зум"
   },
   "floorPlan": {
     "loadError": "Не удалось загрузить план",
@@ -817,6 +824,31 @@
       "front": "Фасад",
       "side": "Сбоку",
       "isometric": "Изометрия"
+    },
+    "overlay": {
+      "mode": "Режим вида",
+      "floor": "Этаж",
+      "camera": "Камера",
+      "facade": "Материал фасада",
+      "fit": "Вписать",
+      "modes": {
+        "whole": "Весь дом",
+        "floor": "Этаж",
+        "section": "Разрез"
+      },
+      "cameras": {
+        "orbit": "Орбита",
+        "top": "Сверху",
+        "front": "Спереди",
+        "side": "Сбоку",
+        "iso": "Изометрия"
+      },
+      "facades": {
+        "concrete": "Бетон",
+        "stucco": "Штукатурка",
+        "brick": "Кирпич",
+        "glass": "Стекло"
+      }
     }
   },
   "estimate": {
@@ -1433,6 +1465,23 @@
     "FAMILY": {
       "label": "Семейный",
       "description": "Удобное расположение для повседневной жизни семьи."
+    }
+  },
+  "plan": {
+    "viewport": {
+      "tools": "Инструменты",
+      "select": "Выбор",
+      "pan": "Панорама",
+      "measure": "Измерение",
+      "soon": "скоро",
+      "zoom": "Масштаб",
+      "zoomIn": "Приблизить",
+      "zoomOut": "Отдалить",
+      "fit": "Вписать",
+      "floor": "Этаж",
+      "layers": "Слои",
+      "scaleLabel": "М",
+      "zoomLabel": "Зум"
     }
   }
 }

@@ -666,12 +666,12 @@
     "tabsLabel": "Loyiha bo'limlari",
     "tabs": {
       "overview": "Umumiy",
-      "plans2d": "2D",
-      "view3d": "3D",
+      "plans2d": "2D reja",
+      "view3d": "3D ko'rinish",
       "interior": "Interyer",
       "exterior": "Eksteryer",
       "estimate": "Smeta",
-      "assistant": "Yordamchi"
+      "assistant": "AI Arxitektor"
     },
     "stats": {
       "land": "Yer maydoni",
@@ -734,7 +734,14 @@
         "LOW": "Past"
       },
       "disclaimer": "AI xato qilishi mumkin — takliflar va javoblarni tekshiring."
-    }
+    },
+    "backToProjects": "Loyihalarga qaytish",
+    "modes": "Ish rejimlari",
+    "collapseRail": "Yig'ish",
+    "scale": "Masshtab",
+    "cursorX": "X",
+    "cursorY": "Y",
+    "zoom": "Zum"
   },
   "floorPlan": {
     "loadError": "Rejani yuklab bo'lmadi",
@@ -817,6 +824,31 @@
       "front": "Old",
       "side": "Yon",
       "isometric": "Izometrik"
+    },
+    "overlay": {
+      "mode": "Ko'rinish rejimi",
+      "floor": "Qavat",
+      "camera": "Kamera",
+      "facade": "Fasad materiali",
+      "fit": "Sig'dirish",
+      "modes": {
+        "whole": "Butun uy",
+        "floor": "Qavat",
+        "section": "Kesim"
+      },
+      "cameras": {
+        "orbit": "Aylanma",
+        "top": "Tepadan",
+        "front": "Old",
+        "side": "Yon",
+        "iso": "Izometrik"
+      },
+      "facades": {
+        "concrete": "Beton",
+        "stucco": "Shtukatur",
+        "brick": "G'isht",
+        "glass": "Shisha"
+      }
     }
   },
   "estimate": {
@@ -1433,6 +1465,23 @@
     "FAMILY": {
       "label": "Oilaviy",
       "description": "Oilaning kundalik harakati uchun qulay joylashuv."
+    }
+  },
+  "plan": {
+    "viewport": {
+      "tools": "Asboblar",
+      "select": "Tanlash",
+      "pan": "Surish",
+      "measure": "O'lchash",
+      "soon": "tez orada",
+      "zoom": "Masshtab",
+      "zoomIn": "Kattalashtirish",
+      "zoomOut": "Kichiklashtirish",
+      "fit": "Sig'dirish",
+      "floor": "Qavat",
+      "layers": "Qatlamlar",
+      "scaleLabel": "M",
+      "zoomLabel": "Zum"
     }
   }
 }

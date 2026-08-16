@@ -666,12 +666,12 @@
     "tabsLabel": "Project sections",
     "tabs": {
       "overview": "Overview",
-      "plans2d": "2D",
-      "view3d": "3D",
+      "plans2d": "2D plan",
+      "view3d": "3D view",
       "interior": "Interior",
       "exterior": "Exterior",
       "estimate": "Estimate",
-      "assistant": "Assistant"
+      "assistant": "AI Architect"
     },
     "stats": {
       "land": "Land area",
@@ -734,7 +734,14 @@
         "LOW": "Low"
       },
       "disclaimer": "AI can make mistakes — review suggestions and answers."
-    }
+    },
+    "backToProjects": "Back to projects",
+    "modes": "Workspace modes",
+    "collapseRail": "Collapse",
+    "scale": "Scale",
+    "cursorX": "X",
+    "cursorY": "Y",
+    "zoom": "Zoom"
   },
   "floorPlan": {
     "loadError": "Could not load the floor plan",
@@ -817,6 +824,31 @@
       "front": "Front",
       "side": "Side",
       "isometric": "Isometric"
+    },
+    "overlay": {
+      "mode": "View mode",
+      "floor": "Floor",
+      "camera": "Camera",
+      "facade": "Facade material",
+      "fit": "Fit",
+      "modes": {
+        "whole": "Whole house",
+        "floor": "Floor",
+        "section": "Section"
+      },
+      "cameras": {
+        "orbit": "Orbit",
+        "top": "Top",
+        "front": "Front",
+        "side": "Side",
+        "iso": "Isometric"
+      },
+      "facades": {
+        "concrete": "Concrete",
+        "stucco": "Stucco",
+        "brick": "Brick",
+        "glass": "Glass"
+      }
     }
   },
   "estimate": {
@@ -1433,6 +1465,23 @@
     "FAMILY": {
       "label": "Family",
       "description": "A layout tuned for everyday family movement."
+    }
+  },
+  "plan": {
+    "viewport": {
+      "tools": "Tools",
+      "select": "Select",
+      "pan": "Pan",
+      "measure": "Measure",
+      "soon": "soon",
+      "zoom": "Zoom",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "fit": "Fit",
+      "floor": "Floor",
+      "layers": "Layers",
+      "scaleLabel": "Scale",
+      "zoomLabel": "Zoom"
     }
   }
 }
