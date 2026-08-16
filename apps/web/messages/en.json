@@ -47,7 +47,25 @@
       "subtitle": "Enter your land, house dimensions, rooms and style — archAi turns them into validated project data, a 2D plan, a 3D view and a preliminary estimate.",
       "ctaPrimary": "Start for free",
       "ctaSecondary": "Log in",
-      "note": "Configurator, AI understanding, 2D plans, 3D preview, estimates and PDF export all work today."
+      "note": "Configurator, AI understanding, 2D plans, 3D preview, estimates and PDF export all work today.",
+      "proof": {
+        "ai": {
+          "title": "AI understands",
+          "body": "Write in plain words"
+        },
+        "precision": {
+          "title": "0.01 m precision",
+          "body": "Deterministic geometry"
+        },
+        "trilingual": {
+          "title": "Three languages",
+          "body": "uz · ru · en"
+        },
+        "estimate": {
+          "title": "With an estimate",
+          "body": "Materials and labour"
+        }
+      }
     },
     "schematic": {
       "title": "Schematic plan",
@@ -143,6 +161,21 @@
       "tagline": "A structured house project, built from your land and requirements.",
       "rights": "© 2026 archAi. All rights reserved.",
       "navLabel": "Site navigation"
+    },
+    "brief": {
+      "title": "Create a new project",
+      "land": "Land area",
+      "sotix": "{count} sotix",
+      "house": "House size",
+      "widthM": "House width, m",
+      "lengthM": "House length, m",
+      "floors": "Floors",
+      "floorCount": "{count} floor",
+      "rooms": "Rooms",
+      "style": "Choose a style",
+      "submit": "Start creating",
+      "tooBig": "The house is larger than the plot.",
+      "note": "After you register you continue with these values."
     }
   },
   "auth": {

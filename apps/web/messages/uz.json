@@ -47,7 +47,25 @@
       "subtitle": "Yer maydoni, uy o'lchamlari, xonalar va uslubni kiriting — archAi ularni tekshirilgan loyiha ma'lumotiga, 2D rejaga, 3D ko'rinishga va taxminiy smetaga aylantiradi.",
       "ctaPrimary": "Bepul boshlash",
       "ctaSecondary": "Hisobga kirish",
-      "note": "Konfigurator, AI tushunish, 2D reja, 3D ko'rinish, smeta va PDF — barchasi bugun ishlaydi."
+      "note": "Konfigurator, AI tushunish, 2D reja, 3D ko'rinish, smeta va PDF — barchasi bugun ishlaydi.",
+      "proof": {
+        "ai": {
+          "title": "AI tushunadi",
+          "body": "Oddiy so'zlar bilan yozing"
+        },
+        "precision": {
+          "title": "0.01 m aniqlik",
+          "body": "Determinstik hisob"
+        },
+        "trilingual": {
+          "title": "3 tilda",
+          "body": "uz · ru · en"
+        },
+        "estimate": {
+          "title": "Smeta bilan",
+          "body": "Materiallar va ish haqi"
+        }
+      }
     },
     "schematic": {
       "title": "Sxematik reja",
@@ -143,6 +161,21 @@
       "tagline": "Yer va talablardan tuzilgan uy loyihasi.",
       "rights": "© 2026 archAi. Barcha huquqlar himoyalangan.",
       "navLabel": "Sayt navigatsiyasi"
+    },
+    "brief": {
+      "title": "Yangi loyiha yaratish",
+      "land": "Yer maydoni",
+      "sotix": "{count} sotix",
+      "house": "Uy o'lchami",
+      "widthM": "Uy eni, m",
+      "lengthM": "Uy uzunligi, m",
+      "floors": "Qavat soni",
+      "floorCount": "{count} qavat",
+      "rooms": "Xonalar soni",
+      "style": "Uslubni tanlang",
+      "submit": "Loyiha yaratishni boshlash",
+      "tooBig": "Uy yer maydonidan katta.",
+      "note": "Ro'yxatdan o'tganingizdan so'ng shu ma'lumotlar bilan davom etasiz."
     }
   },
   "auth": {

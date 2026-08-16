@@ -5,8 +5,10 @@ import {
   Calculator,
   FileText,
   Grid2x2,
+  Languages,
   ListChecks,
   PenLine,
+  Ruler,
   ScrollText,
   ShieldCheck,
   Sparkles,
@@ -16,9 +18,22 @@ import {
 } from 'lucide-react';
 import { buttonClasses } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { BriefPanel } from '@/components/marketing/brief-panel';
 import { HeroSchematic } from '@/components/marketing/hero-schematic';
 
 const HOW_STEPS = ['describe', 'validate', 'visualize', 'export'] as const;
+
+/**
+ * Four claims the hero makes, each one a property the product can actually
+ * demonstrate — no customer counts, no invented averages. The reference puts a
+ * stats strip here; ours states what the engine does instead of how popular it is.
+ */
+const HERO_PROOF: Array<{ key: string; icon: LucideIcon }> = [
+  { key: 'ai', icon: Sparkles },
+  { key: 'precision', icon: Ruler },
+  { key: 'trilingual', icon: Languages },
+  { key: 'estimate', icon: Calculator },
+];
 
 /**
  * `roadmap: true` means the capability is NOT shipped yet and is badged as such.
@@ -47,30 +62,48 @@ export default function LandingPage() {
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────────────────── */}
+      {/* Three tracks at desktop: the pitch, the product itself, and the brief
+          panel that turns intent into a configured project. The middle track is
+          the widest on purpose — the drawing is the argument. */}
       <section className="border-b border-line">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:py-24">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-accent-strong uppercase">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.25fr)_minmax(0,0.85fr)] lg:items-start lg:gap-8 lg:py-16">
+          <div className="lg:pt-6">
+            <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-semibold text-accent-strong">
+              <Sparkles className="size-3.5" aria-hidden="true" />
               {t('hero.eyebrow')}
             </p>
-            <h1 className="mt-4 text-4xl leading-[1.08] font-extrabold tracking-tight text-balance text-ink sm:text-5xl">
+            <h1 className="mt-5 text-4xl leading-[1.06] font-extrabold tracking-tight text-balance text-ink sm:text-5xl">
               {t('hero.title')}
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-ink-soft sm:text-lg">
-              {t('hero.subtitle')}
-            </p>
+            <p className="mt-5 max-w-xl leading-relaxed text-ink-soft">{t('hero.subtitle')}</p>
+
+            <ul className="mt-7 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-2">
+              {HERO_PROOF.map(({ key, icon: Icon }) => (
+                <li key={key} className="flex flex-col gap-1.5">
+                  <span className="flex size-9 items-center justify-center rounded-sm border border-line bg-surface text-accent">
+                    <Icon className="size-4" aria-hidden="true" />
+                  </span>
+                  <span className="text-sm font-bold text-ink">{t(`hero.proof.${key}.title`)}</span>
+                  <span className="text-xs leading-snug text-ink-faint">
+                    {t(`hero.proof.${key}.body`)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link href="/register" className={buttonClasses('accent', 'lg')}>
                 {t('hero.ctaPrimary')}
               </Link>
-              <Link href="/login" className={buttonClasses('outline', 'lg')}>
+              <Link href="/#how-it-works" className={buttonClasses('outline', 'lg')}>
                 {t('hero.ctaSecondary')}
               </Link>
             </div>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-faint">{t('hero.note')}</p>
           </div>
 
           <HeroSchematic />
+
+          <BriefPanel className="lg:sticky lg:top-20" />
         </div>
       </section>
 
