@@ -11,7 +11,9 @@ import {
   LayoutDashboard,
   PanelLeftClose,
   PanelLeftOpen,
+  Sofa,
   Sparkles,
+  Trees,
   type LucideIcon,
 } from 'lucide-react';
 import { type ProjectStatus } from '@archai/shared';
@@ -41,6 +43,16 @@ export const WORKSPACE_MODES: { id: WorkspaceMode; icon: LucideIcon }[] = [
   { id: 'view3d', icon: Box },
   { id: 'estimate', icon: Calculator },
   { id: 'assistant', icon: Sparkles },
+];
+
+/**
+ * Modules that are planned but not built. They stay in the rail — hiding them
+ * would misrepresent the roadmap just as badly as showing them enabled would
+ * misrepresent the product — rendered disabled and explicitly labelled.
+ */
+export const ROADMAP_MODES: { id: 'interior' | 'exterior'; icon: LucideIcon }[] = [
+  { id: 'interior', icon: Sofa },
+  { id: 'exterior', icon: Trees },
 ];
 
 export interface WorkspaceReadout {
@@ -119,7 +131,8 @@ export function WorkspaceShell({
           aria-label={t('modes')}
           className={cn(
             'flex shrink-0 flex-col border-r border-shell-line bg-shell py-2 transition-[width]',
-            railCollapsed ? 'w-14' : 'w-52',
+            'w-14',
+            !railCollapsed && 'md:w-52',
           )}
           style={{ transitionDuration: 'var(--duration-base)', zIndex: 'var(--z-rail)' }}
         >
@@ -138,16 +151,42 @@ export function WorkspaceShell({
                       active
                         ? 'bg-accent text-white'
                         : 'text-shell-ink-soft hover:bg-shell-raised hover:text-shell-ink',
-                      railCollapsed && 'justify-center px-0',
+                      railCollapsed ? 'justify-center px-0' : 'justify-center px-0 md:justify-start md:px-2.5',
                     )}
                   >
                     <Icon className="size-4 shrink-0" aria-hidden="true" />
-                    {railCollapsed ? (
-                      <span className="sr-only">{t(`tabs.${id}`)}</span>
-                    ) : (
-                      <span className="truncate">{t(`tabs.${id}`)}</span>
-                    )}
+                    <span
+                      className={cn(
+                        'truncate',
+                        railCollapsed ? 'sr-only' : 'sr-only md:not-sr-only',
+                      )}
+                    >
+                      {t(`tabs.${id}`)}
+                    </span>
                   </button>
+                </li>
+              );
+            })}
+          </ul>
+
+          <ul className="mt-1 flex flex-col gap-0.5 border-t border-shell-line px-2 pt-2">
+            {ROADMAP_MODES.map(({ id, icon: Icon }) => {
+              const name = t('tabRoadmap', { tab: t(`tabs.${id}`) });
+              return (
+                <li key={id}>
+                  <span
+                    title={name}
+                    aria-disabled="true"
+                    className={cn(
+                      'flex w-full cursor-not-allowed items-center gap-3 rounded-tool px-2.5 py-2 text-sm font-semibold text-shell-ink-faint',
+                      railCollapsed
+                        ? 'justify-center px-0'
+                        : 'justify-center px-0 md:justify-start md:px-2.5',
+                    )}
+                  >
+                    <Icon className="size-4 shrink-0" aria-hidden="true" />
+                    <span className={cn('truncate', railCollapsed ? 'sr-only' : 'sr-only md:not-sr-only')}>{name}</span>
+                  </span>
                 </li>
               );
             })}
@@ -159,7 +198,9 @@ export function WorkspaceShell({
             aria-expanded={!railCollapsed}
             className={cn(
               'mt-auto mx-2 flex items-center gap-3 rounded-tool px-2.5 py-2 text-shell-ink-faint transition-colors hover:bg-shell-raised hover:text-shell-ink',
-              railCollapsed && 'justify-center px-0',
+              railCollapsed
+                ? 'justify-center px-0'
+                : 'justify-center px-0 md:justify-start md:px-2.5',
             )}
           >
             {railCollapsed ? (
@@ -167,7 +208,7 @@ export function WorkspaceShell({
             ) : (
               <PanelLeftClose className="size-4" aria-hidden="true" />
             )}
-            <span className={cn('text-xs font-semibold', railCollapsed && 'sr-only')}>
+            <span className={cn('text-xs font-semibold', railCollapsed ? 'sr-only' : 'sr-only md:not-sr-only')}>
               {t('collapseRail')}
             </span>
           </button>

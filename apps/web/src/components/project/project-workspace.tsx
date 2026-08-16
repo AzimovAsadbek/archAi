@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, type KeyboardEvent } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -8,7 +8,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Archive,
   ArchiveRestore,
-  ArrowLeft,
   Copy,
   FileDown,
   Layers,
@@ -26,14 +25,11 @@ import { EstimatePanel } from '@/components/estimate/estimate-panel';
 import { FloorPlanPanel } from '@/components/floor-plan/floor-plan-panel';
 import { ThreePanel } from '@/components/three/three-panel';
 import { Alert } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { buttonClasses } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Menu, MenuItem, MenuSeparator } from '@/components/ui/menu';
 import { Skeleton } from '@/components/ui/skeleton';
-import { StatusBadge } from '@/components/ui/status-badge';
-import { cn } from '@/lib/cn';
 import {
   archiveProject,
   deleteProject,
@@ -46,15 +42,15 @@ import { coveragePercent, m2ToSotix, round } from '@/lib/format';
 import { FEATURE_ICONS, FEATURE_KEYS } from '@/lib/project-options';
 import { queryKeys } from '@/lib/query-keys';
 import { useApiErrorMessage } from '@/lib/use-api-error';
+import {
+  ShellAction,
+  WorkspaceShell,
+  type WorkspaceMode,
+} from '@/components/workspace/workspace-shell';
 import { AssistantPanel } from './assistant-panel';
 import { StatCard } from './stat-card';
 import { ValidationPanel } from './validation-panel';
 
-/** Tabs backed by a real panel today. */
-const LIVE_TABS = ['overview', 'plans2d', 'view3d', 'estimate', 'assistant'] as const;
-const ROADMAP_TABS = ['interior', 'exterior'] as const;
-
-type LiveTab = (typeof LIVE_TABS)[number];
 type PendingAction = 'delete' | 'archive' | null;
 
 function WorkspaceSkeleton() {
@@ -176,32 +172,15 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
   const locale = useLocale();
   const tFeatures = useTranslations('features');
   const tStyles = useTranslations('styles');
-  const tCommon = useTranslations('common');
   const router = useRouter();
   const queryClient = useQueryClient();
   const apiErrorMessage = useApiErrorMessage();
 
   const [pending, setPending] = useState<PendingAction>(null);
   const [actionError, setActionError] = useState<string | undefined>();
-  const [tab, setTab] = useState<LiveTab>('overview');
+  const [tab, setTab] = useState<WorkspaceMode>('overview');
+  const [railCollapsed, setRailCollapsed] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement | null>(null);
-  const tabRefs = useRef(new Map<LiveTab, HTMLButtonElement>());
-
-  // Roving tabindex: arrows move focus (and selection) among the enabled tabs only.
-  const onTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-    const current = LIVE_TABS.indexOf(tab);
-    let nextIndex: number | null = null;
-    if (event.key === 'ArrowRight') nextIndex = (current + 1) % LIVE_TABS.length;
-    else if (event.key === 'ArrowLeft') nextIndex = (current - 1 + LIVE_TABS.length) % LIVE_TABS.length;
-    else if (event.key === 'Home') nextIndex = 0;
-    else if (event.key === 'End') nextIndex = LIVE_TABS.length - 1;
-    else return;
-    event.preventDefault();
-    const nextId = LIVE_TABS[nextIndex];
-    if (!nextId) return;
-    setTab(nextId);
-    tabRefs.current.get(nextId)?.focus();
-  };
 
   const projectQuery = useQuery({
     queryKey: queryKeys.project(projectId),
@@ -274,189 +253,103 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
   const enabledFeatures = FEATURE_KEYS.filter((feature) => project.features[feature]);
   const configured = project.land !== null && project.house !== null && project.rooms.length > 0;
 
-  return (
-    <div>
-      <Link
-        href="/dashboard"
-        className="inline-flex items-center gap-1.5 rounded-sm text-sm font-medium text-ink-faint transition-colors hover:text-ink"
-      >
-        <ArrowLeft className="size-3.5" aria-hidden="true" />
-        {t('back')}
-      </Link>
-
-      <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">
-              {project.name}
-            </h1>
-            <StatusBadge status={project.status} />
-          </div>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-soft">
-            {project.description ?? t('descriptionEmpty')}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
+  const shellActions = (
+    <>
+      <ShellAction
+        icon={FileDown}
+        label={exportPdf.isPending ? tProject('actions.pdfPending') : tProject('actions.pdf')}
+        onClick={() => exportPdf.mutate()}
+        disabled={!configured || exportPdf.isPending}
+      />
+      {!archived ? (
+        <ShellAction
+          icon={Pencil}
+          label={tProject('actions.edit')}
+          href={`/projects/${projectId}/edit`}
+        />
+      ) : null}
+      <Menu
+        trigger={({ ref: menuRef, ...triggerProps }) => (
           <button
             type="button"
-            onClick={() => exportPdf.mutate()}
-            disabled={!configured || exportPdf.isPending}
-            title={!configured ? tProject('actions.pdfUnavailable') : undefined}
-            className={buttonClasses('outline', 'md', 'disabled:cursor-not-allowed disabled:opacity-50')}
+            {...triggerProps}
+            ref={(node) => {
+              menuRef(node);
+              menuButtonRef.current = node;
+            }}
+            aria-label={tProject('actions.menu')}
+            className="flex size-8 items-center justify-center rounded-tool border border-shell-line text-shell-ink-soft transition-colors hover:bg-shell-raised hover:text-shell-ink"
           >
-            <FileDown className="size-4" aria-hidden="true" />
-            {exportPdf.isPending ? tProject('actions.pdfPending') : tProject('actions.pdf')}
+            <MoreHorizontal className="size-4" aria-hidden="true" />
           </button>
+        )}
+      >
+        {(close) => (
+          <>
+            <MenuItem
+              icon={<Copy className="size-4" />}
+              disabled={duplicate.isPending}
+              onClick={() => {
+                close(false);
+                duplicate.mutate();
+              }}
+            >
+              {tProject('actions.duplicate')}
+            </MenuItem>
+            <MenuItem
+              icon={archived ? <ArchiveRestore className="size-4" /> : <Archive className="size-4" />}
+              disabled={toggleArchive.isPending}
+              onClick={() => {
+                close(false);
+                if (archived) toggleArchive.mutate(true);
+                else setPending('archive');
+              }}
+            >
+              {archived ? tProject('actions.unarchive') : tProject('actions.archive')}
+            </MenuItem>
+            <MenuSeparator />
+            <MenuItem
+              danger
+              icon={<Trash2 className="size-4" />}
+              onClick={() => {
+                close(false);
+                setPending('delete');
+              }}
+            >
+              {tProject('actions.delete')}
+            </MenuItem>
+          </>
+        )}
+      </Menu>
+    </>
+  );
 
-          <Link
-            href={`/projects/${projectId}/edit`}
-            className={buttonClasses('primary', 'md', archived ? 'pointer-events-none opacity-50' : '')}
-            aria-disabled={archived || undefined}
-            tabIndex={archived ? -1 : undefined}
-          >
-            <Pencil className="size-4" aria-hidden="true" />
-            {tProject('actions.edit')}
-          </Link>
-
-          <Menu
-            trigger={({ ref: menuRef, ...triggerProps }) => (
-              <button
-                type="button"
-                {...triggerProps}
-                ref={(node) => {
-                  menuRef(node);
-                  menuButtonRef.current = node;
-                }}
-                aria-label={tProject('actions.menu')}
-                className="flex size-10 items-center justify-center rounded-md border border-line-strong bg-surface text-ink-soft transition-colors hover:bg-paper"
-              >
-                <MoreHorizontal className="size-4" aria-hidden="true" />
-              </button>
-            )}
-          >
-            {(close) => (
-              <>
-                <MenuItem
-                  icon={<Copy className="size-4" />}
-                  disabled={duplicate.isPending}
-                  onClick={() => {
-                    close(false);
-                    duplicate.mutate();
-                  }}
-                >
-                  {tProject('actions.duplicate')}
-                </MenuItem>
-                <MenuItem
-                  icon={
-                    archived ? <ArchiveRestore className="size-4" /> : <Archive className="size-4" />
-                  }
-                  disabled={toggleArchive.isPending}
-                  onClick={() => {
-                    close(false);
-                    if (archived) toggleArchive.mutate(true);
-                    else setPending('archive');
-                  }}
-                >
-                  {archived ? tProject('actions.unarchive') : tProject('actions.archive')}
-                </MenuItem>
-                <MenuSeparator />
-                <MenuItem
-                  danger
-                  icon={<Trash2 className="size-4" />}
-                  onClick={() => {
-                    close(false);
-                    setPending('delete');
-                  }}
-                >
-                  {tProject('actions.delete')}
-                </MenuItem>
-              </>
-            )}
-          </Menu>
-        </div>
-      </div>
-
+  return (
+    <WorkspaceShell
+      projectName={project.name}
+      status={project.status}
+      mode={tab}
+      onModeChange={setTab}
+      railCollapsed={railCollapsed}
+      onRailToggle={() => setRailCollapsed((v) => !v)}
+      actions={shellActions}
+    >
       {actionError ? (
-        <Alert tone="danger" live className="mt-5">
+        <Alert tone="danger" live className="m-4">
           {actionError}
         </Alert>
       ) : null}
 
-      {/* Tabs — overview, 2D, 3D and the estimate are real; the rest is roadmap. */}
-      <div className="mt-7 overflow-x-auto border-b border-line">
-        <div role="tablist" aria-label={t('tabsLabel')} className="flex min-w-max items-center gap-1">
-          {LIVE_TABS.map((id) => (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              id={`workspace-tab-${id}`}
-              ref={(node) => {
-                if (node) tabRefs.current.set(id, node);
-                else tabRefs.current.delete(id);
-              }}
-              aria-selected={tab === id}
-              aria-controls={`workspace-panel-${id}`}
-              tabIndex={tab === id ? 0 : -1}
-              onClick={() => setTab(id)}
-              onKeyDown={onTabKeyDown}
-              className={cn(
-                '-mb-px border-b-2 px-3 py-2.5 text-sm transition-colors',
-                tab === id
-                  ? 'border-accent font-bold text-ink'
-                  : 'border-transparent font-semibold text-ink-faint hover:text-ink',
-              )}
-            >
-              {t(`tabs.${id}`)}
-            </button>
-          ))}
-          {ROADMAP_TABS.map((id) => {
-            const roadmapName = t('tabRoadmap', { tab: t(`tabs.${id}`) });
-            return (
-              <button
-                key={id}
-                type="button"
-                role="tab"
-                aria-selected="false"
-                aria-label={roadmapName}
-                disabled
-                tabIndex={-1}
-                title={roadmapName}
-                className={cn(
-                  '-mb-px flex cursor-not-allowed items-center gap-1.5 border-b-2 border-transparent px-3 py-2.5',
-                  'text-sm font-semibold text-ink-faint',
-                )}
-              >
-                {t(`tabs.${id}`)}
-                <Badge tone="faint" size="sm">
-                  {tCommon('roadmap')}
-                </Badge>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
+      {/* Viewport modes own the full canvas; document modes scroll inside it. */}
       {tab === 'plans2d' ? (
-        <div
-          role="tabpanel"
-          id="workspace-panel-plans2d"
-          aria-labelledby="workspace-tab-plans2d"
-          className="mt-8"
-        >
+        <div className="h-full min-h-0">
           <FloorPlanPanel projectId={projectId} projectUpdatedAt={project.updatedAt} />
         </div>
       ) : null}
 
       {/* Mounted only while selected: unmounting releases the WebGL context. */}
       {tab === 'view3d' ? (
-        <div
-          role="tabpanel"
-          id="workspace-panel-view3d"
-          aria-labelledby="workspace-tab-view3d"
-          className="mt-8"
-        >
+        <div className="h-full min-h-0">
           <ThreePanel
             projectId={projectId}
             projectUpdatedAt={project.updatedAt}
@@ -467,31 +360,19 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
       ) : null}
 
       {tab === 'estimate' ? (
-        <div
-          role="tabpanel"
-          id="workspace-panel-estimate"
-          aria-labelledby="workspace-tab-estimate"
-          className="mt-8"
-        >
+        <div className="h-full overflow-y-auto p-5 lg:p-6">
           <EstimatePanel projectId={projectId} projectUpdatedAt={project.updatedAt} />
         </div>
       ) : null}
 
       {tab === 'assistant' ? (
-        <div
-          role="tabpanel"
-          id="workspace-panel-assistant"
-          aria-labelledby="workspace-tab-assistant"
-          className="mt-8"
-        >
+        <div className="h-full overflow-y-auto p-5 lg:p-6">
           <AssistantPanel projectId={projectId} />
         </div>
       ) : null}
 
       <div
-        role="tabpanel"
-        id="workspace-panel-overview"
-        aria-labelledby="workspace-tab-overview"
+        className="h-full overflow-y-auto p-5 lg:p-6"
         hidden={tab !== 'overview'}
       >
         {!configured ? (
@@ -599,6 +480,6 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
           else if (action === 'archive') toggleArchive.mutate(false);
         }}
       />
-    </div>
+    </WorkspaceShell>
   );
 }
