@@ -44,10 +44,10 @@
     "hero": {
       "eyebrow": "Uy loyihalash platformasi",
       "title": "Yeringiz va istaklaringizni tuzilgan uy loyihasiga aylantiring",
-      "subtitle": "Yer maydoni, uy o'lchamlari, xonalar va uslubni kiriting — archAi ularni aniq, tekshirilgan loyiha ma'lumotiga aylantiradi. Keyinchalik esa rejalar, 3D ko'rinish va taxminiy smeta qo'shiladi.",
+      "subtitle": "Yer maydoni, uy o'lchamlari, xonalar va uslubni kiriting — archAi ularni tekshirilgan loyiha ma'lumotiga, 2D rejaga, 3D ko'rinishga va taxminiy smetaga aylantiradi.",
       "ctaPrimary": "Bepul boshlash",
       "ctaSecondary": "Hisobga kirish",
-      "note": "Konfigurator bugun to'liq ishlaydi. Vizualizatsiya, smeta va PDF keyingi bosqichlarda qo'shiladi."
+      "note": "Konfigurator, AI tushunish, 2D reja, 3D ko'rinish, smeta va PDF — barchasi bugun ishlaydi."
     },
     "schematic": {
       "title": "Sxematik reja",
@@ -85,7 +85,7 @@
     },
     "features": {
       "title": "Platforma imkoniyatlari",
-      "subtitle": "Konfigurator bugun ishlaydi. Qolgan modullar yo'l xaritasida — biz va'da bermaymiz, ketma-ket chiqaramiz.",
+      "subtitle": "Quyidagilarning barchasi bugun ishlaydi. Interyer va eksteryer konsepsiyalari yo'l xaritasida.",
       "items": {
         "configurator": {
           "title": "Tuzilgan konfigurator",

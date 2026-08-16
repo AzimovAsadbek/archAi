@@ -48,7 +48,22 @@ services:
       JWT_ACCESS_TTL_SEC: ${JWT_ACCESS_TTL_SEC:-900}
       JWT_REFRESH_TTL_SEC: ${JWT_REFRESH_TTL_SEC:-2592000}
       COOKIE_SECURE: 'true'
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      # Number of trusted reverse-proxy hops in front of the API. Without this the
+      # per-IP rate limiter keys on the proxy address and collapses every user into
+      # a single bucket — set it to the real hop count for your deployment.
+      TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-1}
+      # ── Runtime AI (server-side only; see docs/ai-architecture.md) ──────────
+      # Empty keys are supported: the API boots and the AI endpoints answer a
+      # documented 503 AI_NOT_CONFIGURED instead of failing to start.
+      AI_PROVIDER: ${AI_PROVIDER:-gemini}
+      AI_FALLBACK_PROVIDER: ${AI_FALLBACK_PROVIDER:-groq}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      AI_PRIMARY_MODEL: ${AI_PRIMARY_MODEL:-}
+      AI_FALLBACK_MODEL: ${AI_FALLBACK_MODEL:-}
+      AI_MAX_REQUESTS_PER_USER_PER_DAY: ${AI_MAX_REQUESTS_PER_USER_PER_DAY:-20}
+      AI_TIMEOUT_MS: ${AI_TIMEOUT_MS:-30000}
+      AI_MAX_RETRIES: ${AI_MAX_RETRIES:-1}
     ports:
       - '3001:3001'
     healthcheck:

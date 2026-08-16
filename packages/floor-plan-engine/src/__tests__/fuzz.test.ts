@@ -35,6 +35,21 @@ const DEEP_VALIDATE_EVERY = 8;
 const DETERMINISM_SAMPLES = 250;
 /** assertValidPlan runs dozens of expect()s, so give the big loop room. */
 const FUZZ_TIMEOUT_MS = 120_000;
+/**
+ * Configs to process before yielding the event loop once. The corpus is pure
+ * CPU, so without this the loop blocks the worker thread end-to-end and vitest's
+ * reporter RPC starves — on a busy machine that surfaces as
+ * `[vitest-worker]: Timeout calling "onTaskUpdate"`, an unhandled error that
+ * fails the run even though all 54 tests pass. Yielding costs microseconds and
+ * changes nothing about the corpus: the PRNG is consumed in the same order, so
+ * the seeded configs and every assertion stay byte-identical.
+ */
+const YIELD_EVERY = 250;
+
+const yieldToEventLoop = (): Promise<void> =>
+  new Promise((resolve) => {
+    setImmediate(resolve);
+  });
 const ISSUE_CODES = new Set<string>(ENGINE_ISSUE_CODES);
 
 function makeInput(rng: () => number): FloorPlanInput {
@@ -70,13 +85,14 @@ function makeInput(rng: () => number): FloorPlanInput {
 describe('generateFloorPlan — seeded fuzz', () => {
   it(
     `never throws and emits only valid geometry or known issues across ${FUZZ_COUNT} configs`,
-    () => {
+    async () => {
       const rng = mulberry32(FUZZ_SEED);
       let ok = 0;
       let failed = 0;
       let deepValidated = 0;
 
       for (let i = 0; i < FUZZ_COUNT; i++) {
+        if (i > 0 && i % YIELD_EVERY === 0) await yieldToEventLoop();
         const input = makeInput(rng);
         const result = generateFloorPlan(input); // must not throw
 

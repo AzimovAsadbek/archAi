@@ -44,10 +44,10 @@
     "hero": {
       "eyebrow": "House design platform",
       "title": "Turn your land and your wishes into a structured house project",
-      "subtitle": "Enter land area, house dimensions, rooms and style — archAi turns them into precise, validated project data. Plans, a 3D preview and a preliminary estimate come next.",
+      "subtitle": "Enter your land, house dimensions, rooms and style — archAi turns them into validated project data, a 2D plan, a 3D view and a preliminary estimate.",
       "ctaPrimary": "Start for free",
       "ctaSecondary": "Log in",
-      "note": "The configurator is fully working today. Visualization, estimates and PDF export arrive in later stages."
+      "note": "Configurator, AI understanding, 2D plans, 3D preview, estimates and PDF export all work today."
     },
     "schematic": {
       "title": "Schematic plan",
@@ -85,7 +85,7 @@
     },
     "features": {
       "title": "What the platform does",
-      "subtitle": "The configurator works today. The rest is on the roadmap — we ship them in order instead of promising everything at once.",
+      "subtitle": "Everything below works today. Interior and exterior concepts are still on the roadmap.",
       "items": {
         "configurator": {
           "title": "Structured configurator",

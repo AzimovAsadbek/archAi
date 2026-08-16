@@ -20,13 +20,18 @@ import { HeroSchematic } from '@/components/marketing/hero-schematic';
 
 const HOW_STEPS = ['describe', 'validate', 'visualize', 'export'] as const;
 
+/**
+ * `roadmap: true` means the capability is NOT shipped yet and is badged as such.
+ * Everything else is live today and must never be badged "coming soon" — the
+ * landing page understating a working feature costs more than overstating one.
+ */
 const FEATURE_ITEMS: Array<{ key: string; icon: LucideIcon; roadmap: boolean }> = [
   { key: 'configurator', icon: SlidersHorizontal, roadmap: false },
-  { key: 'ai', icon: Sparkles, roadmap: true },
-  { key: 'plans', icon: Grid2x2, roadmap: true },
-  { key: 'preview', icon: Box, roadmap: true },
-  { key: 'estimate', icon: Calculator, roadmap: true },
-  { key: 'pdf', icon: FileText, roadmap: true },
+  { key: 'ai', icon: Sparkles, roadmap: false },
+  { key: 'plans', icon: Grid2x2, roadmap: false },
+  { key: 'preview', icon: Box, roadmap: false },
+  { key: 'estimate', icon: Calculator, roadmap: false },
+  { key: 'pdf', icon: FileText, roadmap: false },
 ];
 
 const VALUE_ITEMS: Array<{ key: string; icon: LucideIcon }> = [
