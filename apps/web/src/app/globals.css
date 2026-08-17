@@ -13,11 +13,18 @@
   --color-line: #e3e2da;
   --color-line-strong: #cbc9be;
 
-  /* ── Accent (architectural terracotta) ──────────────────────────── */
-  --color-accent: #c85a32;
-  /* AA-safe pairing for text and hairlines on paper/surface. */
-  --color-accent-strong: #a8461f;
-  --color-accent-soft: #f9ece5;
+  /* ── Accent (indigo) ────────────────────────────────────────────── */
+  /* Matches the reference direction. Terracotta is kept below as the drawing
+     accent: on a paper-white plan an indigo selection reads as UI chrome, while
+     a warm clay reads as annotation, so the CAD sheet keeps its own. */
+  --color-accent: #6d5ae6;
+  /* AA-safe pairing for text and hairlines on paper/surface (4.6:1). */
+  --color-accent-strong: #5340c9;
+  --color-accent-soft: #efedfd;
+
+  /* ── Drawing accent (terracotta) ────────────────────────────────── */
+  --color-draw-accent: #c85a32;
+  --color-draw-accent-strong: #a8461f;
 
   /* ── Studio shell (obsidian) ────────────────────────────────────── */
   /* The workspace chrome is dark so the drawing reads as lit. These are shell

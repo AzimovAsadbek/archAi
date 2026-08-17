@@ -30,7 +30,7 @@ export const PLAN_COLORS = {
   corridorHatch: 'rgb(26 26 24 / 0.07)',
   stair: 'rgb(26 26 24 / 0.04)',
   /** Selected-room ring and its dimension lines — accent-strong (AA on paper). */
-  selection: 'var(--color-accent-strong)',
+  selection: 'var(--color-draw-accent-strong)',
   /** The only room fill in the drawing: hover and active selection. */
   roomHover: 'rgb(200 90 50 / 0.05)',
   roomActive: 'rgb(200 90 50 / 0.08)',

@@ -128,6 +128,14 @@
         "pdf": {
           "title": "PDF eksport",
           "body": "Loyihaning to'liq xulosasini bitta hujjatda yuklab oling va ustalar bilan bo'lishing."
+        },
+        "variants": {
+          "title": "Ko'p variant",
+          "body": "Bir nechta joylashuv variantini solishtiring va eng yaxshisini tanlang."
+        },
+        "persist": {
+          "title": "Doimiy saqlash",
+          "body": "Loyihalar saqlanadi — istalgan vaqtda qaytib davom ettirasiz."
         }
       }
     },
@@ -214,6 +222,24 @@
       "deterministicLabel": "Determinstik",
       "deterministicBody": "Bir xil talab har doim bir xil rejani beradi. Tasodifiylik yo'q — geometriya 0.01 m aniqlikda hisoblanadi.",
       "engineVersion": "Dvigatel versiyasi {version}"
+    },
+    "proof": {
+      "precision": {
+        "value": "0.01 m",
+        "label": "Geometriya aniqligi"
+      },
+      "deterministic": {
+        "value": "100%",
+        "label": "Takrorlanuvchi natija"
+      },
+      "speed": {
+        "value": "< 1 s",
+        "label": "Reja hisoblash vaqti"
+      },
+      "languages": {
+        "value": "3 til",
+        "label": "uz · ru · en"
+      }
     }
   },
   "auth": {

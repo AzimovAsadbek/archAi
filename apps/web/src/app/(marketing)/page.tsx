@@ -3,9 +3,11 @@ import { useTranslations } from 'next-intl';
 import {
   Box,
   Calculator,
+  CloudUpload,
   FileText,
   Grid2x2,
   Languages,
+  Layers,
   ListChecks,
   PenLine,
   Ruler,
@@ -20,6 +22,7 @@ import { buttonClasses } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BriefPanel } from '@/components/marketing/brief-panel';
 import { HeroSchematic } from '@/components/marketing/hero-schematic';
+import { ProofStrip } from '@/components/marketing/proof-strip';
 import { Showcase } from '@/components/marketing/showcase';
 import { SHOWCASE_BRIEF, buildShowcase } from '@/lib/showcase-project';
 
@@ -49,6 +52,8 @@ const FEATURE_ITEMS: Array<{ key: string; icon: LucideIcon; roadmap: boolean }> 
   { key: 'preview', icon: Box, roadmap: false },
   { key: 'estimate', icon: Calculator, roadmap: false },
   { key: 'pdf', icon: FileText, roadmap: false },
+  { key: 'variants', icon: Layers, roadmap: false },
+  { key: 'persist', icon: CloudUpload, roadmap: false },
 ];
 
 const VALUE_ITEMS: Array<{ key: string; icon: LucideIcon }> = [
@@ -112,6 +117,8 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <ProofStrip />
+
       {/* ── How it works ─────────────────────────────────────────────── */}
       <section id="how-it-works" className="scroll-mt-20 border-b border-line">
         <div className="mx-auto max-w-6xl px-5 py-16 lg:py-20">
@@ -153,7 +160,7 @@ export default function LandingPage() {
             <p className="mt-3 text-base leading-relaxed text-ink-soft">{t('features.subtitle')}</p>
           </header>
 
-          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURE_ITEMS.map(({ key, icon: Icon, roadmap }) => (
               <li key={key} className="rounded-md border border-line bg-surface p-6">
                 <div className="flex items-start justify-between gap-3">

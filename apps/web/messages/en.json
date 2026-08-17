@@ -128,6 +128,14 @@
         "pdf": {
           "title": "PDF export",
           "body": "Download the full project summary as one document and share it with your builders."
+        },
+        "variants": {
+          "title": "Multiple variants",
+          "body": "Compare layout candidates and keep the strongest one."
+        },
+        "persist": {
+          "title": "Saved projects",
+          "body": "Projects persist — come back and continue at any time."
         }
       }
     },
@@ -214,6 +222,24 @@
       "deterministicLabel": "Deterministic",
       "deterministicBody": "The same brief always produces the same plan. No randomness — geometry is computed to 0.01 m.",
       "engineVersion": "Engine version {version}"
+    },
+    "proof": {
+      "precision": {
+        "value": "0.01 m",
+        "label": "Geometric precision"
+      },
+      "deterministic": {
+        "value": "100%",
+        "label": "Reproducible output"
+      },
+      "speed": {
+        "value": "< 1 s",
+        "label": "Plan computation"
+      },
+      "languages": {
+        "value": "3 languages",
+        "label": "uz · ru · en"
+      }
     }
   },
   "auth": {
