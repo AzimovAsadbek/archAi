@@ -188,9 +188,9 @@ describe('PDF export (e2e)', () => {
     expect(pdf.subarray(-6).toString('latin1').trim()).toBe('%%EOF');
     expect(Number(res.headers['content-length'])).toBe(pdf.length);
 
-    // Cover + summary, floor plans, estimate — the plans page only exists
-    // because the geometry rendered.
-    expect(pdf.toString('latin1')).toContain('/Count 3');
+    // Cover + summary, site plan, floor plans, estimate — the site and plan
+    // pages only exist because the geometry rendered.
+    expect(pdf.toString('latin1')).toContain('/Count 4');
     expect(pdf.length).toBeGreaterThan(15_000);
   });
 
@@ -199,8 +199,8 @@ describe('PDF export (e2e)', () => {
 
     const pdf = asBuffer(res.body);
     expect(pdf.subarray(0, 5).toString('latin1')).toBe('%PDF-');
-    // Summary, both floor plans on their own page, estimate.
-    expect(pdf.toString('latin1')).toContain('/Count 4');
+    // Summary, site plan, both floor plans on their own page, estimate.
+    expect(pdf.toString('latin1')).toContain('/Count 5');
     expect(pdf.length).toBeGreaterThan(20_000);
   });
 

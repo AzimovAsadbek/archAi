@@ -1,5 +1,7 @@
 'use client';
 
+import { type SiteFeatures } from '@archai/floor-plan-engine';
+import { type LandConfig } from '@archai/shared';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FloorPlanErrorState, useFloorPlanQuery } from './floor-plan-query';
 import { FloorPlanViewer } from './floor-plan-viewer';
@@ -21,12 +23,21 @@ function PanelSkeleton() {
 
 export interface FloorPlanPanelProps {
   projectId: string;
+  /** Plot dimensions and configured features, for the site sheet. */
+  land?: LandConfig | null;
+  features?: SiteFeatures | null;
   /** Regenerating the plan follows the project — a new value refetches. */
   projectUpdatedAt: string;
   className?: string;
 }
 
-export function FloorPlanPanel({ projectId, projectUpdatedAt, className }: FloorPlanPanelProps) {
+export function FloorPlanPanel({
+  projectId,
+  projectUpdatedAt,
+  land,
+  features,
+  className,
+}: FloorPlanPanelProps) {
   const query = useFloorPlanQuery(projectId, projectUpdatedAt);
 
   if (query.isPending) return <PanelSkeleton />;
@@ -51,7 +62,7 @@ export function FloorPlanPanel({ projectId, projectUpdatedAt, className }: Floor
           action={<StrategySelect projectId={projectId} current={query.data.layout.strategy} />}
         />
       ) : null}
-      <FloorPlanViewer plan={query.data.plan} />
+      <FloorPlanViewer plan={query.data.plan} land={land} features={features} />
     </div>
   );
 }

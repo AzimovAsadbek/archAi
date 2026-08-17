@@ -52,6 +52,14 @@ export interface PdfStrings {
   roomsUnsized: string;
 
   plansTitle: string;
+  siteTitle: string;
+  siteHouse: string;
+  siteStreet: string;
+  siteDriveway: string;
+  sitePath: string;
+  siteDimension: string;
+  siteNote: string;
+  siteDerivedNote: string;
   planFloorHeading: string;
   planScaleNote: string;
   planLegendTitle: string;
@@ -138,6 +146,14 @@ const UZ: PdfStrings = {
   roomsUnsized: "o'lcham berilmagan",
 
   plansTitle: 'Qavat rejalari',
+  siteTitle: 'Uchastka rejasi',
+  siteHouse: 'Uy',
+  siteStreet: "Ko'cha",
+  siteDriveway: "Mashina yo'li",
+  sitePath: "Yo'lakcha",
+  siteDimension: '{value} m',
+  siteNote: "Uchastka rejasi sxematik: uy va qo'shimchalar joylashuvi avtomatik hisoblangan.",
+  siteDerivedNote: "Uchastka o'lchami ko'rsatilmagani uchun maydondan taxminan hisoblandi. Reja sxematik.",
   planFloorHeading: '{floor}-qavat rejasi',
   planScaleNote: 'sxematik reja — masshtabsiz',
   planLegendTitle: 'Belgilar',
@@ -247,6 +263,14 @@ const RU: PdfStrings = {
   roomsUnsized: 'размер не задан',
 
   plansTitle: 'Планы этажей',
+  siteTitle: 'План участка',
+  siteHouse: 'Дом',
+  siteStreet: 'Улица',
+  siteDriveway: 'Подъезд',
+  sitePath: 'Дорожка',
+  siteDimension: '{value} м',
+  siteNote: 'План участка схематичный: расположение дома и построек рассчитано автоматически.',
+  siteDerivedNote: 'Размеры участка не указаны, поэтому рассчитаны из площади. План схематичный.',
   planFloorHeading: 'План {floor}-го этажа',
   planScaleNote: 'схематичный план — без масштаба',
   planLegendTitle: 'Обозначения',
@@ -356,6 +380,14 @@ const EN: PdfStrings = {
   roomsUnsized: 'no size given',
 
   plansTitle: 'Floor plans',
+  siteTitle: 'Site plan',
+  siteHouse: 'House',
+  siteStreet: 'Street',
+  siteDriveway: 'Driveway',
+  sitePath: 'Path',
+  siteDimension: '{value} m',
+  siteNote: 'The site plan is schematic: the house and its outbuildings are placed automatically.',
+  siteDerivedNote: 'No plot dimensions were given, so they were derived from the area. The plan is schematic.',
   planFloorHeading: 'Floor {floor} plan',
   planScaleNote: 'schematic plan — not to scale',
   planLegendTitle: 'Legend',

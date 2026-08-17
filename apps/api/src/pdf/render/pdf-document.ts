@@ -7,6 +7,7 @@ import { type PdfReport } from './report';
 import { renderCover } from './sections/cover.section';
 import { renderEstimate } from './sections/estimate.section';
 import { renderFloorPlans } from './sections/floor-plans.section';
+import { renderSitePlan } from './sections/site-plan.section';
 import { renderSummary } from './sections/summary.section';
 import { COLORS, CONTENT_WIDTH, FONTS, PAGE, TYPE } from './theme';
 
@@ -102,6 +103,8 @@ export function renderProjectPdf(report: PdfReport): Promise<Buffer> {
   const strings = stringsFor(report.locale);
   renderCover(doc, report, strings);
   renderSummary(doc, report, strings);
+  // The property first, then the building on it — the order a reader walks a site.
+  renderSitePlan(doc, report, strings);
   renderFloorPlans(doc, report, strings);
   doc.addPage();
   renderEstimate(doc, report, strings);

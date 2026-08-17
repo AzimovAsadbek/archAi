@@ -374,7 +374,12 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
       {/* Viewport modes own the full canvas; document modes scroll inside it. */}
       {tab === 'plans2d' ? (
         <div className="h-full min-h-0">
-          <FloorPlanPanel projectId={projectId} projectUpdatedAt={project.updatedAt} />
+          <FloorPlanPanel
+            projectId={projectId}
+            projectUpdatedAt={project.updatedAt}
+            land={project.land}
+            features={project.features}
+          />
         </div>
       ) : null}
 

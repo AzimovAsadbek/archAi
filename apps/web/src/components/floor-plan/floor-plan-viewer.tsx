@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Info, Maximize, X, ZoomIn, ZoomOut } from 'lucide-react';
-import { type FloorPlan } from '@archai/floor-plan-engine';
+import { layoutSite, type FloorPlan, type SiteFeatures } from '@archai/floor-plan-engine';
+import { type LandConfig } from '@archai/shared';
 import { IconButton } from '@/components/ui/button';
 import { cn } from '@/lib/cn';
 import { FloorPlanCanvas } from './floor-plan-canvas';
+import { SitePlanCanvas } from './site-plan-canvas';
 import { FloorPlanLegend } from './floor-plan-legend';
 import { usePanZoom } from './use-pan-zoom';
 
@@ -26,29 +28,52 @@ function frameRatio(widthM: number, lengthM: number, marginM: number): number {
 
 export interface FloorPlanViewerProps {
   plan: FloorPlan;
+  /** Plot dimensions; the site sheet derives one from the area when absent. */
+  land?: LandConfig | null;
+  /** Garage, terrace, pool and the rest — what to draw on the plot. */
+  features?: SiteFeatures | null;
   className?: string;
 }
 
-export function FloorPlanViewer({ plan, className }: FloorPlanViewerProps) {
+export function FloorPlanViewer({ plan, land, features, className }: FloorPlanViewerProps) {
   const t = useTranslations('floorPlan');
   const tRoomTypes = useTranslations('roomTypes');
   const tFloor = useTranslations('workspace.rooms');
+  const tSite = useTranslations('sitePlan');
 
-  const [floorIndex, setFloorIndex] = useState(0);
+  /** Which sheet is on the board: a floor index, or the site plan. */
+  const [sheet, setSheet] = useState<number | 'site'>(0);
   const [selectedRoomKey, setSelectedRoomKey] = useState<string | null>(null);
   const { widthM, lengthM } = plan.house;
   const marginM = marginFor(widthM, lengthM);
   const panZoom = usePanZoom(widthM, lengthM, marginM);
 
+  // The same call the 3D preview and the PDF make, so all three agree about
+  // where the garage is.
+  const site = useMemo(
+    () =>
+      layoutSite({
+        land,
+        house: { widthM, lengthM, floorCount: plan.floors.length },
+        features: features ?? null,
+      }),
+    [land, features, widthM, lengthM, plan.floors.length],
+  );
+
+  const isSite = sheet === 'site';
+  const floorIndex = typeof sheet === 'number' ? sheet : 0;
+
   // A regenerated plan can have fewer floors than the one being viewed.
   useEffect(() => {
-    setFloorIndex((current) => (current < plan.floors.length ? current : 0));
+    setSheet((current) =>
+      current === 'site' || current < plan.floors.length ? current : 0,
+    );
   }, [plan.floors.length]);
 
-  // Selection is per-floor UI state; switching floors or plans clears it.
+  // Selection is per-floor UI state; switching sheets or plans clears it.
   useEffect(() => {
     setSelectedRoomKey(null);
-  }, [floorIndex, plan]);
+  }, [sheet, plan]);
 
   const floor = plan.floors[floorIndex] ?? plan.floors[0];
   if (!floor) return null;
@@ -60,34 +85,45 @@ export function FloorPlanViewer({ plan, className }: FloorPlanViewerProps) {
   return (
     <div className={className}>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        {plan.floors.length > 1 ? (
-          <div
-            role="group"
-            aria-label={t('floorSwitcherLabel')}
-            className="inline-flex items-center gap-0.5 rounded-panel border border-line-strong bg-surface p-0.5"
+        {/* Always rendered now: even a single-storey house has two sheets, the
+            floor and the site it stands on. */}
+        <div
+          role="group"
+          aria-label={t('floorSwitcherLabel')}
+          className="inline-flex items-center gap-0.5 rounded-panel border border-line-strong bg-surface p-0.5"
+        >
+          {plan.floors.map((item, index) => (
+            <button
+              key={item.index}
+              type="button"
+              aria-pressed={!isSite && index === floorIndex}
+              onClick={() => setSheet(index)}
+              className={cn(
+                'rounded-sm px-3 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-colors',
+                !isSite && index === floorIndex
+                  ? 'bg-ink text-paper'
+                  : 'text-ink-soft hover:bg-paper hover:text-ink',
+              )}
+            >
+              {tFloor('floorGroup', { floor: item.index + 1 })}
+            </button>
+          ))}
+          <button
+            type="button"
+            aria-pressed={isSite}
+            onClick={() => setSheet('site')}
+            className={cn(
+              'rounded-sm px-3 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-colors',
+              isSite ? 'bg-ink text-paper' : 'text-ink-soft hover:bg-paper hover:text-ink',
+            )}
           >
-            {plan.floors.map((item, index) => (
-              <button
-                key={item.index}
-                type="button"
-                aria-pressed={index === floorIndex}
-                onClick={() => setFloorIndex(index)}
-                className={cn(
-                  'rounded-sm px-3 py-1.5 text-[13px] font-semibold whitespace-nowrap transition-colors',
-                  index === floorIndex
-                    ? 'bg-ink text-paper'
-                    : 'text-ink-soft hover:bg-paper hover:text-ink',
-                )}
-              >
-                {tFloor('floorGroup', { floor: item.index + 1 })}
-              </button>
-            ))}
-          </div>
-        ) : (
-          <span />
-        )}
+            {tSite('tab')}
+          </button>
+        </div>
 
-        <div className="flex items-center gap-1.5">
+        {/* Zoom belongs to the floor sheets: the site plan is framed to the
+            plot and has nothing to pan around. */}
+        <div className={cn('flex items-center gap-1.5', isSite && 'invisible')}>
           <IconButton
             variant="outline"
             size="sm"
@@ -126,21 +162,35 @@ export function FloorPlanViewer({ plan, className }: FloorPlanViewerProps) {
         </span>
         <div
           className="max-h-[70vh] w-full"
-          style={{ aspectRatio: frameRatio(widthM, lengthM, marginM) }}
+          style={{
+            aspectRatio: isSite
+              ? Math.min(1.9, Math.max(0.6, site.plot.width / site.plot.height))
+              : frameRatio(widthM, lengthM, marginM),
+          }}
         >
-          <FloorPlanCanvas
-            house={plan.house}
-            floor={floor}
-            panZoom={panZoom}
-            marginM={marginM}
-            selectedRoomKey={selectedRoomKey}
-            onSelectRoom={setSelectedRoomKey}
-          />
+          {isSite ? (
+            <SitePlanCanvas site={site} />
+          ) : (
+            <FloorPlanCanvas
+              house={plan.house}
+              floor={floor}
+              panZoom={panZoom}
+              marginM={marginM}
+              selectedRoomKey={selectedRoomKey}
+              onSelectRoom={setSelectedRoomKey}
+            />
+          )}
         </div>
       </div>
 
+      {isSite ? (
+        <p className="mt-3 text-xs leading-relaxed text-ink-faint">
+          {site.plotDerived ? tSite('derivedNote') : tSite('note')}
+        </p>
+      ) : null}
+
       {/* Selected-room details (§23), announced politely for screen readers. */}
-      <div aria-live="polite">
+      <div aria-live="polite" className={cn(isSite && 'hidden')}>
         {selectedRoom ? (
           <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-panel border border-line bg-surface px-4 py-2.5">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -172,7 +222,9 @@ export function FloorPlanViewer({ plan, className }: FloorPlanViewerProps) {
         )}
       </div>
 
-      <FloorPlanLegend className="mt-4" floor={floor} hasStairs={floor.stairs !== null} />
+      {isSite ? null : (
+        <FloorPlanLegend className="mt-4" floor={floor} hasStairs={floor.stairs !== null} />
+      )}
 
       <p className="mt-3 text-xs leading-relaxed text-ink-faint">{t('disclaimerBody')}</p>
     </div>

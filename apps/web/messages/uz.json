@@ -1509,5 +1509,16 @@
       "scaleLabel": "M",
       "zoomLabel": "Zum"
     }
+  },
+  "sitePlan": {
+    "tab": "Uchastka",
+    "canvasLabel": "Uchastka rejasi, {width} × {length} m",
+    "house": "Uy",
+    "street": "Ko'cha",
+    "driveway": "Mashina yo'li",
+    "path": "Yo'lakcha",
+    "dimension": "{value} m",
+    "note": "Uchastka rejasi sxematik: uy va qo'shimchalar joylashuvi avtomatik hisoblangan.",
+    "derivedNote": "Uchastka o'lchami ko'rsatilmagani uchun maydondan taxminan hisoblandi. Reja sxematik."
   }
 }

@@ -1509,5 +1509,16 @@
       "scaleLabel": "Scale",
       "zoomLabel": "Zoom"
     }
+  },
+  "sitePlan": {
+    "tab": "Site",
+    "canvasLabel": "Site plan, {width} × {length} m",
+    "house": "House",
+    "street": "Street",
+    "driveway": "Driveway",
+    "path": "Path",
+    "dimension": "{value} m",
+    "note": "The site plan is schematic: the house and its outbuildings are placed automatically.",
+    "derivedNote": "No plot dimensions were given, so they were derived from the area. The plan is schematic."
   }
 }
