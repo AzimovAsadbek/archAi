@@ -38,7 +38,8 @@
     "help": "Help",
     "about": "About",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "home": "Home"
   },
   "marketing": {
     "hero": {

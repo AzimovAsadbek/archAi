@@ -100,15 +100,16 @@ export function AdminUsersView() {
           placeholder={t('searchPlaceholder')}
         />
         <Select
-          aria-label={t('filterLabel')}
+          label={t('filterLabel')}
           value={activeFilter}
-          onChange={(event) => setActiveFilter(event.target.value as ActiveFilter)}
+          onChange={(value) => setActiveFilter(value as ActiveFilter)}
           className="sm:w-56"
-        >
-          <option value="">{t('filterAll')}</option>
-          <option value="active">{t('filterActive')}</option>
-          <option value="inactive">{t('filterInactive')}</option>
-        </Select>
+          options={[
+            { value: '', label: t('filterAll') },
+            { value: 'active', label: t('filterActive') },
+            { value: 'inactive', label: t('filterInactive') },
+          ]}
+        />
       </AdminFilters>
 
       {toggleActive.isError ? (

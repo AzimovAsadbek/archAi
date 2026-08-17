@@ -38,7 +38,8 @@
     "help": "Yordam",
     "about": "Biz haqimizda",
     "openMenu": "Menyuni ochish",
-    "closeMenu": "Menyuni yopish"
+    "closeMenu": "Menyuni yopish",
+    "home": "Bosh sahifa"
   },
   "marketing": {
     "hero": {

@@ -255,16 +255,15 @@ export function AdminBlogForm({ item, onDone }: { item: AdminBlogRow | null; onD
             {(control) => (
               <Select
                 {...control}
+                label={t('form.status')}
                 value={form.status}
                 disabled={disabled}
-                onChange={(event) => update({ status: event.target.value as BlogStatus })}
-              >
-                {BLOG_STATUSES.map((status) => (
-                  <option key={status} value={status}>
-                    {status === 'PUBLISHED' ? t('status.PUBLISHED') : t('status.DRAFT')}
-                  </option>
-                ))}
-              </Select>
+                onChange={(next) => update({ status: next as BlogStatus })}
+                options={BLOG_STATUSES.map((status) => ({
+                  value: status,
+                  label: status === 'PUBLISHED' ? t('status.PUBLISHED') : t('status.DRAFT'),
+                }))}
+              />
             )}
           </Field>
 

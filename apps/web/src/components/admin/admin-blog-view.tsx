@@ -94,18 +94,18 @@ export function AdminBlogView() {
 
       <AdminFilters>
         <Select
-          aria-label={t('statusLabel')}
+          label={t('statusLabel')}
           value={status}
-          onChange={(event) => setStatus(event.target.value as StatusFilter)}
+          onChange={(next) => setStatus(next as StatusFilter)}
           className="sm:w-56"
-        >
-          <option value="">{t('statusAll')}</option>
-          {BLOG_STATUSES.map((value) => (
-            <option key={value} value={value}>
-              {value === 'PUBLISHED' ? t('status.PUBLISHED') : t('status.DRAFT')}
-            </option>
-          ))}
-        </Select>
+          options={[
+            { value: '', label: t('statusAll') },
+            ...BLOG_STATUSES.map((value) => ({
+              value,
+              label: value === 'PUBLISHED' ? t('status.PUBLISHED') : t('status.DRAFT'),
+            })),
+          ]}
+        />
       </AdminFilters>
 
       {removeMutation.isError ? (

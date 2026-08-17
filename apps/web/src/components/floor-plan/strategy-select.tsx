@@ -53,18 +53,16 @@ export function StrategySelect({ projectId, current }: StrategySelectProps) {
       </label>
       <Select
         id={`strategy-${projectId}`}
+        label={t('strategyLabel')}
         value={value}
         disabled={mutation.isPending}
-        onChange={(event) => mutation.mutate(event.target.value as LayoutStrategy)}
-        className="h-8 w-auto min-w-36 text-xs"
-        title={tStrategies(`${value}.description`)}
-      >
-        {LAYOUT_STRATEGIES.map((strategy) => (
-          <option key={strategy} value={strategy}>
-            {tStrategies(`${strategy}.label`)}
-          </option>
-        ))}
-      </Select>
+        onChange={(next) => mutation.mutate(next as LayoutStrategy)}
+        className="w-auto min-w-40"
+        options={LAYOUT_STRATEGIES.map((strategy) => ({
+          value: strategy,
+          label: tStrategies(`${strategy}.label`),
+        }))}
+      />
       {mutation.isPending ? <Spinner className="size-3.5 text-ink-faint" /> : null}
       {error ? (
         <span role="alert" className="text-xs font-medium text-danger">

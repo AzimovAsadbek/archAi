@@ -38,7 +38,8 @@
     "help": "Помощь",
     "about": "О нас",
     "openMenu": "Открыть меню",
-    "closeMenu": "Закрыть меню"
+    "closeMenu": "Закрыть меню",
+    "home": "Главная"
   },
   "marketing": {
     "hero": {

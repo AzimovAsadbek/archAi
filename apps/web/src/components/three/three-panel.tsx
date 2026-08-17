@@ -108,18 +108,18 @@ export function ThreePanel({ projectId, projectUpdatedAt, land, style, className
     <div className={className}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Select
-          aria-label={t('floors.label')}
+          label={t('floors.label')}
           value={visibility}
-          onChange={(event) => setVisibility(event.target.value)}
+          onChange={(next) => setVisibility(String(next))}
           className="w-auto min-w-52"
-        >
-          <option value={WHOLE_HOUSE}>{t('floors.all')}</option>
-          {model.floors.map((floor) => (
-            <option key={floor.index} value={String(floor.index)}>
-              {t('floors.cutaway', { floor: floor.index + 1 })}
-            </option>
-          ))}
-        </Select>
+          options={[
+            { value: WHOLE_HOUSE, label: t('floors.all') },
+            ...model.floors.map((floor) => ({
+              value: String(floor.index),
+              label: t('floors.cutaway', { floor: floor.index + 1 }),
+            })),
+          ]}
+        />
 
         <div className="flex flex-wrap items-center gap-1.5">
           <div

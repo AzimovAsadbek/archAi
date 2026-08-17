@@ -190,19 +190,15 @@ export function AdminPricingForm({ item, onDone }: { item: AdminPricingRow | nul
               ) : (
                 <Select
                   {...control}
+                  label={t('form.key')}
                   value={form.key}
                   disabled={disabled}
-                  onChange={(event) => {
-                    update({ key: event.target.value });
+                  onChange={(next) => {
+                    update({ key: String(next) });
                     setErrors((current) => ({ ...current, key: undefined }));
                   }}
-                >
-                  {PRICING_PLAN_KEYS.map((key) => (
-                    <option key={key} value={key}>
-                      {key}
-                    </option>
-                  ))}
-                </Select>
+                  options={PRICING_PLAN_KEYS.map((key) => ({ value: key, label: key }))}
+                />
               )
             }
           </Field>

@@ -134,18 +134,15 @@ export function DashboardView() {
           />
         </div>
         <Select
-          aria-label={t('statusLabel')}
+          label={t('statusLabel')}
           value={status}
-          onChange={(event) => setStatus(event.target.value as ProjectStatus | '')}
+          onChange={(next) => setStatus(next as ProjectStatus | '')}
           className="sm:w-56"
-        >
-          <option value="">{t('statusAll')}</option>
-          {PROJECT_STATUSES.map((value) => (
-            <option key={value} value={value}>
-              {tStatus(value)}
-            </option>
-          ))}
-        </Select>
+          options={[
+            { value: '', label: t('statusAll') },
+            ...PROJECT_STATUSES.map((value) => ({ value, label: tStatus(value) })),
+          ]}
+        />
       </div>
 
       {actionError ? (

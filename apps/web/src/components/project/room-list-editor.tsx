@@ -82,19 +82,16 @@ export function RoomListEditor({
 
           <span className="flex items-center gap-2">
             <Select
-              aria-label={t('otherType')}
+              label={t('otherType')}
               value={otherType}
               disabled={disabled || atLimit}
-              onChange={(event) => setOtherType(event.target.value as RoomType | '')}
-              className="h-9 w-44 text-sm"
-            >
-              <option value="">{t('otherType')}</option>
-              {OTHER_ROOM_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {tRoomTypes(type)}
-                </option>
-              ))}
-            </Select>
+              onChange={(next) => setOtherType(next as RoomType | '')}
+              className="w-44"
+              options={[
+                { value: '', label: t('otherType') },
+                ...OTHER_ROOM_TYPES.map((type) => ({ value: type, label: tRoomTypes(type) })),
+              ]}
+            />
             <Button
               variant="outline"
               size="sm"
@@ -164,19 +161,17 @@ export function RoomListEditor({
                               {t('type')}
                             </span>
                             <Select
+                              label={t('type')}
                               value={room.type}
                               disabled={disabled}
-                              onChange={(event) =>
-                                updateRoom(room.key, { type: event.target.value as RoomType })
+                              onChange={(next) =>
+                                updateRoom(room.key, { type: next as RoomType })
                               }
-                              className="h-9 text-sm"
-                            >
-                              {ROOM_TYPES.map((type) => (
-                                <option key={type} value={type}>
-                                  {tRoomTypes(type)}
-                                </option>
-                              ))}
-                            </Select>
+                              options={ROOM_TYPES.map((type) => ({
+                                value: type,
+                                label: tRoomTypes(type),
+                              }))}
+                            />
                           </label>
 
                           <label className="flex flex-col gap-1">
@@ -184,19 +179,17 @@ export function RoomListEditor({
                               {t('floor')}
                             </span>
                             <Select
+                              label={t('floor')}
                               value={room.floor}
                               disabled={disabled}
-                              onChange={(event) =>
-                                updateRoom(room.key, { floor: Number(event.target.value) })
+                              onChange={(next) =>
+                                updateRoom(room.key, { floor: Number(next) })
                               }
-                              className="h-9 text-sm"
-                            >
-                              {floors.map((value) => (
-                                <option key={value} value={value}>
-                                  {t('floorOption', { floor: value + 1 })}
-                                </option>
-                              ))}
-                            </Select>
+                              options={floors.map((value) => ({
+                                value,
+                                label: t('floorOption', { floor: value + 1 }),
+                              }))}
+                            />
                           </label>
 
                           <label className="flex flex-col gap-1">

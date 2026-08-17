@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { buttonClasses } from '@/components/ui/button';
 import { LocaleSwitcher } from './locale-switcher';
+import { MarketingNav } from './marketing-nav';
 import { Logo } from './logo';
 import { MarketingMobileMenu } from './marketing-mobile-menu';
 
@@ -13,32 +14,7 @@ export async function MarketingHeader() {
       <div className="page-container flex h-16 items-center justify-between gap-4">
         <Logo href="/" />
 
-        <nav aria-label={t('primary')} className="hidden items-center gap-6 md:flex lg:gap-7">
-          <Link
-            href="/#features"
-            className="text-sm font-medium text-ink-soft transition-colors hover:text-ink"
-          >
-            {t('features')}
-          </Link>
-          <Link
-            href="/pricing"
-            className="text-sm font-medium text-ink-soft transition-colors hover:text-ink"
-          >
-            {t('pricing')}
-          </Link>
-          <Link
-            href="/blog"
-            className="text-sm font-medium text-ink-soft transition-colors hover:text-ink"
-          >
-            {t('blog')}
-          </Link>
-          <Link
-            href="/faq"
-            className="text-sm font-medium text-ink-soft transition-colors hover:text-ink"
-          >
-            {t('faq')}
-          </Link>
-        </nav>
+        <MarketingNav className="hidden md:flex" />
 
         <div className="flex items-center gap-2 sm:gap-3">
           <LocaleSwitcher className="hidden md:block" />
