@@ -10,25 +10,58 @@ import { type RoomType } from '@archai/shared';
  * amber — kept pale enough that the ink linework stays dominant.
  */
 export const PLAN_COLORS = {
-  /** Slab under the whole footprint, and the fill that erases wall bands. */
-  slab: 'var(--color-surface)',
+  /** Vellum sheet under the whole footprint. */
+  slab: '#FBFBFA',
   /** Usable area that no room claims (also the ground of an empty floor). */
-  ground: 'var(--color-paper)',
-  wall: 'var(--color-ink)',
+  ground: '#F4F4F0',
+  /** Poché — structural walls are solid obsidian, the heaviest mark on the sheet. */
+  wall: '#1A1A18',
+  /** Hatch strokes drawn inside the poché at drafting density. */
+  wallHatch: 'rgb(251 251 250 / 0.22)',
+  /** Property boundary: dash-dot, the surveyor's line. */
+  boundary: '#999990',
   /** Door swing arcs, window ticks, stair treads. */
   detail: 'var(--color-ink-soft)',
   /** Dimension lines, extension lines, annotation text. */
-  annotation: 'var(--color-ink-faint)',
-  label: 'var(--color-ink)',
-  corridor: '#f1f0ea',
-  corridorHatch: 'rgb(25 26 30 / 0.06)',
-  stair: '#eae7e0',
+  annotation: '#666660',
+  label: '#1A1A18',
+  /** Circulation reads as a hatch wash, never as a coloured room. */
+  corridor: 'transparent',
+  corridorHatch: 'rgb(26 26 24 / 0.07)',
+  stair: 'rgb(26 26 24 / 0.04)',
   /** Selected-room ring and its dimension lines — accent-strong (AA on paper). */
   selection: 'var(--color-accent-strong)',
+  /** The only room fill in the drawing: hover and active selection. */
+  roomHover: 'rgb(200 90 50 / 0.05)',
+  roomActive: 'rgb(200 90 50 / 0.08)',
 } as const;
 
-/** Soft per-type washes. HALLWAY and OTHER stay deliberately neutral. */
+/**
+ * Room fills are transparent by default.
+ *
+ * The drawing is ink on vellum: a plan whose every room is a pastel rectangle
+ * reads as an infographic, not as architecture. Colour now carries exactly one
+ * meaning — this room is hovered or selected — so a coloured shape on the sheet
+ * is always the answer to "which room am I looking at", never decoration.
+ *
+ * The per-type washes are kept below rather than deleted: they remain useful
+ * for a first-time reader scanning for bedrooms, and become an opt-in layer.
+ */
 export const ROOM_TINTS: Record<RoomType, string> = {
+  LIVING_ROOM: 'transparent',
+  BEDROOM: 'transparent',
+  KITCHEN: 'transparent',
+  DINING_ROOM: 'transparent',
+  OFFICE: 'transparent',
+  BATHROOM: 'transparent',
+  LAUNDRY: 'transparent',
+  STORAGE: 'transparent',
+  HALLWAY: 'transparent',
+  OTHER: 'transparent',
+};
+
+/** The former defaults, available as the opt-in "room types" layer. */
+export const ROOM_TYPE_TINTS: Record<RoomType, string> = {
   LIVING_ROOM: '#f8e7db',
   BEDROOM: '#e8eef8',
   KITCHEN: '#faf1dd',

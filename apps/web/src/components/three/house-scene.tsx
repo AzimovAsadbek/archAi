@@ -94,7 +94,13 @@ function BoxCluster({ boxes, children }: { boxes: readonly SceneBox[]; children:
 
   return (
     // `count` is a constructor argument, so a changed length needs a new object.
-    <instancedMesh key={boxes.length} ref={ref} args={[undefined, undefined, boxes.length]}>
+    <instancedMesh
+      key={boxes.length}
+      ref={ref}
+      args={[undefined, undefined, boxes.length]}
+      castShadow
+      receiveShadow
+    >
       <boxGeometry args={[1, 1, 1]} />
       {children}
     </instancedMesh>
@@ -116,7 +122,7 @@ function Roof({ roof, materials }: { roof: SceneRoof; materials: StyleMaterials 
   useEffect(() => () => geometry.dispose(), [geometry]);
 
   return (
-    <mesh geometry={geometry}>
+    <mesh geometry={geometry} castShadow receiveShadow>
       <meshStandardMaterial
         color={materials.roof}
         side={DoubleSide}
@@ -280,22 +286,47 @@ export function HouseScene({
       className={cn('touch-none', className)}
       frameloop="demand"
       dpr={[1, 2]}
+      // Soft shadow maps: the single biggest step from "massing blocks" to a lit
+      // building. `frameloop="demand"` means they are rendered on invalidation
+      // rather than every frame, so the cost is paid on interaction, not idle.
+      shadows="soft"
       gl={{ antialias: true, powerPreference: 'high-performance' }}
       camera={{ fov: 45, near: 0.1, far: 500, position: [12, 9, 12] }}
     >
       <color attach="background" args={[SCENE_COLORS.background]} />
 
       <ambientLight intensity={SCENE_LIGHTS.ambientIntensity} />
+      {/* Sky/ground bounce. Cheap stand-in for ambient occlusion: it darkens
+          undersides and inside corners, which is what makes wall junctions and
+          eaves read as solid rather than as flat-shaded boxes. */}
+      <hemisphereLight
+        intensity={SCENE_LIGHTS.hemisphereIntensity}
+        color={SCENE_COLORS.skyLight}
+        groundColor={SCENE_COLORS.bounceLight}
+      />
       <directionalLight
+        castShadow
         intensity={SCENE_LIGHTS.directionalIntensity}
         position={[
           SCENE_LIGHTS.directionalOffset[0] * lightDistance,
           SCENE_LIGHTS.directionalOffset[1] * lightDistance,
           SCENE_LIGHTS.directionalOffset[2] * lightDistance,
         ]}
+        // The shadow camera is framed to the model's bounding radius, so a small
+        // cottage and a large villa both get the full map resolution instead of
+        // a fixed frustum that wastes most of it on empty space.
+        shadow-mapSize={[2048, 2048]}
+        shadow-camera-near={0.5}
+        shadow-camera-far={lightDistance * 4}
+        shadow-camera-left={-model.bounds.radius * 1.6}
+        shadow-camera-right={model.bounds.radius * 1.6}
+        shadow-camera-top={model.bounds.radius * 1.6}
+        shadow-camera-bottom={-model.bounds.radius * 1.6}
+        shadow-bias={-0.0006}
+        shadow-normalBias={0.02}
       />
 
-      <mesh position={ground.center}>
+      <mesh position={ground.center} receiveShadow>
         <boxGeometry args={ground.size} />
         <meshStandardMaterial color={SCENE_COLORS.ground} {...SCENE_SURFACES.ground} />
       </mesh>

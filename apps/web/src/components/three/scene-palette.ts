@@ -24,8 +24,16 @@ export const SCENE_COLORS = {
   roof: '#c2571e',
   /** Stair treads: a touch darker than the walls so the flight reads. */
   step: '#ded9cd',
-  /** Muted green land plate. */
-  ground: '#9aa87f',
+  /**
+   * Neutral site plate. Previously a muted green lawn, which read as a game
+   * ground plane and fought the building for attention; a desaturated stone
+   * grade lets the facade carry the colour.
+   */
+  ground: '#d8d6ce',
+  /** Sky term of the hemisphere fill — cool, slightly blue. */
+  skyLight: '#eef2f6',
+  /** Ground bounce term — warm, picked up off the site plate. */
+  bounceLight: '#b9b3a5',
 } as const;
 
 /** Roughness/metalness per surface, tuned for the single-directional-light setup. */
@@ -43,10 +51,18 @@ export const SCENE_SURFACES = {
   glass: { roughness: 0.08, metalness: 0.05, opacity: 0.35 },
 } as const;
 
-/** Ambient + one directional light. No shadow maps in v1 — they cost too much. */
+/**
+ * Ambient + hemisphere fill + one shadow-casting sun.
+ *
+ * Ambient drops from 1.5 to 0.55: with shadow maps on, the old flat ambient
+ * washed them straight back out. The hemisphere light replaces most of what
+ * ambient was doing while still letting undersides fall into shade, which is
+ * what gives the massing its depth.
+ */
 export const SCENE_LIGHTS = {
-  ambientIntensity: 1.5,
-  directionalIntensity: 2.1,
+  ambientIntensity: 0.55,
+  hemisphereIntensity: 0.9,
+  directionalIntensity: 2.4,
   /** Direction the sun sits in, relative to the model's bounding radius. */
   directionalOffset: [0.75, 1.25, 0.55] as const,
 } as const;

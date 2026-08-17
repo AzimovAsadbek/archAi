@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useMemo, useRef } from 'react';
+import { useId, useMemo, useRef , useState} from 'react';
 import { useTranslations } from 'next-intl';
 import {
   type FloorGeometry,
@@ -53,7 +53,11 @@ export function FloorPlanCanvas({
 }: FloorPlanCanvasProps) {
   const t = useTranslations('floorPlan');
   const tRoomTypes = useTranslations('roomTypes');
-  const hatchId = `${useId()}-hatch`;
+  const uid = useId();
+  const hatchId = `${uid}-hatch`;
+  const pocheId = `${uid}-poche`;
+  /** Hover is local to the drawing: it tints a room but selects nothing. */
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const { view, pxPerM, panning, svgRef, onPointerDown, onPointerMove, onPointerEnd } = panZoom;
 
   // Where the pointer went down, in client px — a click that travelled further
@@ -127,9 +131,28 @@ export function FloorPlanCanvas({
             fill="none"
           />
         </pattern>
+        {/* Poché hatch: fine 45° strokes laid inside the solid wall fill, the
+            drafting convention for cut structure. Sized in metres so the
+            density stays constant as the drawing zooms. */}
+        <pattern
+          id={pocheId}
+          width={0.16}
+          height={0.16}
+          patternUnits="userSpaceOnUse"
+          patternTransform="rotate(45)"
+        >
+          <line
+            x1={0}
+            y1={0}
+            x2={0}
+            y2={0.16}
+            stroke={PLAN_COLORS.wallHatch}
+            strokeWidth={0.035}
+          />
+        </pattern>
       </defs>
 
-      {/* Footprint slab, then the usable area inside the exterior walls. */}
+      {/* Vellum sheet, then the usable area inside the exterior walls. */}
       <rect x={0} y={0} width={house.widthM} height={house.lengthM} fill={PLAN_COLORS.slab} />
       <rect
         x={floor.outline.x}
@@ -137,6 +160,19 @@ export function FloorPlanCanvas({
         width={floor.outline.width}
         height={floor.outline.height}
         fill={PLAN_COLORS.ground}
+      />
+
+      {/* Property boundary — 1px dash-dot, drawn outside the footprint. */}
+      <rect
+        x={-marginM * 0.45}
+        y={-marginM * 0.45}
+        width={house.widthM + marginM * 0.9}
+        height={house.lengthM + marginM * 0.9}
+        fill="none"
+        stroke={PLAN_COLORS.boundary}
+        strokeWidth={mPerPx}
+        strokeDasharray={`${mPerPx * 9} ${mPerPx * 4} ${mPerPx * 2} ${mPerPx * 4}`}
+        vectorEffect="non-scaling-stroke"
       />
 
       {floor.corridor ? (
@@ -159,17 +195,28 @@ export function FloorPlanCanvas({
         </g>
       ) : null}
 
+      {/* Rooms carry no fill until they are pointed at or selected. Colour on
+          this sheet means exactly one thing: "this is the room you mean". */}
       <g>
-        {floor.rooms.map((room) => (
-          <rect
-            key={room.key}
-            x={room.rect.x}
-            y={room.rect.y}
-            width={room.rect.width}
-            height={room.rect.height}
-            fill={ROOM_TINTS[room.type]}
-          />
-        ))}
+        {floor.rooms.map((room) => {
+          const active = room.key === selectedRoomKey;
+          const hovered = room.key === hoveredKey;
+          const fill = active
+            ? PLAN_COLORS.roomActive
+            : hovered
+              ? PLAN_COLORS.roomHover
+              : ROOM_TINTS[room.type];
+          return (
+            <rect
+              key={room.key}
+              x={room.rect.x}
+              y={room.rect.y}
+              width={room.rect.width}
+              height={room.rect.height}
+              fill={fill}
+            />
+          );
+        })}
       </g>
 
       {floor.stairs ? (
@@ -179,18 +226,36 @@ export function FloorPlanCanvas({
         />
       ) : null}
 
-      {/* Centre lines with stroke-width = thickness render walls exactly. */}
-      <g stroke={PLAN_COLORS.wall} strokeLinecap="square">
-        {floor.walls.map((wall) => (
-          <line
-            key={wall.id}
-            x1={wall.segment.x1}
-            y1={wall.segment.y1}
-            x2={wall.segment.x2}
-            y2={wall.segment.y2}
-            strokeWidth={wall.thickness}
-          />
-        ))}
+      {/* Poché: centre lines stroked at wall thickness give the solid cut, then
+          the same lines are re-stroked with the 45° hatch pattern on top. Two
+          passes rather than one because an SVG stroke takes a paint server but
+          cannot take a fill *and* a pattern — the pattern pass is what turns a
+          black bar into drawn structure. */}
+      <g strokeLinecap="square">
+        <g stroke={PLAN_COLORS.wall}>
+          {floor.walls.map((wall) => (
+            <line
+              key={wall.id}
+              x1={wall.segment.x1}
+              y1={wall.segment.y1}
+              x2={wall.segment.x2}
+              y2={wall.segment.y2}
+              strokeWidth={wall.thickness}
+            />
+          ))}
+        </g>
+        <g stroke={`url(#${pocheId})`}>
+          {floor.walls.map((wall) => (
+            <line
+              key={`${wall.id}-poche`}
+              x1={wall.segment.x1}
+              y1={wall.segment.y1}
+              x2={wall.segment.x2}
+              y2={wall.segment.y2}
+              strokeWidth={wall.thickness}
+            />
+          ))}
+        </g>
       </g>
 
       <g>
@@ -345,6 +410,14 @@ export function FloorPlanCanvas({
                           onSelectRoom(null);
                         }
                       },
+                      onPointerEnter: () => setHoveredKey(room.key),
+                      onPointerLeave: () =>
+                        setHoveredKey((current) => (current === room.key ? null : current)),
+                      // Keyboard focus tints too, so the drawing tracks focus
+                      // for someone who never touches a pointer.
+                      onFocus: () => setHoveredKey(room.key),
+                      onBlur: () =>
+                        setHoveredKey((current) => (current === room.key ? null : current)),
                     }
                   : {})}
               />
@@ -363,7 +436,7 @@ export function FloorPlanCanvas({
               ) : null}
               {showArea ? (
                 <text
-                  className="numeric"
+                  className="numeric" fontFamily="var(--font-mono)" letterSpacing="-0.01em"
                   x={centerX}
                   y={areaY}
                   fill={PLAN_COLORS.annotation}
