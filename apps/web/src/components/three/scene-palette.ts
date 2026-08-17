@@ -149,3 +149,45 @@ export const STYLE_MATERIALS: Record<HouseStyle, StyleMaterials> = {
 export function materialsForStyle(style: HouseStyle | null | undefined): StyleMaterials {
   return style ? STYLE_MATERIALS[style] : STYLE_MATERIALS.MODERN;
 }
+
+// ── Site surfaces ─────────────────────────────────────────────────────────
+
+export interface SurfaceMaterial {
+  color: string;
+  roughness: number;
+  metalness: number;
+  /** Set for translucent surfaces; absent means opaque. */
+  opacity?: number;
+}
+
+/**
+ * The property around the building.
+ *
+ * Each surface is the material it actually is, because that is what makes a
+ * plot read as a plot: lawn is not "green ground", it is a rough matte surface
+ * that takes shadow badly; water is smooth and translucent; a drive is coarse
+ * mineral paving. Rendering them all as the same grey plate is what made the
+ * old preview look like a model on a desk rather than a house on its land.
+ */
+export const SITE_SURFACES = {
+  /** Mown lawn. Desaturated well below "grass green", which reads as a game. */
+  lawn: { color: '#8ea36b', roughness: 1, metalness: 0 },
+  /** Bare grade where no garden was asked for. */
+  grade: { color: '#d8d6ce', roughness: 1, metalness: 0 },
+  /** Vehicle paving — coarse mineral, mid grey. */
+  driveway: { color: '#9c9a94', roughness: 0.95, metalness: 0 },
+  /** Foot paving, a shade lighter so a path reads as separate from a drive. */
+  path: { color: '#b8b5ad', roughness: 0.92, metalness: 0 },
+  /** Timber deck. */
+  terrace: { color: '#a87f57', roughness: 0.78, metalness: 0 },
+  /** Pool water — smooth and translucent, lit from the sky rather than textured. */
+  pool: { color: '#2f7f9e', roughness: 0.06, metalness: 0.1, opacity: 0.82 },
+  /** Garage: rendered as a subordinate mass, slightly darker than the house. */
+  garage: { color: '#e6e3da', roughness: 0.94, metalness: 0 },
+  /** Balcony slab, matching the house's concrete rather than its render. */
+  balcony: { color: '#cfccc2', roughness: 0.9, metalness: 0 },
+  /** Planting massed in the garden. */
+  foliage: { color: '#5f7a4a', roughness: 1, metalness: 0 },
+  trunk: { color: '#6b563f', roughness: 1, metalness: 0 },
+} as const satisfies Record<string, SurfaceMaterial>;
+

@@ -63,6 +63,35 @@ export const DECLARED_AREA_MAX_RATIO = 1.08;
 export const PROFILE_AREA_MIN_RATIO = 0.6;
 export const PROFILE_AREA_MAX_RATIO = 1.8;
 
+// ── Site (metres) ─────────────────────────────────────────────────────────
+//
+// What surrounds the building. These are ordinary residential dimensions, not
+// regulation: the site layer exists to draw a plausible property, and a plot
+// that cannot honour them is shrunk to fit rather than rejected.
+
+/** Street frontage: room for a car to stand clear of the pavement. */
+export const SETBACK_FRONT_M = 5;
+export const SETBACK_SIDE_M = 2;
+export const SETBACK_REAR_M = 4;
+
+/** Depth ÷ width used when a plot is known only by its area. */
+export const PLOT_DEPTH_TO_WIDTH = 1.5;
+
+/** Single garage, internal dimensions rounded up to a structure. */
+export const GARAGE_WIDTH_M = 3.6;
+export const GARAGE_DEPTH_M = 6;
+export const DRIVEWAY_MIN_WIDTH_M = 3;
+/** Footpath to the front door when there is no drive. */
+export const PATH_WIDTH_M = 1.5;
+
+export const TERRACE_DEPTH_M = 3;
+export const POOL_WIDTH_M = 4;
+export const POOL_LENGTH_M = 8;
+export const BALCONY_DEPTH_M = 1.2;
+
+/** Breathing room between two site elements, and between one and the house. */
+export const SITE_GAP_M = 1;
+
 export const NARROW_DOOR_ROOM_TYPES = [
   'BATHROOM',
   'STORAGE',

@@ -16,6 +16,8 @@ function allBoxes(scene: SceneModel): SceneBox[] {
   return [
     scene.ground,
     ...scene.floors.flatMap((f) => [f.slab, f.finish, ...f.walls, ...f.glass, ...f.steps]),
+    // Site elements are geometry like any other and must respect the same limits.
+    ...scene.site.elements.map((e) => e.box),
   ];
 }
 
@@ -57,13 +59,17 @@ describe('buildScene', () => {
 
   it('keeps every box AABB within the ground plate and under the roof ridge', () => {
     const scene = buildScene(TWO_FLOOR);
+    // Measured from the plate's own centre, not the world origin: the house sits
+    // toward the street rather than in the middle of its plot, so the plate is
+    // deliberately off-centre and only the plot's own extent bounds anything.
+    const [plateX, , plateZ] = scene.ground.center;
     const halfX = scene.ground.size[0] / 2 + EPS;
     const halfZ = scene.ground.size[2] / 2 + EPS;
     const maxY = scene.heightM + EPS;
 
     for (const b of allBoxes(scene)) {
-      expect(Math.abs(b.center[0]) + b.size[0] / 2).toBeLessThanOrEqual(halfX);
-      expect(Math.abs(b.center[2]) + b.size[2] / 2).toBeLessThanOrEqual(halfZ);
+      expect(Math.abs(b.center[0] - plateX) + b.size[0] / 2).toBeLessThanOrEqual(halfX);
+      expect(Math.abs(b.center[2] - plateZ) + b.size[2] / 2).toBeLessThanOrEqual(halfZ);
       const bottom = b.center[1] - b.size[1] / 2;
       const top = b.center[1] + b.size[1] / 2;
       expect(bottom).toBeGreaterThanOrEqual(-scene.ground.size[1] - EPS);

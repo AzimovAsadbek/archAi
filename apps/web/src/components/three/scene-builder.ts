@@ -1,9 +1,12 @@
-import type {
-  Door,
-  FloorGeometry,
-  FloorPlan,
-  FloorPlanWindow,
-  Wall,
+import {
+  layoutSite,
+  type Door,
+  type FloorGeometry,
+  type FloorPlan,
+  type FloorPlanWindow,
+  type SiteElementKind,
+  type SiteFeatures,
+  type Wall,
 } from '@archai/floor-plan-engine';
 
 /**
@@ -53,6 +56,14 @@ export const GROUND_THICKNESS_M = 0.3;
 export const GROUND_MARGIN_M = 6;
 /** Minimum breathing room between the footprint and the plate edge. */
 export const GROUND_MIN_MARGIN_M = 2;
+/**
+ * Thickness given to flush paving — drives, paths.
+ *
+ * They have no real height, but a zero-height box and the ground plate would
+ * occupy exactly the same pixels and flicker against each other as the camera
+ * moves. A few centimetres reads as a kerb and settles the depth test.
+ */
+export const PAVING_THICKNESS_M = 0.06;
 /** Steps per flight — a fixed count keeps the model deterministic. */
 export const STAIR_STEP_COUNT = 13;
 
@@ -106,6 +117,21 @@ export interface SceneBounds {
   radius: number;
 }
 
+/** A site element positioned in world space, ready to draw. */
+export interface SceneSiteElement {
+  kind: SiteElementKind;
+  box: SceneBox;
+}
+
+export interface SceneSite {
+  /** The whole property. Its top face is y = 0, like the ground plate. */
+  plot: SceneBox;
+  /** Garage, drive, path, terrace, pool, balcony — whatever was configured and fits. */
+  elements: SceneSiteElement[];
+  /** Open ground reads as lawn rather than bare grade. */
+  hasGarden: boolean;
+}
+
 export interface SceneModel {
   /** Provenance of the plan this model was derived from. */
   engineVersion: string;
@@ -114,13 +140,18 @@ export interface SceneModel {
   roof: SceneRoof | null;
   /** Land plate the house stands on; its top face is y = 0. */
   ground: SceneBox;
+  /** The property around the building. */
+  site: SceneSite;
   /** Bounding sphere of the building (plate excluded) — used to frame the camera. */
   bounds: SceneBounds;
+  /** Bounding sphere of the whole property, for framing the site rather than the house. */
+  siteBounds: SceneBounds;
   /** Grade to ridge (or to the top wall when there is no roof). */
   heightM: number;
 }
 
 export interface LandFootprint {
+  areaM2?: number | null;
   widthM?: number | null;
   lengthM?: number | null;
 }
@@ -128,6 +159,8 @@ export interface LandFootprint {
 export interface BuildSceneOptions {
   /** Plot dimensions when the project declares them; the plate falls back to a margin. */
   land?: LandFootprint | null;
+  /** What the project asked for — garage, terrace, balcony, pool, garden. */
+  features?: SiteFeatures | null;
 }
 
 // ── Numeric hygiene ───────────────────────────────────────────────────────
@@ -471,14 +504,47 @@ export function buildScene(plan: FloorPlan, options: BuildSceneOptions = {}): Sc
   const roof = topFloor ? buildRoof(widthM, lengthM, wallTopY) : null;
 
   const land = options.land;
-  const plateWidth = Math.max(
-    land?.widthM ?? widthM + GROUND_MARGIN_M,
-    widthM + GROUND_MIN_MARGIN_M,
-  );
-  const plateLength = Math.max(
-    land?.lengthM ?? lengthM + GROUND_MARGIN_M,
-    lengthM + GROUND_MIN_MARGIN_M,
-  );
+
+  // The property, laid out by the engine so the 2D, 3D and PDF views cannot
+  // disagree about where the garage is.
+  const site = layoutSite({
+    land,
+    house: { widthM, lengthM, floorCount: plan.floors.length },
+    features: options.features ?? null,
+  });
+
+  // Site space puts the plot's corner at the origin; scene space puts the
+  // *house* centre there. Everything on the plot shifts by the difference,
+  // which is what finally lets the house sit toward the street instead of
+  // floating in the middle of its own land.
+  const siteToWorldX = -(site.house.x + site.house.width / 2);
+  const siteToWorldZ = -(site.house.y + site.house.height / 2);
+
+  const plateWidth = Math.max(site.plot.width, widthM + GROUND_MIN_MARGIN_M);
+  const plateLength = Math.max(site.plot.height, lengthM + GROUND_MIN_MARGIN_M);
+  const plotCenterX = site.plot.width / 2 + siteToWorldX;
+  const plotCenterZ = site.plot.height / 2 + siteToWorldZ;
+
+  const elements: SceneSiteElement[] = site.elements.map((element) => {
+    const { rect: rc, heightM, level } = element;
+    const baseY = level * FLOOR_HEIGHT_M;
+    // Flush paving gets a token thickness so it renders as a surface rather
+    // than a zero-height plane fighting the ground for the same pixels.
+    const thickness = heightM === 0 ? PAVING_THICKNESS_M : Math.abs(heightM);
+    // Positive extrudes upward from its level; negative sinks below it.
+    const centerY = heightM < 0 ? baseY - thickness / 2 : baseY + thickness / 2;
+    return {
+      kind: element.kind,
+      box: box(
+        rc.x + rc.width / 2 + siteToWorldX,
+        centerY,
+        rc.y + rc.height / 2 + siteToWorldZ,
+        rc.width,
+        thickness,
+        rc.height,
+      ),
+    };
+  });
 
   const halfX = widthM / 2 + (roof ? ROOF_OVERHANG_M : 0);
   const halfZ = lengthM / 2 + (roof ? ROOF_OVERHANG_M : 0);
@@ -489,10 +555,26 @@ export function buildScene(plan: FloorPlan, options: BuildSceneOptions = {}): Sc
     house: { widthM, lengthM, floorCount: plan.floors.length },
     floors,
     roof,
-    ground: box(0, -GROUND_THICKNESS_M / 2, 0, plateWidth, GROUND_THICKNESS_M, plateLength),
+    ground: box(
+      plotCenterX,
+      -GROUND_THICKNESS_M / 2,
+      plotCenterZ,
+      plateWidth,
+      GROUND_THICKNESS_M,
+      plateLength,
+    ),
+    site: {
+      plot: box(plotCenterX, -GROUND_THICKNESS_M / 2, plotCenterZ, plateWidth, GROUND_THICKNESS_M, plateLength),
+      elements,
+      hasGarden: site.hasGarden,
+    },
     bounds: {
       center: [0, r(height / 2), 0],
       radius: r(Math.hypot(halfX, height / 2, halfZ)),
+    },
+    siteBounds: {
+      center: [r(plotCenterX), r(height / 2), r(plotCenterZ)],
+      radius: r(Math.hypot(plateWidth / 2, height / 2, plateLength / 2)),
     },
     heightM: r(height),
   };

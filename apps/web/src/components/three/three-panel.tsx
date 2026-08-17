@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { Info, RotateCcw } from 'lucide-react';
-import { type HouseStyle, type LandConfig } from '@archai/shared';
+import { type FeaturesConfig, type HouseStyle, type LandConfig } from '@archai/shared';
 import { FloorPlanErrorState, useFloorPlanQuery } from '@/components/floor-plan/floor-plan-query';
 import { IconButton } from '@/components/ui/button';
 import { Select } from '@/components/ui/select';
@@ -59,12 +59,26 @@ export interface ThreePanelProps {
   projectUpdatedAt: string;
   /** Plot dimensions for the land plate; the model falls back to a margin. */
   land: LandConfig | null;
+  /**
+   * What the project asked for. These place the garage, terrace, pool and
+   * balcony on the plot — before they were passed through, ticking "garage"
+   * changed the estimate and the PDF's feature list while the preview kept
+   * showing an empty lawn.
+   */
+  features: FeaturesConfig | null;
   /** Project style — tunes 3D materials only, never geometry. */
   style: HouseStyle | null;
   className?: string;
 }
 
-export function ThreePanel({ projectId, projectUpdatedAt, land, style, className }: ThreePanelProps) {
+export function ThreePanel({
+  projectId,
+  projectUpdatedAt,
+  land,
+  features,
+  style,
+  className,
+}: ThreePanelProps) {
   const t = useTranslations('three');
   const query = useFloorPlanQuery(projectId, projectUpdatedAt);
 
@@ -73,8 +87,8 @@ export function ThreePanel({ projectId, projectUpdatedAt, land, style, className
   const [resetToken, setResetToken] = useState(0);
 
   const model = useMemo(
-    () => (query.data ? buildScene(query.data.plan, { land }) : null),
-    [query.data, land],
+    () => (query.data ? buildScene(query.data.plan, { land, features }) : null),
+    [query.data, land, features],
   );
 
   const floorCount = model?.house.floorCount ?? 1;

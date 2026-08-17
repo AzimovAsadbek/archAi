@@ -21,9 +21,16 @@ import {
   SCENE_COLORS,
   SCENE_LIGHTS,
   SCENE_SURFACES,
+  SITE_SURFACES,
   type StyleMaterials,
 } from './scene-palette';
-import type { SceneBounds, SceneBox, SceneModel, SceneRoof } from './scene-builder';
+import type {
+  SceneBounds,
+  SceneBox,
+  SceneModel,
+  SceneRoof,
+  SceneSite,
+} from './scene-builder';
 
 /**
  * R3F layer for the 3D preview. It owns no geometry decisions — `scene-builder`
@@ -108,6 +115,114 @@ function BoxCluster({ boxes, children }: { boxes: readonly SceneBox[]; children:
 }
 
 // ── Roof ──────────────────────────────────────────────────────────────────
+
+/** Which surface each site element is made of. */
+const SITE_ELEMENT_SURFACE = {
+  GARAGE: SITE_SURFACES.garage,
+  DRIVEWAY: SITE_SURFACES.driveway,
+  PATH: SITE_SURFACES.path,
+  TERRACE: SITE_SURFACES.terrace,
+  POOL: SITE_SURFACES.pool,
+  BALCONY: SITE_SURFACES.balcony,
+} as const;
+
+/**
+ * Garage, drive, path, terrace, pool and balcony.
+ *
+ * Each is a box from the engine's site layout, drawn in the material it is
+ * actually made of. The pool is the only translucent one, and it is the only
+ * one that does not cast a shadow — water sunk into the ground casting a hard
+ * shadow onto the lawn beside it looks like a floating slab.
+ */
+function SiteElements({ site }: { site: SceneSite }) {
+  return (
+    <>
+      {site.elements.map((element, index) => {
+        const surface = SITE_ELEMENT_SURFACE[element.kind];
+        const isWater = element.kind === 'POOL';
+        return (
+          <mesh
+            key={`${element.kind}-${index}`}
+            position={element.box.center}
+            castShadow={!isWater && element.box.size[1] > 0.2}
+            receiveShadow
+          >
+            <boxGeometry args={element.box.size} />
+            <meshStandardMaterial
+              color={surface.color}
+              roughness={surface.roughness}
+              metalness={surface.metalness}
+              transparent={isWater}
+              opacity={isWater ? SITE_SURFACES.pool.opacity : 1}
+            />
+          </mesh>
+        );
+      })}
+    </>
+  );
+}
+
+/**
+ * Planting along the plot boundary.
+ *
+ * Deliberately crude — a trunk and a sphere of foliage — because the point is
+ * scale, not botany: without something of known height beside it, a house on an
+ * empty lawn has nothing to be read against and looks like a toy. Positions are
+ * derived from the plot rather than randomised, so the scene stays deterministic
+ * and does not reshuffle its garden on every re-render.
+ */
+function Planting({
+  site,
+  house,
+}: {
+  site: SceneSite;
+  house: { widthM: number; lengthM: number };
+}) {
+  const trees = useMemo(() => {
+    const [cx, , cz] = site.plot.center;
+    const halfW = site.plot.size[0] / 2;
+    const halfL = site.plot.size[2] / 2;
+    const inset = 1.4;
+    const spots: { x: number; z: number; scale: number }[] = [];
+
+    // Along both side boundaries, skipping the band the house occupies so a
+    // tree never grows through a wall.
+    const rows = Math.max(2, Math.floor(site.plot.size[2] / 7));
+    for (let i = 0; i < rows; i++) {
+      const t = (i + 0.5) / rows;
+      const z = cz - halfL + inset + t * (site.plot.size[2] - 2 * inset);
+      if (Math.abs(z) < house.lengthM / 2 + 1.5) continue;
+      // A fixed alternating scale keeps the row from looking stamped.
+      const scale = i % 3 === 0 ? 1.25 : i % 3 === 1 ? 0.9 : 1.1;
+      spots.push({ x: cx - halfW + inset, z, scale });
+      spots.push({ x: cx + halfW - inset, z, scale: scale * 0.92 });
+    }
+    return spots;
+  }, [site.plot, house.lengthM]);
+
+  if (trees.length === 0) return null;
+
+  return (
+    <>
+      {trees.map((tree, index) => {
+        const trunkH = 1.5 * tree.scale;
+        const crownR = 1.15 * tree.scale;
+        return (
+          <group key={index} position={[tree.x, 0, tree.z]}>
+            <mesh position={[0, trunkH / 2, 0]} castShadow>
+              <cylinderGeometry args={[0.11 * tree.scale, 0.15 * tree.scale, trunkH, 6]} />
+              <meshStandardMaterial {...SITE_SURFACES.trunk} />
+            </mesh>
+            <mesh position={[0, trunkH + crownR * 0.72, 0]} castShadow>
+              <sphereGeometry args={[crownR, 10, 8]} />
+              <meshStandardMaterial {...SITE_SURFACES.foliage} />
+            </mesh>
+          </group>
+        );
+      })}
+    </>
+  );
+}
 
 function Roof({ roof, materials }: { roof: SceneRoof; materials: StyleMaterials }) {
   const geometry = useMemo(() => {
@@ -275,8 +390,11 @@ export function HouseScene({
   ariaLabel,
   className,
 }: HouseSceneProps) {
-  const { ground, bounds } = model;
-  const lightDistance = Math.max(bounds.radius, 1) * 2.2;
+  const { ground, siteBounds } = model;
+  // Framed on the property, not the building: the garage, drive and pool are
+  // part of what the user configured, and a camera fitted to the house alone
+  // pushes them out of shot.
+  const lightDistance = Math.max(siteBounds.radius, 1) * 2.2;
   const materials = materialsForStyle(style);
 
   return (
@@ -318,18 +436,24 @@ export function HouseScene({
         shadow-mapSize={[2048, 2048]}
         shadow-camera-near={0.5}
         shadow-camera-far={lightDistance * 4}
-        shadow-camera-left={-model.bounds.radius * 1.6}
-        shadow-camera-right={model.bounds.radius * 1.6}
-        shadow-camera-top={model.bounds.radius * 1.6}
-        shadow-camera-bottom={-model.bounds.radius * 1.6}
+        shadow-camera-left={-model.siteBounds.radius * 1.15}
+        shadow-camera-right={model.siteBounds.radius * 1.15}
+        shadow-camera-top={model.siteBounds.radius * 1.15}
+        shadow-camera-bottom={-model.siteBounds.radius * 1.15}
         shadow-bias={-0.0006}
         shadow-normalBias={0.02}
       />
 
+      {/* The plot. Lawn when a garden was configured, bare grade otherwise —
+          the ground is the one surface that tells you whether you are looking
+          at a property or at a display plinth. */}
       <mesh position={ground.center} receiveShadow>
         <boxGeometry args={ground.size} />
-        <meshStandardMaterial color={SCENE_COLORS.ground} {...SCENE_SURFACES.ground} />
+        <meshStandardMaterial {...(model.site.hasGarden ? SITE_SURFACES.lawn : SITE_SURFACES.grade)} />
       </mesh>
+
+      <SiteElements site={model.site} />
+      {model.site.hasGarden ? <Planting site={model.site} house={model.house} /> : null}
 
       {/*
        * Soft grounding shadow, rendered once per invalidation batch (`frames={1}`)
@@ -354,7 +478,7 @@ export function HouseScene({
         materials={materials}
       />
 
-      <CameraRig bounds={bounds} preset={preset} resetToken={resetToken} />
+      <CameraRig bounds={siteBounds} preset={preset} resetToken={resetToken} />
       {/* drei already calls invalidate() on every `change` event — required by frameloop="demand". */}
       <OrbitControls
         makeDefault
@@ -362,8 +486,8 @@ export function HouseScene({
         dampingFactor={0.08}
         minPolarAngle={MIN_POLAR_ANGLE}
         maxPolarAngle={MAX_POLAR_ANGLE}
-        minDistance={Math.max(bounds.radius * 0.4, 1)}
-        maxDistance={Math.max(bounds.radius * 8, 20)}
+        minDistance={Math.max(model.bounds.radius * 0.4, 1)}
+        maxDistance={Math.max(siteBounds.radius * 6, 20)}
       />
     </Canvas>
   );
