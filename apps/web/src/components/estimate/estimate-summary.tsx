@@ -35,7 +35,7 @@ export function EstimateSummary({
 
   return (
     <section aria-label={t('title')} className={className}>
-      <div className="rounded-md border border-line bg-surface p-5 sm:p-6">
+      <div className="rounded-panel border border-line bg-surface p-5 sm:p-6">
         <p className="text-xs font-semibold tracking-wide text-ink-faint uppercase">
           {t('totalLabel')}
         </p>

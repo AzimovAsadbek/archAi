@@ -11,7 +11,7 @@ export interface StatCardProps {
 
 export function StatCard({ label, value, hint, icon, className }: StatCardProps) {
   return (
-    <div className={cn('rounded-md border border-line bg-surface p-4', className)}>
+    <div className={cn('rounded-panel border border-line bg-surface p-4', className)}>
       <div className="flex items-center gap-2">
         {icon ? (
           <span className="text-ink-faint" aria-hidden="true">

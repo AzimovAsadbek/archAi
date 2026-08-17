@@ -64,7 +64,7 @@ export function FloorPlanViewer({ plan, className }: FloorPlanViewerProps) {
           <div
             role="group"
             aria-label={t('floorSwitcherLabel')}
-            className="inline-flex items-center gap-0.5 rounded-md border border-line-strong bg-surface p-0.5"
+            className="inline-flex items-center gap-0.5 rounded-panel border border-line-strong bg-surface p-0.5"
           >
             {plan.floors.map((item, index) => (
               <button
@@ -116,7 +116,7 @@ export function FloorPlanViewer({ plan, className }: FloorPlanViewerProps) {
         </div>
       </div>
 
-      <div className="relative mt-3 overflow-hidden rounded-md border border-line bg-surface">
+      <div className="relative mt-3 overflow-hidden rounded-panel border border-line bg-surface">
         <span
           title={t('disclaimerBody')}
           className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-sm border border-line bg-paper/90 px-2 py-1 text-[11px] font-semibold text-ink-soft"
@@ -142,7 +142,7 @@ export function FloorPlanViewer({ plan, className }: FloorPlanViewerProps) {
       {/* Selected-room details (§23), announced politely for screen readers. */}
       <div aria-live="polite">
         {selectedRoom ? (
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-md border border-line bg-surface px-4 py-2.5">
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-panel border border-line bg-surface px-4 py-2.5">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <span className="text-sm font-bold text-ink">
                 {selectedRoom.label?.trim() ? selectedRoom.label : tRoomTypes(selectedRoom.type)}

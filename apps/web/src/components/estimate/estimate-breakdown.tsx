@@ -55,7 +55,7 @@ export function EstimateBreakdown({
 
   return (
     <section className={className}>
-      <div className="overflow-hidden rounded-md border border-line bg-surface">
+      <div className="overflow-hidden rounded-panel border border-line bg-surface">
         <header className="border-b border-line px-5 py-4">
           <h2 className="text-sm font-bold tracking-wide text-ink uppercase">{t('title')}</h2>
         </header>

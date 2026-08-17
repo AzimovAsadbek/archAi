@@ -61,7 +61,7 @@ export function FloorPlanLegend({ floor, hasStairs, className }: FloorPlanLegend
   }, [floor.rooms]);
 
   return (
-    <div className={cn('rounded-md border border-line bg-paper px-4 py-3', className)}>
+    <div className={cn('rounded-panel border border-line bg-paper px-4 py-3', className)}>
       {/* Collapsible on mobile, always-open heading from `sm` upwards. */}
       <button
         type="button"

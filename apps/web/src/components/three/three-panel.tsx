@@ -125,7 +125,7 @@ export function ThreePanel({ projectId, projectUpdatedAt, land, style, className
           <div
             role="group"
             aria-label={t('presets.label')}
-            className="inline-flex items-center gap-0.5 rounded-md border border-line-strong bg-surface p-0.5"
+            className="inline-flex items-center gap-0.5 rounded-panel border border-line-strong bg-surface p-0.5"
           >
             {CAMERA_PRESETS.map((name) => (
               <button
@@ -159,7 +159,7 @@ export function ThreePanel({ projectId, projectUpdatedAt, land, style, className
         </div>
       </div>
 
-      <div className="relative mt-3 overflow-hidden rounded-md border border-line bg-paper">
+      <div className="relative mt-3 overflow-hidden rounded-panel border border-line bg-paper">
         <span
           title={t('disclaimerBody')}
           className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-sm border border-line bg-surface/90 px-2 py-1 text-[11px] font-semibold text-ink-soft"

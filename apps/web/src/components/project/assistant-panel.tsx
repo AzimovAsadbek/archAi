@@ -66,7 +66,7 @@ export function AssistantPanel({ projectId }: { projectId: string }) {
       {/* ── Suggestions ─────────────────────────────────────────────── */}
       <section
         aria-labelledby="assistant-suggest-heading"
-        className="rounded-md border border-line bg-surface p-5"
+        className="rounded-panel border border-line bg-surface p-5"
       >
         <header className="flex items-start gap-3">
           <span
@@ -117,7 +117,7 @@ export function AssistantPanel({ projectId }: { projectId: string }) {
               ) : (
                 <ul className="flex flex-col gap-3">
                   {result.suggestions.map((suggestion, index) => (
-                    <li key={index} className="rounded-md border border-line bg-paper p-4">
+                    <li key={index} className="rounded-panel border border-line bg-paper p-4">
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge tone="faint" size="sm">
                           {tCategories(suggestion.category)}
@@ -144,7 +144,7 @@ export function AssistantPanel({ projectId }: { projectId: string }) {
       {/* ── Ask a question ──────────────────────────────────────────── */}
       <section
         aria-labelledby="assistant-ask-heading"
-        className="rounded-md border border-line bg-surface p-5"
+        className="rounded-panel border border-line bg-surface p-5"
       >
         <header className="flex items-start gap-3">
           <span

@@ -80,7 +80,7 @@ function RoomsTable({ project }: { project: ProjectDto }) {
     room.widthM != null && room.lengthM != null ? round(room.widthM * room.lengthM, 1) : null;
 
   return (
-    <div className="overflow-hidden rounded-md border border-line bg-surface">
+    <div className="overflow-hidden rounded-panel border border-line bg-surface">
       <header className="border-b border-line px-5 py-4">
         <h2 className="text-sm font-bold tracking-wide text-ink uppercase">{tRooms('title')}</h2>
       </header>
@@ -421,7 +421,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
         </div>
 
         {enabledFeatures.length > 0 ? (
-          <section className="mt-6 rounded-md border border-line bg-surface p-5">
+          <section className="mt-6 rounded-panel border border-line bg-surface p-5">
             <h2 className="text-sm font-bold tracking-wide text-ink uppercase">
               {t('featuresTitle')}
             </h2>

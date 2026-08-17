@@ -4,10 +4,12 @@ import type { HouseStyle } from '@archai/shared';
  * Every colour and surface property the 3D preview renders with, in one place.
  *
  * three.js materials cannot read the Tailwind `@theme` custom properties the
- * rest of the app paints with, so the values are literals that mirror
- * `src/app/globals.css` — the roof is the brand accent terracotta and the
- * background is the paper tone, which keeps the canvas sitting inside the page
- * rather than on top of it. Keep the two files in sync when tokens move.
+ * rest of the app paints with, so the values are literals.
+ *
+ * Only the *background* mirrors a token (`--color-paper`), because the canvas
+ * has to sit inside the page rather than on top of it. Everything else is a
+ * building material and is deliberately independent of the UI palette: a brand
+ * colour change must not repaint the architecture.
  */
 export const SCENE_COLORS = {
   /** Canvas clear colour — `--color-paper`. */
@@ -20,8 +22,14 @@ export const SCENE_COLORS = {
   floor: '#c19a6b',
   /** Glazing — rendered translucent, not refractive. */
   glass: '#8fb3c4',
-  /** Roof tiles — `--color-accent`. */
-  roof: '#c2571e',
+  /**
+   * Roof tiles — clay. This used to mirror `--color-accent`, which was wrong
+   * even before the accent moved to indigo: a roof colour is a *material*, and
+   * tying it to the UI accent meant a brand change would have repainted the
+   * building. It is now independent, and `STYLE_MATERIALS` overrides it per
+   * style anyway.
+   */
+  roof: '#b0562a',
   /** Stair treads: a touch darker than the walls so the flight reads. */
   step: '#ded9cd',
   /**
