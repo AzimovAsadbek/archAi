@@ -125,7 +125,8 @@ for (const line of readFileSync(envFile, 'utf8').split(/\r?\n/)) {
   if (m) local[m[1]] = m[2].trim().replace(/^["']|["']$/g, '');
 }
 
-console.log('\nCopying AI keys from apps/api/.env → archai-api (production)\n');
+console.log('\nCopying AI keys from apps/api/.env → archai-api (production)');
+console.log(c.dim('Each key takes roughly half a minute; the redeploy after them takes a few.\n'));
 
 let copied = 0;
 for (const key of KEYS) {
@@ -135,21 +136,29 @@ for (const key of KEYS) {
     continue;
   }
 
-  process.stdout.write(`  ...  ${key} `);
-  // `--force` replaces an existing value in one call. The previous version did
-  // `env rm` then `env add`, and the removal is what hung.
+  // A finished line, not a bare prefix waiting to be overwritten with \r.
+  // `vercel env add` resolves the project over the network before it saves and
+  // takes the better part of a minute per key; printed without a newline, a
+  // working command is indistinguishable from a hung one.
+  console.log(`  ${c.dim('→')}    ${key} ${c.dim(`(${value.length} chars) — contacting Vercel…`)}`);
+  const started = Date.now();
+
+  // `--force` replaces an existing value in one call, so no separate removal.
   // `--sensitive` keeps the value unreadable in the dashboard afterwards.
   const { code, out, note } = await run(
     ['env', 'add', key, 'production', '--force', '--sensitive'],
-    { cwd: apiDir, input: `${value}\n`, timeoutMs: 120_000 },
+    { cwd: apiDir, input: `${value}\n`, timeoutMs: 180_000 },
   );
 
+  const secs = ((Date.now() - started) / 1000).toFixed(1);
   if (code === 0) {
-    console.log(`\r  ${c.green('ok')}   ${key} ${c.dim(`(${value.length} chars)`)}     `);
+    console.log(`  ${c.green('ok')}    ${key} ${c.dim(`stored in ${secs}s`)}`);
     copied += 1;
   } else {
-    const reason = note ?? out.split('\n').filter(Boolean).pop() ?? 'unknown error';
-    console.log(`\r  ${c.red('FAIL')} ${key} ${c.dim(`— ${reason.slice(0, 90)}`)}`);
+    // The CLI reports on stderr, which is captured rather than shown; surface
+    // its last line so a failure explains itself.
+    const reason = note ?? out.split('\n').map((l) => l.trim()).filter(Boolean).pop() ?? 'unknown error';
+    console.log(`  ${c.red('FAIL')}  ${key} ${c.dim(`after ${secs}s — ${reason.slice(0, 100)}`)}`);
   }
 }
 
