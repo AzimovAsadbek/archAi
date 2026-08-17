@@ -12,6 +12,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@archai/api", "start:dev"],
       "port": 3001
+    },
+    {
+      "name": "api-built",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@archai/api", "start"],
+      "port": 3001
     }
   ]
 }
