@@ -15,10 +15,8 @@ import {
   Users,
   Wallet,
 } from 'lucide-react';
-import { LocaleSwitcher } from '@/components/layout/locale-switcher';
-import { Logo } from '@/components/layout/logo';
+import { AppHeader } from '@/components/layout/app-header';
 import { SkipLink } from '@/components/layout/skip-link';
-import { UserMenu } from '@/components/layout/user-menu';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -65,11 +63,10 @@ function useNavLabels(): Record<(typeof NAV_ITEMS)[number]['key'], string> {
 function AdminShellSkeleton() {
   return (
     <div className="min-h-dvh bg-paper">
-      <div className="border-b border-line bg-surface">
-        <div className="page-container flex h-16 items-center justify-between">
-          <Skeleton className="h-5 w-28" />
-          <Skeleton className="h-8 w-36" />
-        </div>
+      {/* Mirrors the real bar so authenticating does not flash a light header. */}
+      <div className="flex h-[var(--size-app-header)] items-center justify-between border-b border-shell-line bg-shell px-3 sm:px-4">
+        <Skeleton className="h-5 w-28 bg-shell-raised" />
+        <Skeleton className="h-8 w-36 bg-shell-raised" />
       </div>
       <div className="page-container flex flex-col gap-6 py-8 lg:flex-row lg:gap-8">
         <Skeleton className="h-10 w-full lg:h-52 lg:w-56 lg:shrink-0" />
@@ -178,32 +175,25 @@ export function AdminShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-dvh bg-paper">
       <SkipLink />
-      <header className="sticky top-0 z-30 border-b border-line bg-surface">
-        <div className="page-container flex h-16 items-center justify-between gap-4">
-          <div className="flex min-w-0 items-center gap-3 sm:gap-5">
-            <div className="flex items-center gap-2">
-              <Logo href="/admin/users" size="sm" />
-              <Badge tone="accent" size="sm">
-                {t('badge')}
-              </Badge>
-            </div>
+      <AppHeader
+        position="sticky"
+        context={
+          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+            <Badge tone="accent" size="sm">
+              {t('badge')}
+            </Badge>
             {/* Icon-only on phones: the way back must never disappear entirely. */}
             <Link
               href="/dashboard"
               aria-label={t('backToApp')}
-              className="inline-flex items-center gap-1.5 rounded-sm text-sm font-semibold text-ink-faint transition-colors hover:text-ink"
+              className="inline-flex items-center gap-1.5 rounded-sm text-sm font-semibold text-shell-ink-faint transition-colors hover:text-shell-ink"
             >
               <ArrowLeft className="size-3.5" aria-hidden="true" />
               <span className="hidden sm:inline">{t('backToApp')}</span>
             </Link>
           </div>
-
-          <div className="flex items-center gap-2 sm:gap-3">
-            <LocaleSwitcher className="hidden sm:inline-flex" />
-            <UserMenu user={user} />
-          </div>
-        </div>
-      </header>
+        }
+      />
 
       <div className="page-container flex flex-col gap-6 py-6 lg:flex-row lg:gap-8 lg:py-8">
         <AdminNav />

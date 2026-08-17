@@ -24,9 +24,17 @@ import { LOCALES, LOCALE_COOKIE, LOCALE_COOKIE_MAX_AGE, type AppLocale } from '@
 export function LocaleSwitcher({
   className,
   compact = false,
+  tone = 'paper',
 }: {
   className?: string;
-  compact?: boolean;
+  /**
+   * `true` drops the language name entirely; `'sm'` keeps it but hides it below
+   * the `sm` breakpoint, for chrome that is crowded on a phone and roomy above
+   * it. A full-screen mobile menu wants the name, so it stays `false` there.
+   */
+  compact?: boolean | 'sm';
+  /** Surface the trigger sits on. The dropdown itself stays a light popover. */
+  tone?: 'paper' | 'shell';
 }) {
   const t = useTranslations('locale');
   const active = useLocale() as AppLocale;
@@ -52,18 +60,32 @@ export function LocaleSwitcher({
           ref={triggerProps.ref as React.Ref<HTMLButtonElement>}
           aria-label={`${t('label')}: ${t(`${active}Full`)}`}
           className={cn(
-            'flex h-9 items-center gap-2 rounded-tool border border-line bg-surface pr-2 pl-2.5 transition-colors',
-            'hover:border-line-strong focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none',
-            open && 'border-line-strong',
+            'flex h-9 items-center gap-2 rounded-tool border pr-2 pl-2.5 transition-colors',
+            'focus-visible:ring-2 focus-visible:outline-none',
+            tone === 'shell'
+              ? 'border-shell-line bg-shell-raised hover:border-shell-ink-faint focus-visible:ring-accent-on-shell'
+              : 'border-line bg-surface hover:border-line-strong focus-visible:ring-accent',
+            open && (tone === 'shell' ? 'border-shell-ink-faint' : 'border-line-strong'),
           )}
         >
           <Flag locale={active} />
-          {!compact ? (
-            <span className="text-sm font-semibold text-ink">{t(`${active}Full`)}</span>
+          {compact !== true ? (
+            <span
+              className={cn(
+                'text-sm font-semibold',
+                // The accessible name on the button always carries the language,
+                // so hiding the word never leaves a bare two-letter code.
+                compact === 'sm' ? 'hidden sm:inline' : 'inline',
+                tone === 'shell' ? 'text-shell-ink' : 'text-ink',
+              )}
+            >
+              {t(`${active}Full`)}
+            </span>
           ) : null}
           <ChevronDown
             className={cn(
-              'size-3.5 text-ink-faint transition-transform',
+              'size-3.5 transition-transform',
+              tone === 'shell' ? 'text-shell-ink-faint' : 'text-ink-faint',
               open && 'rotate-180',
             )}
             aria-hidden="true"

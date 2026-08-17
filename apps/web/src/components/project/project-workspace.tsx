@@ -253,9 +253,14 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
   const enabledFeatures = FEATURE_KEYS.filter((feature) => project.features[feature]);
   const configured = project.land !== null && project.house !== null && project.rooms.length > 0;
 
+  // Below `sm` the top bar cannot hold the logo, the project name, three action
+  // buttons and the account controls — the name was truncating to a single
+  // character. PDF and Edit collapse into the overflow menu there instead, so a
+  // phone loses the buttons but not the actions.
   const shellActions = (
     <>
       <ShellAction
+        className="hidden sm:flex"
         icon={FileDown}
         label={exportPdf.isPending ? tProject('actions.pdfPending') : tProject('actions.pdf')}
         onClick={() => exportPdf.mutate()}
@@ -263,6 +268,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
       />
       {!archived ? (
         <ShellAction
+          className="hidden sm:flex"
           icon={Pencil}
           label={tProject('actions.edit')}
           href={`/projects/${projectId}/edit`}
@@ -286,6 +292,31 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
       >
         {(close) => (
           <>
+            {/* The counterparts of the buttons hidden below `sm`. */}
+            <div className="sm:hidden">
+              <MenuItem
+                icon={<FileDown className="size-4" />}
+                disabled={!configured || exportPdf.isPending}
+                onClick={() => {
+                  close(false);
+                  exportPdf.mutate();
+                }}
+              >
+                {exportPdf.isPending ? tProject('actions.pdfPending') : tProject('actions.pdf')}
+              </MenuItem>
+              {!archived ? (
+                <MenuItem
+                  icon={<Pencil className="size-4" />}
+                  onClick={() => {
+                    close(false);
+                    router.push(`/projects/${projectId}/edit`);
+                  }}
+                >
+                  {tProject('actions.edit')}
+                </MenuItem>
+              ) : null}
+              <MenuSeparator />
+            </div>
             <MenuItem
               icon={<Copy className="size-4" />}
               disabled={duplicate.isPending}

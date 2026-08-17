@@ -11,19 +11,17 @@ import { useRequireAuth } from '@/lib/use-auth';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Skeleton } from '@/components/ui/skeleton';
-import { LocaleSwitcher } from './locale-switcher';
-import { Logo } from './logo';
+import { AppHeader } from './app-header';
 import { SkipLink } from './skip-link';
-import { UserMenu } from './user-menu';
 
 function AppShellSkeleton() {
   return (
     <div className="min-h-dvh bg-paper">
-      <div className="border-b border-line bg-surface">
-        <div className="page-container flex h-16 items-center justify-between">
-          <Skeleton className="h-5 w-20" />
-          <Skeleton className="h-8 w-36" />
-        </div>
+      {/* Matches the real bar's height and obsidian, so authenticating does not
+          flash a light header and then swap it for a dark one. */}
+      <div className="flex h-[var(--size-app-header)] items-center justify-between border-b border-shell-line bg-shell px-3 sm:px-4">
+        <Skeleton className="h-5 w-20 bg-shell-raised" />
+        <Skeleton className="h-8 w-36 bg-shell-raised" />
       </div>
       <div className="page-container py-10">
         <Skeleton className="h-8 w-56" />
@@ -73,30 +71,25 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-dvh bg-paper">
       <SkipLink />
-      <header className="sticky top-0 z-30 border-b border-line bg-surface">
-        <div className="page-container flex h-16 items-center justify-between gap-4">
-          <div className="flex items-center gap-7">
-            <Logo href="/dashboard" size="sm" />
-            <nav aria-label={t('primary')} className="hidden sm:block">
-              <Link
-                href="/dashboard"
-                aria-current={projectsActive ? 'page' : undefined}
-                className={cn(
-                  'rounded-sm text-sm font-semibold transition-colors',
-                  projectsActive ? 'text-ink' : 'text-ink-faint hover:text-ink',
-                )}
-              >
-                {t('projects')}
-              </Link>
-            </nav>
-          </div>
-
-          <div className="flex items-center gap-2 sm:gap-3">
-            <LocaleSwitcher className="inline-flex" />
-            <UserMenu user={user} />
-          </div>
-        </div>
-      </header>
+      <AppHeader
+        position="sticky"
+        context={
+          <nav aria-label={t('primary')} className="hidden sm:block">
+            <Link
+              href="/dashboard"
+              aria-current={projectsActive ? 'page' : undefined}
+              className={cn(
+                'rounded-sm text-sm font-semibold transition-colors',
+                projectsActive
+                  ? 'text-shell-ink'
+                  : 'text-shell-ink-faint hover:text-shell-ink',
+              )}
+            >
+              {t('projects')}
+            </Link>
+          </nav>
+        }
+      />
 
       <main
         id="main-content"

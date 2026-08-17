@@ -21,21 +21,34 @@
   /* AA-safe pairing for text and hairlines on paper/surface (4.6:1). */
   --color-accent-strong: #5340c9;
   --color-accent-soft: #efedfd;
+  /* The same indigo lightened for obsidian chrome: `--color-accent` is only
+     3.5:1 on `--color-shell`, so the logo's accent half and any accent text in
+     the top bar would fail AA. This is 5.4:1 and the same hue. */
+  --color-accent-on-shell: #8f7ff0;
 
   /* ── Drawing accent (terracotta) ────────────────────────────────── */
   --color-draw-accent: #c85a32;
   --color-draw-accent-strong: #a8461f;
 
   /* ── Studio shell (obsidian) ────────────────────────────────────── */
-  /* The workspace chrome is dark so the drawing reads as lit. These are shell
-     tokens, not a dark theme: the canvas and every document surface stay light,
-     which is why `color-scheme` below is still `light`. */
+  /* The chrome of the signed-in app is dark so the document beneath it reads as
+     the lit surface. These are shell tokens, not a dark theme: the dashboard
+     body, the drawing canvas and every document surface stay light, which is
+     why `color-scheme` below is still `light`.
+
+     The same obsidian carries the top bar on every signed-in screen — dashboard,
+     workspace and admin. Before it did, entering a project swapped a light
+     header for a dark one and dropped the logo and account menu, so the studio
+     read as a different product from the dashboard that launched it. */
   --color-shell: #1a1a18;
   --color-shell-raised: #24241f;
   --color-shell-line: #33332c;
   --color-shell-ink: #f0efe9;
   --color-shell-ink-soft: #a3a299;
-  --color-shell-ink-faint: #7a7970;
+  /* Lightened from #7a7970, which was 3.98:1 on `--color-shell` and failed AA
+     on the rail's collapse label. This clears 5.1:1 and still steps clearly
+     below `--color-shell-ink-soft` (6.8:1). */
+  --color-shell-ink-faint: #8d8c82;
 
   /* ── Status ─────────────────────────────────────────────────────── */
   /* Darkened from #2f7d46 (4.47:1 on success-soft, just under AA) to ~4.8:1. */

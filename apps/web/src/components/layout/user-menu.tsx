@@ -5,13 +5,15 @@ import { useTranslations } from 'next-intl';
 import { ChevronDown, LogOut, ShieldCheck } from 'lucide-react';
 import { type UserDto } from '@archai/shared';
 import { Menu, MenuItem, MenuSeparator } from '@/components/ui/menu';
+import { cn } from '@/lib/cn';
 import { useLogout } from '@/lib/use-auth';
 import { initials } from '@/lib/format';
 
-export function UserMenu({ user }: { user: UserDto }) {
+export function UserMenu({ user, tone = 'paper' }: { user: UserDto; tone?: 'paper' | 'shell' }) {
   const t = useTranslations('nav');
   const router = useRouter();
   const logout = useLogout();
+  const shell = tone === 'shell';
 
   return (
     <Menu
@@ -19,16 +21,29 @@ export function UserMenu({ user }: { user: UserDto }) {
         <button
           type="button"
           {...triggerProps}
-          className="flex items-center gap-2 rounded-md border border-line bg-surface py-1 pr-2 pl-1 text-sm font-semibold text-ink transition-colors hover:bg-paper"
+          className={cn(
+            'flex items-center gap-2 rounded-md border py-1 pr-2 pl-1 text-sm font-semibold transition-colors',
+            shell
+              ? 'border-shell-line bg-shell-raised text-shell-ink hover:border-shell-ink-faint'
+              : 'border-line bg-surface text-ink hover:bg-paper',
+          )}
         >
           <span
-            className="flex size-7 items-center justify-center rounded-sm bg-ink text-[11px] font-bold text-paper"
+            className={cn(
+              'flex size-7 items-center justify-center rounded-sm text-[11px] font-bold',
+              // On obsidian the ink-on-paper chip inverts, otherwise a near-black
+              // square on near-black chrome reads as a hole in the bar.
+              shell ? 'bg-shell-ink text-shell' : 'bg-ink text-paper',
+            )}
             aria-hidden="true"
           >
             {initials(user.fullName)}
           </span>
           <span className="hidden max-w-32 truncate sm:inline">{user.fullName}</span>
-          <ChevronDown className="size-4 text-ink-faint" aria-hidden="true" />
+          <ChevronDown
+            className={cn('size-4', shell ? 'text-shell-ink-faint' : 'text-ink-faint')}
+            aria-hidden="true"
+          />
         </button>
       )}
     >
