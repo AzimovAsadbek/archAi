@@ -60,15 +60,46 @@ export interface RequestOptions {
   next?: { revalidate?: number | false; tags?: string[] };
 }
 
+/**
+ * Absolute base for the request, or `undefined` to leave the URL relative.
+ *
+ * `API_BASE_URL === ''` means "same origin", which is only a meaningful
+ * instruction inside a browser — on the server there is no current origin to be
+ * relative to, so the rewrite target is used instead. Without that, every
+ * server-rendered fetch (blog, FAQ, pricing) silently returns nothing.
+ */
+function urlBase(): string | undefined {
+  if (API_BASE_URL !== '') return API_BASE_URL;
+  if (typeof window !== 'undefined') return window.location.origin;
+  const serverOrigin = process.env.API_ORIGIN?.trim().replace(/\/+$/, '');
+  return serverOrigin ? serverOrigin : undefined;
+}
+
+/**
+ * Builds the request URL.
+ *
+ * Assembled by hand rather than handing an empty base to `new URL`, because
+ * `new URL('/api/v1/…', '')` throws `TypeError: Invalid URL` — and this is
+ * called inside the request's own try/catch, so the throw surfaced as
+ * "could not reach the server" while no request was ever made. Same-origin
+ * deployments broke entirely, and the failure looked like a network outage.
+ */
 function buildUrl(path: string, query?: Record<string, QueryValue>): string {
-  const url = new URL(`${API_PREFIX}${path}`, API_BASE_URL);
+  const relative = `${API_PREFIX}${path}`;
+
+  const search = new URLSearchParams();
   if (query) {
     for (const [key, value] of Object.entries(query)) {
       if (value === undefined || value === null || value === '') continue;
-      url.searchParams.set(key, String(value));
+      search.set(key, String(value));
     }
   }
-  return url.toString();
+  const suffix = search.toString() ? `?${search.toString()}` : '';
+
+  const base = urlBase();
+  // No base: a relative URL is still a valid fetch target in a browser.
+  if (base === undefined) return `${relative}${suffix}`;
+  return `${new URL(relative, base).toString()}${suffix}`;
 }
 
 function isApiErrorShape(value: unknown): value is ApiErrorShape {
