@@ -408,8 +408,23 @@ export function HouseScene({
       // building. `frameloop="demand"` means they are rendered on invalidation
       // rather than every frame, so the cost is paid on interaction, not idle.
       shadows="soft"
-      gl={{ antialias: true, powerPreference: 'high-performance' }}
-      camera={{ fov: 45, near: 0.1, far: 500, position: [12, 9, 12] }}
+      /*
+       * Depth precision, not just antialiasing.
+       *
+       * A 0.1 m near plane with a 500 m far plane spends almost all of the
+       * depth buffer on the first few metres and leaves neighbouring surfaces
+       * indistinguishable further out — which is why the drawing shimmered
+       * while orbiting and why zooming made it worse. The near plane is now
+       * scaled to the scene and the far plane sits just beyond it, and the
+       * logarithmic buffer distributes what is left evenly across the range.
+       */
+      gl={{ antialias: true, powerPreference: 'high-performance', logarithmicDepthBuffer: true }}
+      camera={{
+        fov: 45,
+        near: Math.max(0.25, siteBounds.radius / 200),
+        far: Math.max(120, siteBounds.radius * 12),
+        position: [12, 9, 12],
+      }}
     >
       <color attach="background" args={[SCENE_COLORS.background]} />
 
@@ -446,11 +461,18 @@ export function HouseScene({
 
       {/* The plot. Lawn when a garden was configured, bare grade otherwise —
           the ground is the one surface that tells you whether you are looking
-          at a property or at a display plinth. */}
-      <mesh position={ground.center} receiveShadow>
-        <boxGeometry args={ground.size} />
-        <meshStandardMaterial {...(model.site.hasGarden ? SITE_SURFACES.lawn : SITE_SURFACES.grade)} />
-      </mesh>
+          at a property or at a display plinth.
+
+          Drawn as the carved pieces rather than one plate, so a pool is a hole
+          in the ground instead of a box overlapping it. */}
+      {model.site.lawn.map((piece, index) => (
+        <mesh key={index} position={piece.center} receiveShadow>
+          <boxGeometry args={piece.size} />
+          <meshStandardMaterial
+            {...(model.site.hasGarden ? SITE_SURFACES.lawn : SITE_SURFACES.grade)}
+          />
+        </mesh>
+      ))}
 
       <SiteElements site={model.site} />
       {model.site.hasGarden ? <Planting site={model.site} house={model.house} /> : null}

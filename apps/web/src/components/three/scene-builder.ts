@@ -51,7 +51,24 @@ export const ROOF_MAX_RISE_M = 3.6;
 export const FLOOR_FINISH_M = 0.02;
 /** Glazing pane thickness — thin enough to read as glass in a wall reveal. */
 export const GLASS_THICKNESS_M = 0.04;
-export const GROUND_THICKNESS_M = 0.3;
+/**
+ * Deep enough to contain a sunken pool.
+ *
+ * At 0.3 m the pool punched straight through the plate and out the underside,
+ * so its walls intersected the ground instead of being held by it — which is
+ * half of the shimmer when the camera moves.
+ */
+export const GROUND_THICKNESS_M = 1.8;
+/**
+ * Flush paving sits *on* the ground, not in it.
+ *
+ * A drive modelled from y=0 upward shares its bottom face with the lawn's top
+ * face, and two coplanar surfaces have no correct draw order: the GPU picks per
+ * pixel per frame, which is exactly the flicker you see while orbiting.
+ */
+export const PAVING_LIFT_M = 0.012;
+/** Sunken elements stop short of grade so their top face never lands on it. */
+export const SUNK_DROP_M = 0.04;
 /** Fallback land plate margin when the project has no land dimensions. */
 export const GROUND_MARGIN_M = 6;
 /** Minimum breathing room between the footprint and the plate edge. */
@@ -126,6 +143,11 @@ export interface SceneSiteElement {
 export interface SceneSite {
   /** The whole property. Its top face is y = 0, like the ground plate. */
   plot: SceneBox;
+  /**
+   * The ground actually drawn: the plot split around anything sunk into it, so
+   * a pool is a hole rather than a box overlapping an unbroken plate.
+   */
+  lawn: SceneBox[];
   /** Garage, drive, path, terrace, pool, balcony — whatever was configured and fits. */
   elements: SceneSiteElement[];
   /** Open ground reads as lawn rather than bare grade. */
@@ -525,14 +547,64 @@ export function buildScene(plan: FloorPlan, options: BuildSceneOptions = {}): Sc
   const plotCenterX = site.plot.width / 2 + siteToWorldX;
   const plotCenterZ = site.plot.height / 2 + siteToWorldZ;
 
+  /**
+   * The plot, minus the footprint of anything sunk into it.
+   *
+   * A pool is a hole in the ground, and with only box geometry the only way to
+   * make one is to stop drawing ground there. Splitting the plate into the (at
+   * most four) rectangles around the hole is exact for axis-aligned shapes and
+   * costs three extra draws; the alternative — a water box overlapping an
+   * unbroken plate — leaves two solids fighting for the same pixels.
+   */
+  function lawnAround(hole: { x: number; y: number; width: number; height: number } | null): SceneBox[] {
+    const plate = (x: number, z: number, w: number, d: number): SceneBox =>
+      box(
+        x + w / 2 + siteToWorldX,
+        -GROUND_THICKNESS_M / 2,
+        z + d / 2 + siteToWorldZ,
+        w,
+        GROUND_THICKNESS_M,
+        d,
+      );
+
+    const { width: W, height: H } = site.plot;
+    if (hole === null) return [plate(0, 0, W, H)];
+
+    const x0 = Math.max(0, hole.x);
+    const x1 = Math.min(W, hole.x + hole.width);
+    const z0 = Math.max(0, hole.y);
+    const z1 = Math.min(H, hole.y + hole.height);
+
+    const pieces: SceneBox[] = [];
+    if (z0 > EPS) pieces.push(plate(0, 0, W, z0)); // in front of the hole
+    if (H - z1 > EPS) pieces.push(plate(0, z1, W, H - z1)); // behind it
+    if (x0 > EPS) pieces.push(plate(0, z0, x0, z1 - z0)); // left of it
+    if (W - x1 > EPS) pieces.push(plate(x1, z0, W - x1, z1 - z0)); // right of it
+    return pieces;
+  }
+
+  const sunk = site.elements.find((e) => e.heightM < 0) ?? null;
+  const lawn = lawnAround(sunk ? sunk.rect : null);
+
   const elements: SceneSiteElement[] = site.elements.map((element) => {
     const { rect: rc, heightM, level } = element;
     const baseY = level * FLOOR_HEIGHT_M;
-    // Flush paving gets a token thickness so it renders as a surface rather
-    // than a zero-height plane fighting the ground for the same pixels.
-    const thickness = heightM === 0 ? PAVING_THICKNESS_M : Math.abs(heightM);
-    // Positive extrudes upward from its level; negative sinks below it.
-    const centerY = heightM < 0 ? baseY - thickness / 2 : baseY + thickness / 2;
+
+    // Every case deliberately avoids sharing a face with the ground plane.
+    let thickness: number;
+    let centerY: number;
+    if (heightM === 0) {
+      // Flush paving: lifted clear of the lawn it sits on.
+      thickness = PAVING_THICKNESS_M;
+      centerY = baseY + PAVING_LIFT_M + thickness / 2;
+    } else if (heightM < 0) {
+      // Sunken: the water surface stops just below grade rather than on it.
+      thickness = Math.max(0.05, Math.abs(heightM) - SUNK_DROP_M);
+      centerY = baseY - SUNK_DROP_M - thickness / 2;
+    } else {
+      thickness = heightM;
+      centerY = baseY + thickness / 2;
+    }
     return {
       kind: element.kind,
       box: box(
@@ -565,6 +637,7 @@ export function buildScene(plan: FloorPlan, options: BuildSceneOptions = {}): Sc
     ),
     site: {
       plot: box(plotCenterX, -GROUND_THICKNESS_M / 2, plotCenterZ, plateWidth, GROUND_THICKNESS_M, plateLength),
+      lawn,
       elements,
       hasGarden: site.hasGarden,
     },

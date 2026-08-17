@@ -110,3 +110,71 @@ describe('buildScene', () => {
     }
   });
 });
+
+describe('site depth hygiene', () => {
+  /** Vertical span of a box. */
+  const spanY = (b: SceneBox): [number, number] => [
+    b.center[1] - b.size[1] / 2,
+    b.center[1] + b.size[1] / 2,
+  ];
+
+  /** Do two boxes overlap on all three axes (a real intersection, not a touch)? */
+  function intersects(a: SceneBox, b: SceneBox): boolean {
+    const gap = 1e-4;
+    for (let axis = 0; axis < 3; axis++) {
+      const aCenter = a.center[axis] ?? 0;
+      const aSize = a.size[axis] ?? 0;
+      const bCenter = b.center[axis] ?? 0;
+      const bSize = b.size[axis] ?? 0;
+      const aMin = aCenter - aSize / 2;
+      const aMax = aCenter + aSize / 2;
+      const bMin = bCenter - bSize / 2;
+      const bMax = bCenter + bSize / 2;
+      if (aMax - bMin <= gap || bMax - aMin <= gap) return false;
+    }
+    return true;
+  }
+
+  const withPool = () =>
+    buildScene(TWO_FLOOR, {
+      land: { areaM2: 800, widthM: 22, lengthM: 36 },
+      features: { garage: true, terrace: true, pool: true, garden: true, balcony: true },
+    });
+
+  it('cuts the lawn around a sunken pool instead of overlapping it', () => {
+    const scene = withPool();
+    const pool = scene.site.elements.find((e) => e.kind === 'POOL');
+    expect(pool, 'expected a pool for this configuration').toBeDefined();
+    if (!pool) return;
+
+    expect(scene.site.lawn.length).toBeGreaterThan(1);
+    for (const piece of scene.site.lawn) {
+      expect(intersects(piece, pool.box), 'lawn overlaps the pool').toBe(false);
+    }
+  });
+
+  it('keeps the pool inside the ground rather than through its underside', () => {
+    const scene = withPool();
+    const pool = scene.site.elements.find((e) => e.kind === 'POOL');
+    if (!pool) return;
+    const [poolBottom, poolTop] = spanY(pool.box);
+    const [groundBottom] = spanY(scene.ground);
+    expect(poolBottom).toBeGreaterThan(groundBottom);
+    // Below grade, so its top face never lands on the lawn's.
+    expect(poolTop).toBeLessThan(0);
+  });
+
+  it('lifts flush paving clear of the ground plane', () => {
+    const scene = buildScene(TWO_FLOOR, {
+      land: { areaM2: 800, widthM: 22, lengthM: 36 },
+      features: { garage: true, garden: true },
+    });
+    for (const kind of ['DRIVEWAY', 'PATH'] as const) {
+      const paving = scene.site.elements.find((e) => e.kind === kind);
+      if (!paving) continue;
+      const [bottom] = spanY(paving.box);
+      // Coplanar with the lawn top (y = 0) is what causes the flicker.
+      expect(bottom, `${kind} sits on the ground plane`).toBeGreaterThan(0);
+    }
+  });
+});
