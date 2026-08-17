@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { LIMITS } from '@archai/shared';
 import { Field } from '@/components/ui/field';
+import { SegmentedControl } from '@/components/ui/segmented-control';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/cn';
 import { draftLandAreaM2 } from '@/lib/draft-project';
@@ -62,25 +63,20 @@ export function HouseStep({ draft, update, errors, disabled }: StepProps) {
 
         <fieldset>
           <legend className="text-sm font-semibold text-ink">{t('floors')}</legend>
-          <div className="mt-2 inline-flex rounded-md border border-line bg-surface p-0.5">
-            {FLOOR_OPTIONS.map((count) => (
-              <button
-                key={count}
-                type="button"
-                disabled={disabled}
-                onClick={() => update({ floorCount: count })}
-                aria-pressed={draft.floorCount === count}
-                className={cn(
-                  'numeric min-w-24 rounded-sm px-4 py-2 text-sm font-bold transition-colors',
-                  draft.floorCount === count
-                    ? 'bg-ink text-paper'
-                    : 'text-ink-faint hover:bg-paper hover:text-ink',
-                )}
-              >
-                {t('floorOption', { count })}
-              </button>
-            ))}
-          </div>
+          {/* A radio group underneath, so arrows move and select the way a
+              native radio set already does. */}
+          <SegmentedControl
+            name="floor-count"
+            label={t('floors')}
+            className="mt-2 max-w-md"
+            value={draft.floorCount}
+            onChange={(count) => update({ floorCount: count })}
+            options={FLOOR_OPTIONS.map((count) => ({
+              value: count,
+              label: t('floorOption', { count }),
+              disabled,
+            }))}
+          />
           {errors['floorCount'] ? (
             <p role="alert" className="mt-2 text-xs font-medium text-danger">
               {errors['floorCount']}

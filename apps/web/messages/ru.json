@@ -266,7 +266,9 @@
       "passwordHint": "Минимум 8 символов, обязательно буква и цифра.",
       "fullName": "Полное имя",
       "fullNamePlaceholder": "Имя и фамилия"
-    }
+    },
+    "showPassword": "Показать пароль",
+    "hidePassword": "Скрыть пароль"
   },
   "apiErrors": {
     "generic": "Произошла ошибка. Попробуйте ещё раз.",

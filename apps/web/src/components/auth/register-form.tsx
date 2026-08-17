@@ -11,6 +11,7 @@ import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 import { register as registerRequest } from '@/lib/endpoints';
 import { queryKeys } from '@/lib/query-keys';
 import { useApiErrorMessage } from '@/lib/use-api-error';
@@ -86,10 +87,9 @@ export function RegisterForm({ next }: { next: string }) {
           required
         >
           {(control) => (
-            <Input
+            <PasswordInput
               {...control}
               {...registerField('password')}
-              type="password"
               autoComplete="new-password"
               placeholder={t('fields.passwordPlaceholder')}
             />

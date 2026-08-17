@@ -12,6 +12,7 @@ import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 import { login } from '@/lib/endpoints';
 import { queryKeys } from '@/lib/query-keys';
 import { useApiErrorMessage } from '@/lib/use-api-error';
@@ -79,10 +80,9 @@ export function LoginForm({ next }: { next: string }) {
 
         <Field label={t('fields.password')} error={fieldError(errors.password?.message)} required>
           {(control) => (
-            <Input
+            <PasswordInput
               {...control}
               {...registerField('password')}
-              type="password"
               autoComplete="current-password"
               placeholder={t('fields.passwordPlaceholder')}
             />

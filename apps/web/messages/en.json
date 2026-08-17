@@ -266,7 +266,9 @@
       "passwordHint": "At least 8 characters, including a letter and a digit.",
       "fullName": "Full name",
       "fullNamePlaceholder": "Your first and last name"
-    }
+    },
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "apiErrors": {
     "generic": "Something went wrong. Please try again.",

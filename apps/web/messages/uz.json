@@ -266,7 +266,9 @@
       "passwordHint": "Kamida 8 belgi, ichida harf ham, raqam ham bo'lsin.",
       "fullName": "To'liq ism",
       "fullNamePlaceholder": "Ism va familiyangiz"
-    }
+    },
+    "showPassword": "Parolni ko'rsatish",
+    "hidePassword": "Parolni yashirish"
   },
   "apiErrors": {
     "generic": "Xatolik yuz berdi. Qayta urinib ko'ring.",
