@@ -4,7 +4,7 @@ import type { RoomType } from '@archai/shared';
  * Engine version — bump on ANY algorithm change. Persisted plans cite it for
  * provenance; consumers recompute when the stored version differs.
  */
-export const FLOOR_PLAN_ENGINE_VERSION = '1.2.0';
+export const FLOOR_PLAN_ENGINE_VERSION = '1.3.0';
 
 // ── Construction constants (metres) ───────────────────────────────────────
 
@@ -32,6 +32,36 @@ export const EPSILON_M = 0.005;
 
 /** A floor gets a corridor band from this many rooms upwards. */
 export const CORRIDOR_MIN_ROOMS = 4;
+
+// ── Room area bounds ──────────────────────────────────────────────────────
+//
+// These order the competition for floor area: `allocateAreas` grows the rooms
+// with the most headroom first, so a room left unsized absorbs spare floor
+// before a declared one is touched.
+//
+// They are a priority, not a guarantee. Rooms tile a fixed rectangle, so a
+// program that does not add up to its envelope still has to be scaled to fill
+// it — a 24 m² program in a 79 m² floor ends up at roughly 3× whatever these
+// say. What the bounds do buy is that the scaling is *uniform*: no single room
+// is picked to absorb the slack, which is the defect they were added for (a
+// declared 5 m² bathroom drawn at 11.4 m² beside rooms that kept their sizes).
+
+/**
+ * A declared width×length is a requirement, so it is the last thing to give:
+ * these keep a declared room within a few percent of its size for as long as
+ * any other room still has room to grow. The tolerance covers 0.01 m grid
+ * snapping and the minimum-side clamp — never a re-plan of the room.
+ */
+export const DECLARED_AREA_MIN_RATIO = 0.92;
+export const DECLARED_AREA_MAX_RATIO = 1.08;
+
+/**
+ * A room the user left unsized has no requirement to honour, so the engine may
+ * size it anywhere inside its type profile. These mirror the ratios
+ * `ROOM_PROFILES` uses for the feasibility gate.
+ */
+export const PROFILE_AREA_MIN_RATIO = 0.6;
+export const PROFILE_AREA_MAX_RATIO = 1.8;
 
 export const NARROW_DOOR_ROOM_TYPES = [
   'BATHROOM',

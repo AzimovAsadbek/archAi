@@ -2,6 +2,7 @@ import type { RoomType } from '@archai/shared';
 import {
   CORRIDOR_MIN_ROOMS,
   CORRIDOR_WIDTH_M,
+  EPSILON_M,
   MIN_ROOM_SIDE_M,
   SNAP_M,
   STAIR_DEPTH_M,
@@ -23,6 +24,18 @@ export interface PreparedRoom {
   label: string | null;
   /** Declared width×length, or the type default. Drives the area share. */
   targetAreaM2: number;
+  /**
+   * Hard lower bound on the placed area. Bands are never sized below the sum of
+   * these; a floor that cannot honour them fails rather than shrinking a room
+   * past what its type can use.
+   */
+  minAreaM2: number;
+  /**
+   * Hard upper bound on the placed area. This is what stops a room absorbing
+   * spare floor: leftover depth goes to circulation instead of inflating rooms.
+   * Tight around a declared size, generous for a profile default.
+   */
+  maxAreaM2: number;
   requestedAreaM2: number | null;
   /** Index in the floor's room list (input order). */
   inputIndex: number;
@@ -67,13 +80,111 @@ export function bandCapacity(width: number): number {
 }
 
 /**
+ * Divides the floor's area budget between rooms, honouring each room's bounds.
+ *
+ * This is the layer that makes a placed room resemble the one that was asked
+ * for. Rooms tile the floor, so the allocated areas *must* sum to the budget —
+ * the envelope is a fixed rectangle and any area the rooms decline still has to
+ * be drawn as something. The bounds therefore shape the **proportions** between
+ * rooms; they are not a licence to leave the floor half empty.
+ *
+ * Three phases, in priority order:
+ *
+ *  1. One shared scale factor, each room clamped to its own `[min, max]`. This
+ *     is the shape-preserving pass, and on a floor whose program roughly matches
+ *     its footprint it is the only one that does anything.
+ *  2. Surplus (every room at its max, budget still unspent) goes to **headroom**
+ *     — `max - allocated` — so the rooms that were left unsized absorb it first
+ *     and a declared 5 m² bathroom stays near 5 m².
+ *  3. Only once every room is at its ceiling and the budget is *still* unspent
+ *     does the remainder spread proportionally. At that point the house is far
+ *     larger than the program it was given, and generous rooms are a better
+ *     answer than a 50 m² corridor. The same pass runs in reverse for a deficit,
+ *     which `layoutFloor` has already rejected as infeasible before calling.
+ *
+ * The scale factor is found by bisection rather than algebraically: clamping
+ * makes total(s) a piecewise-linear, non-invertible function of s, but it is
+ * monotonic non-decreasing, so bisection converges and — with a fixed iteration
+ * count and no data-dependent branching on floats — stays deterministic, which
+ * the engine requires.
+ */
+export function allocateAreas(
+  rooms: readonly PreparedRoom[],
+  areaBudget: number,
+): Map<string, number> {
+  const result = new Map<string, number>();
+  if (rooms.length === 0) return result;
+
+  const totalAt = (scale: number): number =>
+    rooms.reduce(
+      (sum, room) => sum + clamp(room.targetAreaM2 * scale, room.minAreaM2, room.maxAreaM2),
+      0,
+    );
+
+  // Beyond every room's max, more scale buys nothing; below every min, less
+  // buys nothing. The answer is somewhere between, so bracket it and bisect.
+  let low = 0;
+  let high = 1;
+  while (totalAt(high) < areaBudget && high < 1024) high *= 2;
+
+  for (let i = 0; i < 40; i++) {
+    const mid = (low + high) / 2;
+    if (totalAt(mid) < areaBudget) low = mid;
+    else high = mid;
+  }
+
+  const scale = (low + high) / 2;
+  const allocated = rooms.map((room) =>
+    clamp(room.targetAreaM2 * scale, room.minAreaM2, room.maxAreaM2),
+  );
+
+  // Phase 2 — spend what is left on the rooms that can still grow.
+  let residual = areaBudget - allocated.reduce((sum, value) => sum + value, 0);
+  if (residual > EPSILON_M) {
+    const headroom = rooms.map((room, i) => Math.max(0, room.maxAreaM2 - (allocated[i] ?? 0)));
+    const totalHeadroom = headroom.reduce((sum, value) => sum + value, 0);
+    if (totalHeadroom > EPSILON_M) {
+      const take = Math.min(residual, totalHeadroom);
+      for (let i = 0; i < rooms.length; i++) {
+        allocated[i] = (allocated[i] ?? 0) + take * ((headroom[i] ?? 0) / totalHeadroom);
+      }
+      residual -= take;
+    }
+  }
+
+  // Phase 3 — the program cannot fill the envelope (or, in deficit, cannot fit
+  // inside it). Spread the remainder proportionally so the rooms tile the floor.
+  if (Math.abs(residual) > EPSILON_M) {
+    const totalTarget = rooms.reduce((sum, room) => sum + room.targetAreaM2, 0);
+    for (let i = 0; i < rooms.length; i++) {
+      const share =
+        totalTarget > EPSILON_M ? (rooms[i]?.targetAreaM2 ?? 0) / totalTarget : 1 / rooms.length;
+      allocated[i] = Math.max(0, (allocated[i] ?? 0) + residual * share);
+    }
+  }
+
+  rooms.forEach((room, i) => result.set(room.key, allocated[i] ?? room.targetAreaM2));
+  return result;
+}
+
+/**
  * Strip packing: rooms fill a band left→right as full-height rects with
  * width ∝ target area. Rooms that would fall under the minimum side are
  * clamped (water filling) and the remaining width is redistributed
  * proportionally; the last room absorbs snapping drift so the band is filled
  * exactly.
+ *
+ * Area fidelity comes from the band *height*, not from this function: the
+ * caller sizes each band as `Σ area ÷ band width`, so a width proportional to
+ * area lands every room on the area it was allocated. Widening the band would
+ * inflate every room in it, which is exactly the defect this layer used to have.
  */
-function packBand(band: Rect, rooms: PreparedRoom[], floorIndex: number): PackResult {
+function packBand(
+  band: Rect,
+  rooms: PreparedRoom[],
+  floorIndex: number,
+  areaOf: (room: PreparedRoom) => number,
+): PackResult {
   if (rooms.length === 0) return { ok: true, placed: [] };
 
   if (!gte(band.height, MIN_ROOM_SIDE_M)) {
@@ -113,10 +224,14 @@ function packBand(band: Rect, rooms: PreparedRoom[], floorIndex: number): PackRe
     if (pool.length === 0) break;
 
     let poolTarget = 0;
-    for (const i of pool) poolTarget += rooms[i]?.targetAreaM2 ?? 0;
+    for (const i of pool) {
+      const room = rooms[i];
+      poolTarget += room ? areaOf(room) : 0;
+    }
 
     for (const i of pool) {
-      const share = poolTarget > 0 ? (rooms[i]?.targetAreaM2 ?? 0) / poolTarget : 1 / pool.length;
+      const room = rooms[i];
+      const share = poolTarget > 0 && room ? areaOf(room) / poolTarget : 1 / pool.length;
       widths[i] = freeWidth * share;
     }
 
@@ -230,55 +345,33 @@ export function layoutFloor(params: LayoutFloorParams): LayoutResult {
       )
     : outline;
 
-  const stripWidth = stairs ? snap(outline.width - STAIR_WIDTH_M) : 0;
+  // Every room lives in the main region. The strip beside the stair core is
+  // 1.5 m deep — deep enough for a landing, not for a room: a room forced into
+  // it came out as a slab (a 5 m² bathroom was drawn 7.6 × 1.5 m). It is now
+  // left as circulation, which is what the space beside a stair actually is.
+  const bandWidth = mainRegion.width;
 
-  // The strip beside the stair core can only be tiled by rooms; with a single
-  // room on the floor the room takes the main region instead (a rectangle
-  // cannot cover an L-shape) and the strip stays empty.
-  if (stairs && roomCount >= 2 && !gte(stripWidth, MIN_PACK_SIDE_M)) {
-    return {
-      ok: false,
-      issues: [
-        {
-          code: 'FOOTPRINT_TOO_SMALL',
-          message: `Floor ${floorIndex}: only ${stripWidth} m is left beside the ${STAIR_WIDTH_M} m stair core — not enough for a room`,
-          meta: {
-            floor: floorIndex,
-            stripWidthM: stripWidth,
-            stairWidthM: STAIR_WIDTH_M,
-            minSideM: MIN_ROOM_SIDE_M,
-          },
-        },
-      ],
-    };
-  }
-
-  const useStrip = Boolean(stairs) && roomCount >= 2 && gte(stripWidth, MIN_PACK_SIDE_M);
   // ≥ 4 rooms get a corridor; a floor too shallow for a corridor plus two bands
-  // falls back to a single strip (rooms then connect directly) rather than failing.
+  // falls back to a single band (rooms then connect directly) rather than failing.
   const useCorridor =
     roomCount >= CORRIDOR_MIN_ROOMS &&
     gte(mainRegion.height, CORRIDOR_WIDTH_M + 2 * MIN_PACK_SIDE_M);
 
-  const stripArea = useStrip ? stripWidth * STAIR_DEPTH_M : 0;
-  const corridorArea = useCorridor ? mainRegion.width * CORRIDOR_WIDTH_M : 0;
-  const availableArea = stripArea + rectArea(mainRegion) - corridorArea;
+  const bandCount = useCorridor ? 2 : 1;
+  const capacityPerBand = bandCapacity(bandWidth);
+  const roomCapacity = capacityPerBand * bandCount;
 
-  const stripCapacity = useStrip ? bandCapacity(stripWidth) : 0;
-  const mainBandCount = useCorridor ? 2 : 1;
-  const mainCapacity = bandCapacity(mainRegion.width) * mainBandCount;
-
-  if (roomCount > stripCapacity + mainCapacity) {
+  if (roomCount > roomCapacity) {
     return {
       ok: false,
       issues: [
         {
           code: 'TOO_MANY_ROOMS_PER_FLOOR',
-          message: `Floor ${floorIndex}: ${roomCount} rooms exceed the ${stripCapacity + mainCapacity} that fit at the ${MIN_ROOM_SIDE_M} m minimum side`,
+          message: `Floor ${floorIndex}: ${roomCount} rooms exceed the ${roomCapacity} that fit at the ${MIN_ROOM_SIDE_M} m minimum side`,
           meta: {
             floor: floorIndex,
             rooms: roomCount,
-            capacity: stripCapacity + mainCapacity,
+            capacity: roomCapacity,
             minSideM: MIN_ROOM_SIDE_M,
           },
         },
@@ -286,68 +379,45 @@ export function layoutFloor(params: LayoutFloorParams): LayoutResult {
     };
   }
 
-  const totalTarget = rooms.reduce((sum, room) => sum + room.targetAreaM2, 0);
-  const globalScale = totalTarget > 0 ? availableArea / totalTarget : 0;
+  // ── Area allocation ─────────────────────────────────────────────────────
+  // The depth rooms may occupy, once circulation has taken its minimum.
+  const roomDepthBudget = snap(mainRegion.height - (useCorridor ? CORRIDOR_WIDTH_M : 0));
+  const areaBudget = bandWidth * roomDepthBudget;
+  const minTotal = rooms.reduce((sum, room) => sum + room.minAreaM2, 0);
 
-  // ── Which rooms go into the shallow stair strip ─────────────────────────
-  // The smallest declared rooms distort least in a 1.5 m deep band; ties break
-  // on input order, so the choice is stable.
-  const stripKeys = new Set<string>();
-  if (useStrip) {
-    const byArea = rooms
-      .map((room, index) => ({ room, index }))
-      .sort((a, b) => a.room.targetAreaM2 - b.room.targetAreaM2 || a.index - b.index);
-
-    const maxStripRooms = Math.min(stripCapacity, roomCount - mainBandCount);
-    let bestCount = 0;
-    let bestDiff = Number.POSITIVE_INFINITY;
-    let accumulated = 0;
-    for (let take = 1; take <= maxStripRooms; take++) {
-      accumulated += byArea[take - 1]?.room.targetAreaM2 ?? 0;
-      if (roomCount - take > mainCapacity) continue;
-      const diff = Math.abs(accumulated * globalScale - stripArea);
-      if (diff < bestDiff) {
-        bestDiff = diff;
-        bestCount = take;
-      }
-    }
-
-    if (bestCount === 0) {
-      return {
-        ok: false,
-        issues: [
-          {
-            code: 'TOO_MANY_ROOMS_PER_FLOOR',
-            message: `Floor ${floorIndex}: ${roomCount} rooms cannot be distributed across the available bands`,
-            meta: { floor: floorIndex, rooms: roomCount, capacity: stripCapacity + mainCapacity },
+  if (minTotal > areaBudget + EPSILON_M) {
+    return {
+      ok: false,
+      issues: [
+        {
+          code: 'ROOM_AREA_UNSATISFIABLE',
+          message: `Floor ${floorIndex}: rooms need at least ${round1(minTotal)} m² but only ${round1(areaBudget)} m² is available`,
+          meta: {
+            floor: floorIndex,
+            requiredAreaM2: round1(minTotal),
+            availableAreaM2: round1(areaBudget),
           },
-        ],
-      };
-    }
-
-    for (let i = 0; i < bestCount; i++) {
-      const entry = byArea[i];
-      if (entry) stripKeys.add(entry.room.key);
-    }
+        },
+      ],
+    };
   }
 
-  const stripRooms = rooms.filter((room) => stripKeys.has(room.key));
-  const mainRooms = rooms.filter((room) => !stripKeys.has(room.key));
+  const areas = allocateAreas(rooms, areaBudget);
+  const areaOf = (room: PreparedRoom): number => areas.get(room.key) ?? room.targetAreaM2;
 
   // ── Bands ───────────────────────────────────────────────────────────────
+  // A band's height is its rooms' allocated area divided by the band width, so
+  // widths proportional to area land every room on exactly what it was
+  // allocated. The allocation always sums to the budget, so the bands and the
+  // corridor tile the main region exactly.
   const bands: { rect: Rect; rooms: PreparedRoom[] }[] = [];
-  if (useStrip && stripRooms.length > 0) {
-    bands.push({
-      rect: rect(outline.x, outline.y, stripWidth, STAIR_DEPTH_M),
-      rooms: stripRooms,
-    });
-  }
-
   let corridor: Rect | null = null;
+
+  const bandHeightFor = (group: PreparedRoom[]): number =>
+    snap(group.reduce((sum, room) => sum + areaOf(room), 0) / bandWidth);
+
   if (useCorridor) {
-    const usableHeight = snap(mainRegion.height - CORRIDOR_WIDTH_M);
-    const capacityPerBand = bandCapacity(mainRegion.width);
-    const count = mainRooms.length;
+    const count = rooms.length;
     const minSplit = Math.max(1, count - capacityPerBand);
     const maxSplit = Math.min(count - 1, capacityPerBand);
 
@@ -357,45 +427,75 @@ export function layoutFloor(params: LayoutFloorParams): LayoutResult {
         issues: [
           {
             code: 'TOO_MANY_ROOMS_PER_FLOOR',
-            message: `Floor ${floorIndex}: ${count} rooms cannot be split across two ${mainRegion.width} m wide bands`,
-            meta: { floor: floorIndex, rooms: count, bandWidthM: mainRegion.width },
+            message: `Floor ${floorIndex}: ${count} rooms cannot be split across two ${bandWidth} m wide bands`,
+            meta: { floor: floorIndex, rooms: count, bandWidthM: bandWidth },
           },
         ],
       };
     }
 
-    const targets = mainRooms.map((room) => room.targetAreaM2);
-    const total = targets.reduce((sum, value) => sum + value, 0);
+    // Split where the two bands' allocated areas balance, so neither band ends
+    // up so shallow that its rooms breach the minimum side.
+    const allocated = rooms.map(areaOf);
+    const total = allocated.reduce((sum, value) => sum + value, 0);
     let bestSplit = minSplit;
     let bestImbalance = Number.POSITIVE_INFINITY;
-    let upperTarget = 0;
-    let runningTarget = 0;
+    let running = 0;
     for (let split = 1; split <= count - 1; split++) {
-      runningTarget += targets[split - 1] ?? 0;
+      running += allocated[split - 1] ?? 0;
       if (split < minSplit || split > maxSplit) continue;
-      const imbalance = Math.abs(runningTarget - (total - runningTarget));
+      const imbalance = Math.abs(running - (total - running));
       if (imbalance < bestImbalance) {
         bestImbalance = imbalance;
         bestSplit = split;
-        upperTarget = runningTarget;
       }
     }
 
-    // Corridor sits where the two bands' target areas balance.
-    const share = total > 0 ? upperTarget / total : 0.5;
-    const upperHeight = snap(
-      clamp(usableHeight * share, MIN_PACK_SIDE_M, snap(usableHeight - MIN_PACK_SIDE_M)),
-    );
-    const lowerHeight = snap(usableHeight - upperHeight);
+    const upperRooms = rooms.slice(0, bestSplit);
+    const lowerRooms = rooms.slice(bestSplit);
+    // The lower band takes the remainder rather than its own quotient, so the
+    // two snapped heights plus the corridor tile the main region exactly
+    // instead of drifting apart by a grid step.
+    const upperHeight = bandHeightFor(upperRooms);
+    const lowerHeight = snap(roomDepthBudget - upperHeight);
+    const corridorHeight = CORRIDOR_WIDTH_M;
 
-    const upperBand = rect(mainRegion.x, mainRegion.y, mainRegion.width, upperHeight);
-    corridor = rect(mainRegion.x, bottom(upperBand), mainRegion.width, CORRIDOR_WIDTH_M);
-    const lowerBand = rect(mainRegion.x, bottom(corridor), mainRegion.width, lowerHeight);
+    if (!gte(upperHeight, MIN_PACK_SIDE_M) || !gte(lowerHeight, MIN_PACK_SIDE_M)) {
+      return {
+        ok: false,
+        issues: [
+          {
+            code: 'ROOM_AREA_UNSATISFIABLE',
+            message: `Floor ${floorIndex}: a layout band would be shallower than the ${MIN_ROOM_SIDE_M} m minimum room side`,
+            meta: { floor: floorIndex, upperHeightM: upperHeight, lowerHeightM: lowerHeight },
+          },
+        ],
+      };
+    }
 
-    bands.push({ rect: upperBand, rooms: mainRooms.slice(0, bestSplit) });
-    bands.push({ rect: lowerBand, rooms: mainRooms.slice(bestSplit) });
+    const upperBand = rect(mainRegion.x, mainRegion.y, bandWidth, upperHeight);
+    corridor = rect(mainRegion.x, bottom(upperBand), bandWidth, corridorHeight);
+    const lowerBand = rect(mainRegion.x, bottom(corridor), bandWidth, lowerHeight);
+
+    bands.push({ rect: upperBand, rooms: upperRooms });
+    bands.push({ rect: lowerBand, rooms: lowerRooms });
   } else {
-    bands.push({ rect: mainRegion, rooms: mainRooms });
+    // One band, no corridor: the rooms were allocated the whole budget, so the
+    // band is the main region. Taking its height directly rather than dividing
+    // the allocation back out keeps the fill exact.
+    if (!gte(mainRegion.height, MIN_PACK_SIDE_M)) {
+      return {
+        ok: false,
+        issues: [
+          {
+            code: 'ROOM_AREA_UNSATISFIABLE',
+            message: `Floor ${floorIndex}: the room band would be ${mainRegion.height} m deep, below the ${MIN_ROOM_SIDE_M} m minimum room side`,
+            meta: { floor: floorIndex, bandHeightM: mainRegion.height, minSideM: MIN_ROOM_SIDE_M },
+          },
+        ],
+      };
+    }
+    bands.push({ rect: mainRegion, rooms });
   }
 
   // ── Pack ────────────────────────────────────────────────────────────────
@@ -405,7 +505,7 @@ export function layoutFloor(params: LayoutFloorParams): LayoutResult {
   const placementOrder: string[] = [];
 
   for (const band of bands) {
-    const result = packBand(band.rect, band.rooms, floorIndex);
+    const result = packBand(band.rect, band.rooms, floorIndex, areaOf);
     if (!result.ok) {
       issues.push(...result.issues);
       continue;

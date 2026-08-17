@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { generateFloorPlan } from '../generate-floor-plan';
 import type { FloorPlanInput } from '../types';
 import {
+  allowedUncoveredArea,
   assertAreaBalance,
   assertDoorCoverage,
   assertInsideOutline,
@@ -57,13 +58,16 @@ describe('spec invariants', () => {
     }
   });
 
-  it('invariant 4: rooms + corridor + stairs fill the floor outline (±0.5 m²)', () => {
+  it('invariant 4: rooms + corridor + stairs + stair landing fill the floor outline (±0.5 m²)', () => {
     for (const { config } of ALL_CONFIGS) {
       const plan = planOf(config);
       for (const floor of plan.floors) assertAreaBalance(floor);
     }
 
-    // Exact fill on a floor that has enough rooms for every band.
+    // Exact fill on a floor that has enough rooms for every band. The strip
+    // beside the stair core is circulation, not a room: it is 1.5 m deep, so a
+    // room placed there came out as a slab. It carries no geometry of its own,
+    // which is why it is added back here rather than read off the floor.
     const floor = planOf(SEED_CONFIG).floors[0];
     expect(floor).toBeDefined();
     if (!floor) return;
@@ -71,7 +75,8 @@ describe('spec invariants', () => {
     const covered =
       floor.rooms.reduce((sum, r) => sum + r.rect.width * r.rect.height, 0) +
       (floor.corridor ? floor.corridor.width * floor.corridor.height : 0) +
-      (floor.stairs ? floor.stairs.rect.width * floor.stairs.rect.height : 0);
+      (floor.stairs ? floor.stairs.rect.width * floor.stairs.rect.height : 0) +
+      allowedUncoveredArea(floor);
     expect(covered).toBeCloseTo(outlineArea, 6);
   });
 

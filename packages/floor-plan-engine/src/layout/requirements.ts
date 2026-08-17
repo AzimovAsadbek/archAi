@@ -1,5 +1,9 @@
 import type { RoomType } from '@archai/shared';
-import { DEFAULT_ROOM_AREAS } from '../constants';
+import {
+  DEFAULT_ROOM_AREAS,
+  PROFILE_AREA_MAX_RATIO,
+  PROFILE_AREA_MIN_RATIO,
+} from '../constants';
 import { isPositiveFinite, round1 } from '../geometry';
 import type { FloorPlanInput } from '../types';
 
@@ -37,9 +41,9 @@ function profile(
   const target = DEFAULT_ROOM_AREAS[type];
   return {
     zone,
-    minAreaM2: round1(target * 0.6),
+    minAreaM2: round1(target * PROFILE_AREA_MIN_RATIO),
     targetAreaM2: target,
-    maxAreaM2: round1(target * 1.8),
+    maxAreaM2: round1(target * PROFILE_AREA_MAX_RATIO),
     floorAffinity,
   };
 }

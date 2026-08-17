@@ -1,9 +1,13 @@
 import { ROOM_TYPES, type RoomType } from '@archai/shared';
 import {
+  DECLARED_AREA_MAX_RATIO,
+  DECLARED_AREA_MIN_RATIO,
   DEFAULT_ROOM_AREAS,
   EXTERIOR_WALL_M,
   FLOOR_PLAN_ENGINE_VERSION,
   MIN_ROOM_SIDE_M,
+  PROFILE_AREA_MAX_RATIO,
+  PROFILE_AREA_MIN_RATIO,
   STAIR_DEPTH_M,
   STAIR_WIDTH_M,
 } from './constants';
@@ -23,6 +27,43 @@ function defaultAreaFor(type: RoomType): number {
   return (ROOM_TYPES as readonly string[]).includes(type)
     ? DEFAULT_ROOM_AREAS[type]
     : DEFAULT_ROOM_AREAS.OTHER;
+}
+
+/**
+ * How far a placed room may drift from its target area.
+ *
+ * A declared width×length is a user requirement, so the band is tight — the
+ * tolerance exists only to absorb grid snapping and the minimum-side clamp, not
+ * to let the engine re-plan the room. A room the user left blank has no such
+ * requirement, so the engine may size it anywhere inside its type profile.
+ *
+ * The profile ratios are the same constants `ROOM_PROFILES` in
+ * `layout/requirements.ts` builds its bounds from, so the area a room is placed
+ * at and the area the feasibility gate checks it against cannot drift apart.
+ */
+function areaBoundsFor(
+  type: RoomType,
+  declared: boolean,
+  targetAreaM2: number,
+): { min: number; max: number } {
+  const base = (ROOM_TYPES as readonly string[]).includes(type)
+    ? DEFAULT_ROOM_AREAS[type]
+    : DEFAULT_ROOM_AREAS.OTHER;
+
+  if (declared) {
+    // The maximum is tight — that is what stops a room absorbing spare floor.
+    // The minimum is not: it is the *lower* of the declared tolerance and what
+    // the room type actually needs to function. Treating a declared size as a
+    // hard floor would make an over-ambitious brief infeasible rather than
+    // scaled, so "I want eight 40 m² bedrooms in a 10×10 house" would fail
+    // outright instead of coming back proportionally shrunk with an honest
+    // deviation the UI can show.
+    return {
+      min: Math.min(targetAreaM2 * DECLARED_AREA_MIN_RATIO, base * PROFILE_AREA_MIN_RATIO),
+      max: targetAreaM2 * DECLARED_AREA_MAX_RATIO,
+    };
+  }
+  return { min: base * PROFILE_AREA_MIN_RATIO, max: base * PROFILE_AREA_MAX_RATIO };
 }
 
 /**
@@ -66,12 +107,16 @@ function prepareRooms(specs: RoomSpec[], floorCount: number): PreparedRoom[][] {
     const declaredLength = spec.lengthM;
     const hasDims = isPositiveFinite(declaredWidth) && isPositiveFinite(declaredLength);
     const declaredArea = hasDims ? declaredWidth * declaredLength : 0;
+    const targetAreaM2 = hasDims ? declaredArea : defaultAreaFor(spec.type);
+    const bounds = areaBoundsFor(spec.type, hasDims, targetAreaM2);
 
     bucket.push({
       key: uniqueKey(base, usedKeys),
       type: spec.type,
       label: typeof spec.label === 'string' && spec.label.length > 0 ? spec.label : null,
-      targetAreaM2: hasDims ? declaredArea : defaultAreaFor(spec.type),
+      targetAreaM2,
+      minAreaM2: bounds.min,
+      maxAreaM2: bounds.max,
       requestedAreaM2: hasDims ? round1(declaredArea) : null,
       inputIndex: index,
     });
@@ -155,11 +200,19 @@ function generate(input: FloorPlanInput): FloorPlanResult {
       },
     });
   } else if (floorCount > 1) {
-    if (!gte(outline.width, STAIR_WIDTH_M)) {
+    // The core alone is not enough: the strip beside it is the landing you
+    // arrive on, and a landing narrower than the minimum room side is not a
+    // space anyone can use. Requiring the core *plus* that clearance is what
+    // makes the strip a landing rather than a sliver of unreachable slab.
+    if (!gte(outline.width, STAIR_WIDTH_M + MIN_ROOM_SIDE_M)) {
       issues.push({
         code: 'FOOTPRINT_TOO_SMALL',
-        message: `Usable width ${outline.width} m cannot host the ${STAIR_WIDTH_M} m stair core`,
-        meta: { usableWidthM: outline.width, stairWidthM: STAIR_WIDTH_M },
+        message: `Usable width ${outline.width} m cannot host the ${STAIR_WIDTH_M} m stair core plus a ${MIN_ROOM_SIDE_M} m landing`,
+        meta: {
+          usableWidthM: outline.width,
+          stairWidthM: STAIR_WIDTH_M,
+          landingWidthM: MIN_ROOM_SIDE_M,
+        },
       });
     }
     if (!gte(outline.height, STAIR_DEPTH_M + MIN_ROOM_SIDE_M)) {

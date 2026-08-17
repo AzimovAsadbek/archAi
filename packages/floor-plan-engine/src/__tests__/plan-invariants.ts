@@ -66,7 +66,10 @@ function overlapLength(a: Interval, b: Interval): number {
  * the stairs empty — nothing else.
  */
 export function allowedUncoveredArea(floor: FloorGeometry): number {
-  if (floor.stairs && floor.rooms.length === 1) {
+  // The 1.5 m strip beside the stair core is a landing, not a room band: it is
+  // deep enough to walk through and too shallow to live in. Rooms are no longer
+  // forced into it, so it is legitimately uncovered on every stair floor.
+  if (floor.stairs) {
     return (floor.outline.width - floor.stairs.rect.width) * floor.stairs.rect.height;
   }
   return 0;
@@ -265,7 +268,13 @@ function assertFloorStructure(floor: FloorGeometry, house: FloorPlan['house']): 
 
   if (floor.corridor) {
     expectRectSnapped(floor.corridor, `floor ${floor.index} corridor`);
-    expect(floor.corridor.height).toBeCloseTo(CORRIDOR_WIDTH_M, 6);
+    // The corridor is a fixed architectural element, not whatever the rooms
+    // left over: surplus floor is spread across the rooms instead, so a house
+    // far larger than its program cannot produce a 50 m² "corridor".
+    expect(floor.corridor.height, `floor ${floor.index}: corridor is not ${CORRIDOR_WIDTH_M} m deep`).toBeCloseTo(
+      CORRIDOR_WIDTH_M,
+      6,
+    );
   }
 
   if (floor.stairs) {

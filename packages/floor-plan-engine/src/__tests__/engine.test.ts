@@ -63,7 +63,7 @@ describe('geometry helpers', () => {
 
 describe('engine contract', () => {
   it('stamps the engine version on every plan', () => {
-    expect(FLOOR_PLAN_ENGINE_VERSION).toBe('1.2.0');
+    expect(FLOOR_PLAN_ENGINE_VERSION).toBe('1.3.0');
     expect(planOf(input(10, 10, 1, [room('BEDROOM', 0)])).engineVersion).toBe(
       FLOOR_PLAN_ENGINE_VERSION,
     );
