@@ -41,7 +41,7 @@ export async function MarketingHeader() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <LocaleSwitcher className="hidden md:inline-flex" />
+          <LocaleSwitcher className="hidden md:block" />
           <Link
             href="/login"
             className="hidden text-sm font-semibold text-ink-soft transition-colors hover:text-ink md:inline"

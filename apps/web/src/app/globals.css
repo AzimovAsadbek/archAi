@@ -187,6 +187,20 @@
   font-feature-settings: 'tnum';
 }
 
+/* Shared popover entrance. Every menu in the product uses this one curve, so a
+   select and an action menu open the same way. The reduced-motion block below
+   collapses it to near-zero. */
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 /* Respect users who ask for less motion: near-zero every animation/transition
    (covers Tailwind's spin/pulse, the stepper width tween, 3D CSS transitions).
    Kept outside @layer so the !important overrides utility-level durations. */
