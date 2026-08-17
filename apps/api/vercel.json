@@ -1,8 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "installCommand": "pnpm install --frozen-lockfile --ignore-scripts=false",
+  "installCommand": "pnpm install --frozen-lockfile --prod=false --ignore-scripts=false",
   "buildCommand": "pnpm --filter @archai/api prisma:generate && pnpm --filter \"@archai/api...\" build",
+  "outputDirectory": "public",
   "functions": {
     "api/index.js": {
       "maxDuration": 30,

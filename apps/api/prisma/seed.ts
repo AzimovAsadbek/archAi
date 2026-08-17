@@ -214,13 +214,65 @@ const PRICING_PLANS: Prisma.PricingPlanCreateManyInput[] = [
   },
 ];
 
+/**
+ * Reference data every environment needs, production included: the estimate
+ * rule set and the public marketing content. None of it is an account and none
+ * of it carries a credential.
+ *
+ * It is split from the demo accounts because a production database needs the
+ * pricing rules — without an active `estimate_rules` row the estimate and the
+ * PDF export both fail with 500 — but must never receive the repo-published
+ * demo passwords. Before the split the only way to get one was to also get the
+ * other.
+ */
+async function seedReferenceData(): Promise<void> {
+  // Prices are data an administrator may already have tuned: seed them only when
+  // no active rule set exists, and never overwrite one that does.
+  const activeRules = await prisma.estimateRule.findFirst({ where: { isActive: true } });
+  if (activeRules === null) {
+    await prisma.estimateRule.create({
+      data: { version: ESTIMATE_RULES_V1.version, data: ESTIMATE_RULES_V1, isActive: true },
+    });
+  }
+
+  // Public content is only seeded into an empty table, so an administrator's edits
+  // (or deletions) are never resurrected by a re-run.
+  if ((await prisma.faqItem.count()) === 0) {
+    await prisma.faqItem.createMany({ data: FAQ_ITEMS });
+  }
+  if ((await prisma.blogPost.count()) === 0) {
+    await prisma.blogPost.createMany({ data: BLOG_POSTS });
+  }
+  if ((await prisma.pricingPlan.count()) === 0) {
+    await prisma.pricingPlan.createMany({ data: PRICING_PLANS });
+  }
+}
+
 async function main() {
+  // `--reference-only` seeds the rule set and public content and stops there.
+  // It is the production-safe half and carries no credential, so it runs
+  // without ALLOW_PROD_SEED.
+  const referenceOnly =
+    process.argv.includes('--reference-only') || process.env.SEED_REFERENCE_ONLY === 'true';
+
+  if (referenceOnly) {
+    await seedReferenceData();
+    const rules = await prisma.estimateRule.findFirst({ where: { isActive: true } });
+    console.log(
+      `Seeded reference data: estimateRules=v${rules?.version ?? '?'}, ` +
+        `faq=${await prisma.faqItem.count()}, blog=${await prisma.blogPost.count()}, ` +
+        `pricing=${await prisma.pricingPlan.count()} (no accounts created)`,
+    );
+    return;
+  }
+
   // These seeded credentials are published in the repo (README, login page hint),
   // so seeding a production database would plant a known admin password. Refuse
   // unless explicitly overridden for a deliberate demo deployment.
   if (process.env.NODE_ENV === 'production' && process.env.ALLOW_PROD_SEED !== 'true') {
     throw new Error(
-      'Refusing to seed in production. Set ALLOW_PROD_SEED=true only for an intentional demo environment.',
+      'Refusing to seed in production. Set ALLOW_PROD_SEED=true only for an intentional demo environment. ' +
+        'For the rule set and public content alone, use `pnpm prisma:seed:reference`.',
     );
   }
 
@@ -298,27 +350,9 @@ async function main() {
     });
   }
 
-  // Prices are data an administrator may already have tuned: seed them only when
-  // no active rule set exists, and never overwrite one that does.
+  await seedReferenceData();
+
   const activeRules = await prisma.estimateRule.findFirst({ where: { isActive: true } });
-  if (activeRules === null) {
-    await prisma.estimateRule.create({
-      data: { version: ESTIMATE_RULES_V1.version, data: ESTIMATE_RULES_V1, isActive: true },
-    });
-  }
-
-  // Public content is only seeded into an empty table, so an administrator's edits
-  // (or deletions) are never resurrected by a re-run.
-  if ((await prisma.faqItem.count()) === 0) {
-    await prisma.faqItem.createMany({ data: FAQ_ITEMS });
-  }
-  if ((await prisma.blogPost.count()) === 0) {
-    await prisma.blogPost.createMany({ data: BLOG_POSTS });
-  }
-  if ((await prisma.pricingPlan.count()) === 0) {
-    await prisma.pricingPlan.createMany({ data: PRICING_PLANS });
-  }
-
   console.log(
     `Seeded: admin=${admin.email}, demo=${demo.email}, ` +
       `estimateRules=v${activeRules?.version ?? ESTIMATE_RULES_V1.version}, ` +

@@ -45,8 +45,14 @@ DATABASE_URL='<pooled>' DIRECT_DATABASE_URL='<direct>' pnpm --filter @archai/api
 
 ### 2. API project (`archai-api`)
 
-- **Root Directory**: `apps/api`
+- **Root Directory**: `apps/api` — and **deploy from the repository root**, not from
+  `apps/api`. The CLI uploads its working directory, so deploying from the app folder ships
+  it without `pnpm-lock.yaml` and the install fails with *"Headless installation requires a
+  pnpm-lock.yaml file"*. Root Directory is what tells Vercel where to build inside the
+  upload. The CLI has no command for that setting — use the dashboard, or PATCH
+  `rootDirectory` on `/v9/projects/{id}`.
 - Build, install and function settings come from `apps/api/vercel.json` — do not re-enter them in the dashboard.
+- `vercel.json` rejects unknown keys, including a `//` comment key.
 - `api/index.js` is a CommonJS shim that requires `dist/serverless.js`. It exists because
   Vercel compiles files under `api/` with esbuild, which strips types *without* emitting the
   `design:*` decorator metadata Nest's DI reads; `nest build` (tsc) emits the real thing.
@@ -81,6 +87,35 @@ API_ORIGIN=https://<api deployment>    # server-side rewrite target
 
 `same-origin` and the empty string mean the same thing; the word is spelled out because an
 empty value in a dashboard is easy to mistake for an unset one.
+
+### 4. Reference data
+
+A fresh database has no `estimate_rules` row, and without one the estimate **and** the PDF
+export both answer 500. The full seed cannot be used — it plants the repo-published demo
+passwords — so seed the credential-free half:
+
+```bash
+DATABASE_URL='<pooled>' DIRECT_DATABASE_URL='<direct>' \
+  pnpm --filter @archai/api prisma:seed:reference
+```
+
+That writes the estimate rule set plus FAQ/blog/pricing content and creates no accounts. It
+is safe in production and safe to re-run: existing rows are never overwritten.
+
+### 5. Deployment Protection
+
+Vercel enables Vercel Authentication (SSO) on new projects, which answers **302 to
+`vercel.com/sso-api`** for every request — including the web deployment's server-side proxy
+to the API. Both projects must have it off to serve the public; the product's own auth
+(argon2 + httpOnly JWT cookies + server-side ownership checks) is what protects the data.
+
+### Things that bit on the first deploy
+
+- `NODE_ENV=production` is read by pnpm at **install** time, so it skips `devDependencies`
+  and the build dies on `prisma: command not found` — `prisma`, `@nestjs/cli` and
+  `typescript` all live there. Hence `--prod=false` in the install command.
+- A functions-only project still needs `outputDirectory`. It points at an empty `public/`
+  **on purpose**: pointing it at `dist` would publish the compiled server source.
 
 ### Known limits
 
