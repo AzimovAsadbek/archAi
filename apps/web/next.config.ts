@@ -25,6 +25,20 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  /**
+   * Forces a literal for the demo-credentials flag.
+   *
+   * Next only inlines `process.env.NEXT_PUBLIC_*` for variables that exist at
+   * build time; an undefined one is left as a runtime property lookup. That is
+   * enough to defeat dead-code elimination — the login form's guard could not
+   * fold, so the seeded demo password shipped inside the production bundle even
+   * though the panel showing it was correctly hidden. Defaulting to the string
+   * `'false'` makes the comparison statically false, and the credentials are
+   * dropped from the build entirely.
+   */
+  env: {
+    NEXT_PUBLIC_SHOW_DEMO_CREDENTIALS: process.env.NEXT_PUBLIC_SHOW_DEMO_CREDENTIALS ?? 'false',
+  },
   // Self-contained production server (traced deps + minimal server.js), used by
   // the Docker image. Standalone tracing creates symlinks, which Windows blocks
   // without elevation — so it is opt-in via env (the Dockerfile sets it) and the

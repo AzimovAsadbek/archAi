@@ -18,13 +18,24 @@ import { queryKeys } from '@/lib/query-keys';
 import { useApiErrorMessage } from '@/lib/use-api-error';
 import { useFieldError } from '@/lib/zod-errors';
 
-const DEMO_EMAIL = 'demo@archai.uz';
-const DEMO_PASSWORD = 'Demo1234!';
 // The seeded demo credentials are a dev/demo convenience only; never surface them
 // in a production build. Set NEXT_PUBLIC_SHOW_DEMO_CREDENTIALS=true to opt in.
 const SHOW_DEMO_CREDENTIALS =
   process.env.NODE_ENV !== 'production' ||
   process.env.NEXT_PUBLIC_SHOW_DEMO_CREDENTIALS === 'true';
+
+/**
+ * Held inside the flag rather than beside it.
+ *
+ * Both operands of `SHOW_DEMO_CREDENTIALS` are inlined at build time, so in a
+ * production build this whole expression folds to `null` and the strings below
+ * are eliminated. As top-level constants they survived instead: the panel was
+ * correctly hidden, but `Demo1234!` still shipped in the JavaScript, handing a
+ * reader of the bundle the exact password to try against a seeded environment.
+ */
+const DEMO_CREDENTIALS = SHOW_DEMO_CREDENTIALS
+  ? { email: 'demo@archai.uz', password: 'Demo1234!' }
+  : null;
 
 export function LoginForm({ next }: { next: string }) {
   const t = useTranslations('auth');
@@ -94,13 +105,16 @@ export function LoginForm({ next }: { next: string }) {
         </Button>
       </form>
 
-      {SHOW_DEMO_CREDENTIALS ? (
+      {DEMO_CREDENTIALS ? (
         <div className="mt-6 flex gap-3 rounded-md border border-line bg-paper px-4 py-3">
           <Info className="mt-0.5 size-4 shrink-0 text-ink-faint" aria-hidden="true" />
           <div className="text-sm">
             <p className="font-semibold text-ink">{t('login.demoTitle')}</p>
             <p className="numeric mt-0.5 text-ink-soft">
-              {t('login.demoBody', { email: DEMO_EMAIL, password: DEMO_PASSWORD })}
+              {t('login.demoBody', {
+                email: DEMO_CREDENTIALS.email,
+                password: DEMO_CREDENTIALS.password,
+              })}
             </p>
           </div>
         </div>
