@@ -5,15 +5,13 @@
  *
  *   node scripts/vercel-ai-keys.mjs
  *
- * The keys are piped straight from the local .env into `vercel env add` — they
- * are never printed, never written anywhere else, and never leave your machine
- * except to your own Vercel project. Only the key *length* is reported, so you
- * can confirm the right value was picked up without exposing it.
+ * The keys are piped into `vercel env add` over stdin — never printed, never
+ * passed as a command-line argument (which would expose them in the process
+ * list), never written anywhere else. Only the key *length* is reported, which
+ * is enough to confirm the right value was picked up.
  *
- * Everything else about the deployment is already configured; this exists
- * because the AI endpoints are the one part that stays dark without them. The
- * API is built to degrade honestly (503 + `AI_NOT_CONFIGURED`) rather than
- * break, so running this is optional.
+ * Optional by design: without the keys the AI endpoints answer 503
+ * AI_NOT_CONFIGURED and the rest of the product is unaffected.
  */
 
 import { spawn } from 'node:child_process';
@@ -25,41 +23,98 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const apiDir = path.join(repoRoot, 'apps', 'api');
 const KEYS = ['GEMINI_API_KEY', 'GROQ_API_KEY'];
 
+/**
+ * How to invoke the Vercel CLI without a shell.
+ *
+ * Two Windows constraints collide here. `vercel` on PATH is a `.cmd` shim, and
+ * Node 22+ refuses to spawn `.cmd` without `shell: true` (spawn EINVAL — the
+ * fix for CVE-2024-27980). Turning the shell on to satisfy that brings back
+ * DEP0190, because arguments are then concatenated rather than escaped.
+ *
+ * Running the CLI's own JS entry point under this Node binary sidesteps both:
+ * no shim, no shell, arguments passed as a real argv array. The shell path
+ * stays as a fallback for an install layout we do not recognise.
+ */
+function resolveCli() {
+  const candidates = [];
+  if (process.env.APPDATA) {
+    candidates.push(path.join(process.env.APPDATA, 'npm', 'node_modules', 'vercel', 'dist', 'index.js'));
+  }
+  if (process.env.HOME) {
+    candidates.push(path.join(process.env.HOME, '.npm-global', 'lib', 'node_modules', 'vercel', 'dist', 'index.js'));
+  }
+  candidates.push('/usr/local/lib/node_modules/vercel/dist/index.js');
+  candidates.push('/usr/lib/node_modules/vercel/dist/index.js');
+
+  for (const entry of candidates) {
+    if (existsSync(entry)) return { cmd: process.execPath, prefix: [entry], shell: false };
+  }
+  return { cmd: process.platform === 'win32' ? 'vercel.cmd' : 'vercel', prefix: [], shell: true };
+}
+
+const cli = resolveCli();
+
 const c = {
   green: (s) => `\x1b[32m${s}\x1b[0m`,
   red: (s) => `\x1b[31m${s}\x1b[0m`,
   dim: (s) => `\x1b[2m${s}\x1b[0m`,
 };
 
-function run(cmd, args, { cwd = repoRoot, input, quiet = true, env } = {}) {
+/**
+ * Runs a command with a hard deadline.
+ *
+ * The deadline is the point of this wrapper: the previous version called
+ * `vercel env rm` with no timeout, and when that command sat waiting the whole
+ * script hung after printing its header with no indication of what it was
+ * stuck on.
+ */
+function run(args, { cwd = repoRoot, input, quiet = true, env, timeoutMs = 120_000 } = {}) {
   return new Promise((resolve) => {
-    const child = spawn(cmd, args, {
+    const child = spawn(cli.cmd, [...cli.prefix, ...args], {
       cwd,
-      shell: true,
       env: { ...process.env, ...env },
-      stdio: [input === undefined ? 'inherit' : 'pipe', 'pipe', 'pipe'],
+      shell: cli.shell,
+      stdio: ['pipe', 'pipe', 'pipe'],
     });
+
     let out = '';
+    let done = false;
+    const finish = (code, note) => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      resolve({ code, out, note });
+    };
+
+    const timer = setTimeout(() => {
+      child.kill();
+      finish(1, `timed out after ${Math.round(timeoutMs / 1000)}s`);
+    }, timeoutMs);
+
     const capture = (d) => {
       out += d;
       if (!quiet) process.stdout.write(d);
     };
     child.stdout.on('data', capture);
     child.stderr.on('data', capture);
-    if (input !== undefined) {
-      child.stdin.write(input);
-      child.stdin.end();
-    }
-    child.on('close', (code) => resolve({ code: code ?? 1, out }));
+    child.on('error', (err) => finish(1, err.message));
+    child.on('close', (code) => finish(code ?? 1));
+
+    // Always close stdin, even with nothing to send: a CLI that decides to
+    // prompt then reads EOF and gives up instead of waiting forever.
+    if (input !== undefined) child.stdin.write(input);
+    child.stdin.end();
   });
 }
 
 const envFile = path.join(apiDir, '.env');
+const projectFile = path.join(apiDir, '.vercel', 'project.json');
+
 if (!existsSync(envFile)) {
   console.error(c.red(`✗ ${envFile} not found`));
   process.exit(1);
 }
-if (!existsSync(path.join(apiDir, '.vercel', 'project.json'))) {
+if (!existsSync(projectFile)) {
   console.error(c.red('✗ apps/api is not linked to a Vercel project — run `vercel link` there'));
   process.exit(1);
 }
@@ -79,34 +134,38 @@ for (const key of KEYS) {
     console.log(`  ${c.dim('skip')} ${key} ${c.dim('(empty in .env)')}`);
     continue;
   }
-  // Remove first: `add` fails on an existing key rather than replacing it.
-  await run('vercel', ['env', 'rm', key, 'production', '--yes'], { cwd: apiDir, input: '' });
-  const { code } = await run('vercel', ['env', 'add', key, 'production'], {
-    cwd: apiDir,
-    input: `${value}\n`,
-  });
+
+  process.stdout.write(`  ...  ${key} `);
+  // `--force` replaces an existing value in one call. The previous version did
+  // `env rm` then `env add`, and the removal is what hung.
+  // `--sensitive` keeps the value unreadable in the dashboard afterwards.
+  const { code, out, note } = await run(
+    ['env', 'add', key, 'production', '--force', '--sensitive'],
+    { cwd: apiDir, input: `${value}\n`, timeoutMs: 120_000 },
+  );
+
   if (code === 0) {
-    console.log(`  ${c.green('ok')}   ${key} ${c.dim(`(${value.length} chars)`)}`);
+    console.log(`\r  ${c.green('ok')}   ${key} ${c.dim(`(${value.length} chars)`)}     `);
     copied += 1;
   } else {
-    console.log(`  ${c.red('FAIL')} ${key}`);
+    const reason = note ?? out.split('\n').filter(Boolean).pop() ?? 'unknown error';
+    console.log(`\r  ${c.red('FAIL')} ${key} ${c.dim(`— ${reason.slice(0, 90)}`)}`);
   }
 }
 
 if (copied === 0) {
-  console.log('\nNothing to deploy.\n');
-  process.exit(0);
+  console.log('\nNothing copied — nothing to deploy.\n');
+  process.exit(1);
 }
 
 // Vercel only picks up environment changes on a new deployment. Deploy from the
 // repo root: the project's Root Directory is apps/api, but the upload has to
 // include the workspace lockfile at the root.
-console.log('\nRedeploying so the keys take effect — a few minutes.\n');
-const { projectId, orgId } = JSON.parse(
-  readFileSync(path.join(apiDir, '.vercel', 'project.json'), 'utf8'),
-);
-const { code } = await run('vercel', ['deploy', '--prod', '--yes'], {
+console.log(`\n${copied} key(s) stored. Redeploying — this takes a few minutes.\n`);
+const { projectId, orgId } = JSON.parse(readFileSync(projectFile, 'utf8'));
+const { code } = await run(['deploy', '--prod', '--yes'], {
   quiet: false,
+  timeoutMs: 900_000,
   env: { VERCEL_PROJECT_ID: projectId, VERCEL_ORG_ID: orgId },
 });
 
@@ -114,5 +173,4 @@ if (code !== 0) {
   console.error(c.red('\n✗ redeploy failed — the keys are stored, so just rerun the deploy\n'));
   process.exit(1);
 }
-console.log(c.green('\n✓ AI keys live.'), 'Check the AI Arxitektor tab, or:');
-console.log(c.dim('  curl -s https://archai-api.vercel.app/api/v1/health\n'));
+console.log(c.green('\n✓ AI keys live.'), 'Verify with the AI Arxitektor tab in the workspace.\n');
