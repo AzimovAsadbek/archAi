@@ -170,21 +170,6 @@
       "rights": "© 2026 archAi. Barcha huquqlar himoyalangan.",
       "navLabel": "Sayt navigatsiyasi"
     },
-    "brief": {
-      "title": "Yangi loyiha yaratish",
-      "land": "Yer maydoni",
-      "sotix": "{count} sotix",
-      "house": "Uy o'lchami",
-      "widthM": "Uy eni, m",
-      "lengthM": "Uy uzunligi, m",
-      "floors": "Qavat soni",
-      "floorCount": "{count} qavat",
-      "rooms": "Xonalar soni",
-      "style": "Uslubni tanlang",
-      "submit": "Loyiha yaratishni boshlash",
-      "tooBig": "Uy yer maydonidan katta.",
-      "note": "Ro'yxatdan o'tganingizdan so'ng shu ma'lumotlar bilan davom etasiz."
-    },
     "showcase": {
       "title": "Mana, natija",
       "subtitle": "Quyidagi reja va smeta shu sahifa ochilganda haqiqiy archAI dvigateli tomonidan hisoblandi — bu tayyor rasm emas.",

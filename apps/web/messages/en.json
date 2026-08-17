@@ -170,21 +170,6 @@
       "rights": "© 2026 archAi. All rights reserved.",
       "navLabel": "Site navigation"
     },
-    "brief": {
-      "title": "Create a new project",
-      "land": "Land area",
-      "sotix": "{count} sotix",
-      "house": "House size",
-      "widthM": "House width, m",
-      "lengthM": "House length, m",
-      "floors": "Floors",
-      "floorCount": "{count} floor",
-      "rooms": "Rooms",
-      "style": "Choose a style",
-      "submit": "Start creating",
-      "tooBig": "The house is larger than the plot.",
-      "note": "After you register you continue with these values."
-    },
     "showcase": {
       "title": "Here is the output",
       "subtitle": "The plan and estimate below were computed by the real archAI engine when this page loaded — not a prepared image.",

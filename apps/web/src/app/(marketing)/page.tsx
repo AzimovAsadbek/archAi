@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import { buttonClasses } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BriefPanel } from '@/components/marketing/brief-panel';
 import { HeroSchematic } from '@/components/marketing/hero-schematic';
 import { ProofStrip } from '@/components/marketing/proof-strip';
 import { Showcase } from '@/components/marketing/showcase';
@@ -72,11 +71,10 @@ export default function LandingPage() {
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      {/* Three tracks at desktop: the pitch, the product itself, and the brief
-          panel that turns intent into a configured project. The middle track is
-          the widest on purpose — the drawing is the argument. */}
+      {/* Two tracks at desktop: the pitch and the product itself. The drawing
+          gets the wider track — it is the argument. */}
       <section className="border-b border-line">
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.25fr)_minmax(0,0.85fr)] lg:items-start lg:gap-8 lg:py-16">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-14 lg:py-20">
           <div className="lg:pt-6">
             <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-semibold text-accent-strong">
               <Sparkles className="size-3.5" aria-hidden="true" />
@@ -112,8 +110,6 @@ export default function LandingPage() {
           </div>
 
           <HeroSchematic />
-
-          <BriefPanel className="lg:sticky lg:top-20" />
         </div>
       </section>
 
