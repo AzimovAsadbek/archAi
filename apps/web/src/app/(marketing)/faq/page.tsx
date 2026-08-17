@@ -51,27 +51,31 @@ export default async function FaqPage() {
     groups = null;
   }
 
+  // Two tracks: framing stays put on the left while the answers scroll past it. At 1440 a single measured column would leave half the page empty; this fills the width with structure rather than by stretching the text.
+
   return (
     <div className="page-container py-16 lg:py-20">
-      <div className="max-w-3xl">
-      <header className="max-w-2xl">
-        <p className="text-xs font-bold tracking-widest text-accent-strong uppercase">{t('eyebrow')}</p>
-        <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-balance text-ink sm:text-4xl">
-          {t('title')}
-        </h1>
-        <p className="mt-4 text-base leading-relaxed text-ink-soft">{t('subtitle')}</p>
-      </header>
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.6fr)] lg:gap-16">
+        <header className="lg:sticky lg:top-24 lg:self-start">
+          <p className="text-caption font-bold tracking-widest text-accent-strong uppercase">
+            {t('eyebrow')}
+          </p>
+          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-balance text-ink sm:text-4xl">
+            {t('title')}
+          </h1>
+          <p className="mt-4 leading-relaxed text-ink-soft">{t('subtitle')}</p>
+        </header>
 
-      {groups === null ? (
-        <Alert tone="warning" className="mt-8" live>
-          {t('unavailable')}
-        </Alert>
-      ) : (
-        <div className="mt-8">
-          <FaqAccordion groups={groups} />
+        <div className="min-w-0">
+          {groups === null ? (
+            <Alert tone="warning" live>
+              {t('unavailable')}
+            </Alert>
+          ) : (
+            <FaqAccordion groups={groups} />
+          )}
         </div>
-      )}
-    </div>
+      </div>
     </div>
   );
 }

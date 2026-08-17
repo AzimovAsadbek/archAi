@@ -24,16 +24,18 @@ export default async function AboutPage() {
 
   return (
     <div className="page-container py-16 lg:py-20">
-      <div className="max-w-3xl">
-      <header className="max-w-2xl">
-        <p className="text-xs font-bold tracking-widest text-accent-strong uppercase">{t('eyebrow')}</p>
-        <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-balance text-ink sm:text-4xl">
-          {t('title')}
-        </h1>
-        <p className="mt-4 text-base leading-relaxed text-ink-soft">{t('subtitle')}</p>
-      </header>
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)] lg:gap-16">
+        <header className="lg:sticky lg:top-24 lg:self-start">
+          <p className="text-caption font-bold tracking-widest text-accent-strong uppercase">
+            {t('eyebrow')}
+          </p>
+          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-balance text-ink sm:text-4xl">
+            {t('title')}
+          </h1>
+          <p className="mt-4 leading-relaxed text-ink-soft">{t('subtitle')}</p>
+        </header>
 
-      <div className="mt-10 flex flex-col gap-8">
+      <div className="grid min-w-0 gap-8 sm:grid-cols-2">
         <section className="flex gap-4">
           <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md border border-line bg-surface text-accent" aria-hidden="true">
             <Target className="size-4" />

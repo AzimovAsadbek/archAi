@@ -75,8 +75,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   };
 
   return (
-    <div className="page-container py-12 lg:py-16">
-      <article className="max-w-3xl">
+    <div className="page-container grid gap-10 py-12 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,0.7fr)] lg:gap-16 lg:py-16">
+      <article className="min-w-0 max-w-[68ch]">
       {/* Structured data: JSON.stringify of our own object, with `<` escaped so the
           content can never break out of the script element. Safe by construction. */}
       <script
