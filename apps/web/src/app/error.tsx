@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Home, RefreshCw } from 'lucide-react';
+import { Button, buttonClasses } from '@/components/ui/button';
 import { Logo } from '@/components/layout/logo';
 
 export default function AppError({
@@ -27,10 +28,18 @@ export default function AppError({
       {error.digest ? (
         <p className="numeric mt-2 text-xs text-ink-faint">{t('reference', { id: error.digest })}</p>
       ) : null}
-      <Button className="mt-7" onClick={reset}>
-        <RefreshCw className="size-4" aria-hidden="true" />
-        {t('retry')}
-      </Button>
+      {/* Retry first, but always offer a way out: when the failure is in the
+          route itself, resetting lands the user on the same broken page. */}
+      <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+        <Button onClick={reset}>
+          <RefreshCw className="size-4" aria-hidden="true" />
+          {t('retry')}
+        </Button>
+        <Link href="/" className={buttonClasses('outline', 'md')}>
+          <Home className="size-4" aria-hidden="true" />
+          {t('home')}
+        </Link>
+      </div>
     </div>
   );
 }

@@ -72,7 +72,7 @@ export default async function BlogPage({
   const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-16 lg:py-20">
+    <div className="page-container py-16 lg:py-20">
       <header className="max-w-2xl">
         <p className="text-xs font-bold tracking-widest text-accent-strong uppercase">{t('eyebrow')}</p>
         <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-balance text-ink sm:text-4xl">

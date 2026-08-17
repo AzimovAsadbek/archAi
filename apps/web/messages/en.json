@@ -163,12 +163,24 @@
       "title": "Start your first project today",
       "body": "Signing up is free. Enter your land area and you will have a structured project in a few minutes.",
       "cta": "Create a project",
-      "secondary": "I already have an account"
+      "secondary": "I already have an account",
+      "eyebrow": "Free to start",
+      "planAlt": "Sample plan — produced by the archAI engine"
     },
     "footer": {
       "tagline": "A structured house project, built from your land and requirements.",
       "rights": "© 2026 archAi. All rights reserved.",
-      "navLabel": "Site navigation"
+      "columns": {
+        "navigation": "Navigation",
+        "help": "Help",
+        "contact": "Contact"
+      },
+      "links": {
+        "guide": "Guide",
+        "contact": "Get in touch"
+      },
+      "contactBody": "Have a question? Write to us from the help page and we will reply.",
+      "disclaimerShort": "A preliminary figure — not construction documentation."
     },
     "showcase": {
       "title": "Here is the output",
@@ -974,7 +986,8 @@
       "title": "Something went wrong",
       "body": "An unexpected error occurred. Try reloading the page.",
       "retry": "Try again",
-      "reference": "Error reference: {id}"
+      "reference": "Error reference: {id}",
+      "home": "Go to homepage"
     }
   },
   "admin": {

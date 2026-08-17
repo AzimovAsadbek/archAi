@@ -84,7 +84,7 @@ export function MarketingMobileMenu() {
         >
           <nav
             aria-label={t('primary')}
-            className="mx-auto flex max-w-6xl flex-col gap-0.5 px-5 py-4"
+            className="page-container flex flex-col gap-0.5 py-4"
           >
             {LINKS.map((link) => (
               <Link

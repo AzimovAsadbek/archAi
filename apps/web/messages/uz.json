@@ -163,12 +163,24 @@
       "title": "Birinchi loyihangizni bugun boshlang",
       "body": "Ro'yxatdan o'tish bepul. Yer maydonini kiriting — bir necha daqiqada tuzilgan loyihaga ega bo'lasiz.",
       "cta": "Loyiha yaratish",
-      "secondary": "Hisobim bor"
+      "secondary": "Hisobim bor",
+      "eyebrow": "Bepul boshlanadi",
+      "planAlt": "Namuna reja — archAI dvigateli chiqargan"
     },
     "footer": {
       "tagline": "Yer va talablardan tuzilgan uy loyihasi.",
       "rights": "© 2026 archAi. Barcha huquqlar himoyalangan.",
-      "navLabel": "Sayt navigatsiyasi"
+      "columns": {
+        "navigation": "Navigatsiya",
+        "help": "Yordam",
+        "contact": "Bog'lanish"
+      },
+      "links": {
+        "guide": "Qo'llanma",
+        "contact": "Biz bilan bog'laning"
+      },
+      "contactBody": "Savolingiz bormi? Yordam sahifasidan bizga yozing — javob beramiz.",
+      "disclaimerShort": "Dastlabki hisob — rasmiy loyiha hujjati emas."
     },
     "showcase": {
       "title": "Mana, natija",
@@ -974,7 +986,8 @@
       "title": "Nimadir noto'g'ri ketdi",
       "body": "Kutilmagan xatolik yuz berdi. Sahifani qayta yuklashga urinib ko'ring.",
       "retry": "Qayta urinish",
-      "reference": "Xatolik kodi: {id}"
+      "reference": "Xatolik kodi: {id}",
+      "home": "Bosh sahifaga"
     }
   },
   "admin": {

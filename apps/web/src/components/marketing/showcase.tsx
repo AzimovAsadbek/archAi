@@ -37,7 +37,7 @@ export function Showcase({ plan, estimate, brief }: ShowcaseProps) {
 
   return (
     <section className="border-b border-line">
-      <div className="mx-auto max-w-7xl px-5 py-16 lg:py-20">
+      <div className="page-container py-16 lg:py-20">
         <header className="max-w-2xl">
           <h2 className="text-section font-extrabold text-ink">{t('title')}</h2>
           <p className="mt-3 leading-relaxed text-ink-soft">{t('subtitle')}</p>

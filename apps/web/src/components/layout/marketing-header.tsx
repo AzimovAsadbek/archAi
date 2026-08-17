@@ -10,7 +10,7 @@ export async function MarketingHeader() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-paper">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
+      <div className="page-container flex h-16 items-center justify-between gap-4">
         <Logo href="/" />
 
         <nav aria-label={t('primary')} className="hidden items-center gap-6 md:flex lg:gap-7">

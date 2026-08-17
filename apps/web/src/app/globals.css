@@ -187,6 +187,21 @@
   font-feature-settings: 'tnum';
 }
 
+/**
+ * The one page container.
+ *
+ * Every section — header, hero, marketing bands, footer, app pages — used to
+ * pick its own max width (1152px here, 1280px there), so their left edges did
+ * not line up down the page. This is the single measure they all share, so
+ * content sits on one vertical line at every breakpoint.
+ */
+@utility page-container {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1440px;
+  padding-inline: 1.25rem;
+}
+
 /* Shared popover entrance. Every menu in the product uses this one curve, so a
    select and an action menu open the same way. The reduced-motion block below
    collapses it to near-zero. */

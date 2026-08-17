@@ -29,7 +29,7 @@ export async function ProofStrip() {
 
   return (
     <section className="border-b border-line">
-      <div className="mx-auto max-w-7xl px-5 py-6">
+      <div className="page-container py-6">
         <ul className="grid grid-cols-1 divide-y divide-line rounded-panel border border-line bg-surface sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
           {ITEMS.map(({ key, icon: Icon, tone }) => (
             <li key={key} className="flex items-center gap-3.5 px-5 py-4">

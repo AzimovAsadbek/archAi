@@ -21,6 +21,7 @@ import {
 import { buttonClasses } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { HeroSchematic } from '@/components/marketing/hero-schematic';
+import { PlanSpecimen } from '@/components/marketing/plan-specimen';
 import { ProofStrip } from '@/components/marketing/proof-strip';
 import { Showcase } from '@/components/marketing/showcase';
 import { SHOWCASE_BRIEF, buildShowcase } from '@/lib/showcase-project';
@@ -74,7 +75,7 @@ export default function LandingPage() {
       {/* Two tracks at desktop: the pitch and the product itself. The drawing
           gets the wider track — it is the argument. */}
       <section className="border-b border-line">
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-14 lg:py-20">
+        <div className="page-container grid gap-10 py-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-14 lg:py-20">
           <div className="lg:pt-6">
             <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-semibold text-accent-strong">
               <Sparkles className="size-3.5" aria-hidden="true" />
@@ -117,7 +118,7 @@ export default function LandingPage() {
 
       {/* ── How it works ─────────────────────────────────────────────── */}
       <section id="how-it-works" className="scroll-mt-20 border-b border-line">
-        <div className="mx-auto max-w-6xl px-5 py-16 lg:py-20">
+        <div className="page-container py-16 lg:py-20">
           <header className="max-w-2xl">
             <h2 className="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">
               {t('how.title')}
@@ -148,7 +149,7 @@ export default function LandingPage() {
 
       {/* ── Features ─────────────────────────────────────────────────── */}
       <section id="features" className="scroll-mt-20 border-b border-line">
-        <div className="mx-auto max-w-6xl px-5 py-16 lg:py-20">
+        <div className="page-container py-16 lg:py-20">
           <header className="max-w-2xl">
             <h2 className="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">
               {t('features.title')}
@@ -190,7 +191,7 @@ export default function LandingPage() {
 
       {/* ── What you get + disclaimer ────────────────────────────────── */}
       <section className="border-b border-line">
-        <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 lg:grid-cols-[1fr_1fr] lg:gap-16 lg:py-20">
+        <div className="page-container grid gap-10 py-16 lg:grid-cols-[1fr_1fr] lg:gap-16 lg:py-20">
           <div>
             <h2 className="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">
               {t('value.title')}
@@ -233,28 +234,76 @@ export default function LandingPage() {
       </section>
 
       {/* ── Final CTA ────────────────────────────────────────────────── */}
+      {/* The reference fills the right of this banner with a photograph. There
+          are no photo assets, so the space is held by the product's own
+          drawing: a blueprint grid with the showcase footprint set into it,
+          which is both honest and on-brand for an architecture tool. */}
       <section>
-        <div className="mx-auto max-w-6xl px-5 py-16 lg:py-20">
-          <div className="flex flex-col items-start gap-6 rounded-lg border border-line bg-ink p-8 sm:p-12 lg:flex-row lg:items-center lg:justify-between">
-            <div className="max-w-xl">
-              <h2 className="text-2xl font-extrabold tracking-tight text-paper sm:text-3xl">
-                {t('finalCta.title')}
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-paper/70 sm:text-base">
-                {t('finalCta.body')}
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <Link href="/register" className={buttonClasses('accent', 'lg')}>
-                <PenLine className="size-4" aria-hidden="true" />
-                {t('finalCta.cta')}
-              </Link>
-              <Link
-                href="/login"
-                className="rounded-md px-2 py-1 text-sm font-semibold text-paper/80 transition-colors hover:text-paper"
-              >
-                {t('finalCta.secondary')}
-              </Link>
+        <div className="page-container py-16 lg:py-20">
+          <div className="relative isolate overflow-hidden rounded-lg bg-shell">
+            {/* Blueprint grid, fading out toward the copy so text stays legible. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-[0.16]"
+              style={{
+                backgroundImage:
+                  'linear-gradient(var(--color-shell-ink-faint) 1px, transparent 1px), linear-gradient(90deg, var(--color-shell-ink-faint) 1px, transparent 1px)',
+                backgroundSize: '32px 32px',
+                maskImage: 'linear-gradient(100deg, transparent 28%, #000 78%)',
+                WebkitMaskImage: 'linear-gradient(100deg, transparent 28%, #000 78%)',
+              }}
+            />
+            {/* A single accent wash anchors the composition without a gradient
+                sitting over the whole panel. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-24 -right-16 size-[26rem] rounded-full opacity-25 blur-3xl"
+              style={{ background: 'var(--color-accent)' }}
+            />
+
+            <div className="relative grid items-center gap-10 p-8 sm:p-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:p-14">
+              <div>
+                <p className="font-mono text-caption tracking-[0.18em] text-shell-ink-faint uppercase">
+                  {t('finalCta.eyebrow')}
+                </p>
+                <h2 className="mt-3 text-3xl leading-[1.1] font-extrabold tracking-tight text-balance text-shell-ink sm:text-4xl">
+                  {t('finalCta.title')}
+                </h2>
+                <p className="mt-4 max-w-lg leading-relaxed text-shell-ink-soft">
+                  {t('finalCta.body')}
+                </p>
+
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <Link href="/register" className={buttonClasses('accent', 'lg')}>
+                    <PenLine className="size-4" aria-hidden="true" />
+                    {t('finalCta.cta')}
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="inline-flex h-11 items-center rounded-md border border-shell-line px-5 text-sm font-semibold text-shell-ink-soft transition-colors hover:border-shell-ink-faint hover:text-shell-ink"
+                  >
+                    {t('finalCta.secondary')}
+                  </Link>
+                </div>
+              </div>
+
+              {showcase ? (
+                <div className="hidden justify-self-end lg:block">
+                  <div className="w-[19rem] rounded-panel border border-shell-line bg-surface p-3 shadow-card">
+                    <div className="aspect-[4/3]">
+                      <PlanSpecimen
+                        plan={showcase.plan}
+                        floorIndex={0}
+                        label={t('finalCta.planAlt')}
+                      />
+                    </div>
+                    <p className="mt-2 px-1 font-mono text-[11px] tabular-nums text-ink-faint">
+                      {SHOWCASE_BRIEF.widthM} × {SHOWCASE_BRIEF.lengthM} m ·{' '}
+                      {SHOWCASE_BRIEF.floorCount} · {showcase.plan.engineVersion}
+                    </p>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

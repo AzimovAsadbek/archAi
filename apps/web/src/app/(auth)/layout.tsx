@@ -11,7 +11,7 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
   return (
     <div className="flex min-h-dvh flex-col bg-paper">
       <header className="border-b border-line">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+        <div className="page-container flex h-16 items-center justify-between">
           <Logo href="/" />
           <LocaleSwitcher />
         </div>

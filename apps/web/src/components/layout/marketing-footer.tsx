@@ -1,29 +1,44 @@
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
-import { LocaleSwitcher } from './locale-switcher';
 import { Logo } from './logo';
 
-const FOOTER_LINKS = [
+/**
+ * Four-column footer: identity, navigation, help, contact.
+ *
+ * No language selector here. It lives in the header, and a second copy at the
+ * bottom of every page is a second source of truth for the same state — the
+ * kind of duplication that eventually disagrees with itself.
+ *
+ * Link groups are literal rather than generated so the i18n checker can verify
+ * every label statically.
+ */
+
+const NAV_LINKS = [
+  { key: 'projects', href: '/register' },
   { key: 'pricing', href: '/pricing' },
   { key: 'blog', href: '/blog' },
-  { key: 'faq', href: '/faq' },
   { key: 'help', href: '/help' },
   { key: 'about', href: '/about' },
+] as const;
+
+const HELP_LINKS = [
+  { key: 'guide', href: '/help' },
+  { key: 'faq', href: '/faq' },
+  { key: 'contact', href: '/help#contact' },
 ] as const;
 
 export async function MarketingFooter() {
   const t = await getTranslations('marketing.footer');
   const tNav = await getTranslations('nav');
 
-  const label = (key: (typeof FOOTER_LINKS)[number]['key']): string => {
-    // Literal keys so the i18n checker can verify each one.
+  const navLabel = (key: (typeof NAV_LINKS)[number]['key']): string => {
     switch (key) {
+      case 'projects':
+        return tNav('projects');
       case 'pricing':
         return tNav('pricing');
       case 'blog':
         return tNav('blog');
-      case 'faq':
-        return tNav('faq');
       case 'help':
         return tNav('help');
       case 'about':
@@ -31,31 +46,83 @@ export async function MarketingFooter() {
     }
   };
 
+  const helpLabel = (key: (typeof HELP_LINKS)[number]['key']): string => {
+    switch (key) {
+      case 'guide':
+        return t('links.guide');
+      case 'faq':
+        return tNav('faq');
+      case 'contact':
+        return t('links.contact');
+    }
+  };
+
+  const columnHeading = 'text-caption font-bold tracking-wider text-ink uppercase';
+  const columnLink =
+    'text-sm text-ink-soft transition-colors hover:text-accent-strong rounded-sm';
+
   return (
     <footer className="border-t border-line bg-paper">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-10 sm:flex-row sm:justify-between">
-        <div className="max-w-xs">
-          <Logo href="/" size="sm" />
-          <p className="mt-1.5 text-sm leading-relaxed text-ink-faint">{t('tagline')}</p>
-        </div>
+      <div className="page-container py-14">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.6fr)_repeat(3,minmax(0,1fr))] lg:gap-8">
+          {/* Identity */}
+          <div className="max-w-sm">
+            <Logo href="/" size="sm" />
+            <p className="mt-3 text-sm leading-relaxed text-ink-faint">{t('tagline')}</p>
+          </div>
 
-        <nav aria-label={t('navLabel')} className="flex flex-col items-start gap-2.5 sm:items-end">
-          {FOOTER_LINKS.map((link) => (
+          {/* Navigation */}
+          <nav aria-labelledby="footer-nav-heading">
+            <h2 id="footer-nav-heading" className={columnHeading}>
+              {t('columns.navigation')}
+            </h2>
+            <ul className="mt-4 flex flex-col gap-2.5">
+              {NAV_LINKS.map((link) => (
+                <li key={link.key}>
+                  <Link href={link.href} className={columnLink}>
+                    {navLabel(link.key)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Help */}
+          <nav aria-labelledby="footer-help-heading">
+            <h2 id="footer-help-heading" className={columnHeading}>
+              {t('columns.help')}
+            </h2>
+            <ul className="mt-4 flex flex-col gap-2.5">
+              {HELP_LINKS.map((link) => (
+                <li key={link.key}>
+                  <Link href={link.href} className={columnLink}>
+                    {helpLabel(link.key)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Contact. The reference puts social icons here; archAI has no
+              accounts to link to, so this states how to actually reach the
+              product rather than linking to profiles that do not exist. */}
+          <div>
+            <h2 className={columnHeading}>{t('columns.contact')}</h2>
+            <p className="mt-4 text-sm leading-relaxed text-ink-soft">{t('contactBody')}</p>
             <Link
-              key={link.key}
-              href={link.href}
-              className="text-sm font-medium text-ink-soft transition-colors hover:text-ink"
+              href="/help#contact"
+              className="mt-3 inline-flex text-sm font-semibold text-accent-strong hover:underline"
             >
-              {label(link.key)}
+              {t('links.contact')}
             </Link>
-          ))}
-        </nav>
+          </div>
+        </div>
       </div>
 
       <div className="border-t border-line">
-        <div className="mx-auto flex max-w-6xl flex-col-reverse gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-ink-faint">{t('rights')}</p>
-          <LocaleSwitcher />
+        <div className="page-container flex flex-col-reverse gap-3 py-5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-caption text-ink-faint">{t('rights')}</p>
+          <p className="text-caption text-ink-faint">{t('disclaimerShort')}</p>
         </div>
       </div>
     </footer>

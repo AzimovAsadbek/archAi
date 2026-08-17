@@ -66,12 +66,12 @@ function AdminShellSkeleton() {
   return (
     <div className="min-h-dvh bg-paper">
       <div className="border-b border-line bg-surface">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
+        <div className="page-container flex h-16 items-center justify-between">
           <Skeleton className="h-5 w-28" />
           <Skeleton className="h-8 w-36" />
         </div>
       </div>
-      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-8 lg:flex-row lg:gap-8">
+      <div className="page-container flex flex-col gap-6 py-8 lg:flex-row lg:gap-8">
         <Skeleton className="h-10 w-full lg:h-52 lg:w-56 lg:shrink-0" />
         <div className="min-w-0 flex-1">
           <Skeleton className="h-8 w-56" />
@@ -179,7 +179,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     <div className="min-h-dvh bg-paper">
       <SkipLink />
       <header className="sticky top-0 z-30 border-b border-line bg-surface">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5">
+        <div className="page-container flex h-16 items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3 sm:gap-5">
             <div className="flex items-center gap-2">
               <Logo href="/admin/users" size="sm" />
@@ -205,7 +205,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-6 lg:flex-row lg:gap-8 lg:py-8">
+      <div className="page-container flex flex-col gap-6 py-6 lg:flex-row lg:gap-8 lg:py-8">
         <AdminNav />
         <main id="main-content" tabIndex={-1} className="min-w-0 flex-1 outline-none">
           {children}
