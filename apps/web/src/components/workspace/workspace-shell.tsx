@@ -132,7 +132,7 @@ export function WorkspaceShell({
           className={cn(
             'flex shrink-0 flex-col border-r border-shell-line bg-shell py-2 transition-[width]',
             'w-14',
-            !railCollapsed && 'md:w-52',
+            !railCollapsed && 'lg:w-52',
           )}
           style={{ transitionDuration: 'var(--duration-base)', zIndex: 'var(--z-rail)' }}
         >
@@ -151,14 +151,14 @@ export function WorkspaceShell({
                       active
                         ? 'bg-accent text-white'
                         : 'text-shell-ink-soft hover:bg-shell-raised hover:text-shell-ink',
-                      railCollapsed ? 'justify-center px-0' : 'justify-center px-0 md:justify-start md:px-2.5',
+                      railCollapsed ? 'justify-center px-0' : 'justify-center px-0 lg:justify-start lg:px-2.5',
                     )}
                   >
                     <Icon className="size-4 shrink-0" aria-hidden="true" />
                     <span
                       className={cn(
                         'truncate',
-                        railCollapsed ? 'sr-only' : 'sr-only md:not-sr-only',
+                        railCollapsed ? 'sr-only' : 'sr-only lg:not-sr-only',
                       )}
                     >
                       {t(`tabs.${id}`)}
@@ -181,11 +181,11 @@ export function WorkspaceShell({
                       'flex w-full cursor-not-allowed items-center gap-3 rounded-tool px-2.5 py-2 text-sm font-semibold text-shell-ink-faint',
                       railCollapsed
                         ? 'justify-center px-0'
-                        : 'justify-center px-0 md:justify-start md:px-2.5',
+                        : 'justify-center px-0 lg:justify-start lg:px-2.5',
                     )}
                   >
                     <Icon className="size-4 shrink-0" aria-hidden="true" />
-                    <span className={cn('truncate', railCollapsed ? 'sr-only' : 'sr-only md:not-sr-only')}>{name}</span>
+                    <span className={cn('truncate', railCollapsed ? 'sr-only' : 'sr-only lg:not-sr-only')}>{name}</span>
                   </span>
                 </li>
               );
@@ -200,7 +200,7 @@ export function WorkspaceShell({
               'mt-auto mx-2 flex items-center gap-3 rounded-tool px-2.5 py-2 text-shell-ink-faint transition-colors hover:bg-shell-raised hover:text-shell-ink',
               railCollapsed
                 ? 'justify-center px-0'
-                : 'justify-center px-0 md:justify-start md:px-2.5',
+                : 'justify-center px-0 lg:justify-start lg:px-2.5',
             )}
           >
             {railCollapsed ? (
@@ -208,7 +208,7 @@ export function WorkspaceShell({
             ) : (
               <PanelLeftClose className="size-4" aria-hidden="true" />
             )}
-            <span className={cn('text-xs font-semibold', railCollapsed ? 'sr-only' : 'sr-only md:not-sr-only')}>
+            <span className={cn('text-xs font-semibold', railCollapsed ? 'sr-only' : 'sr-only lg:not-sr-only')}>
               {t('collapseRail')}
             </span>
           </button>
