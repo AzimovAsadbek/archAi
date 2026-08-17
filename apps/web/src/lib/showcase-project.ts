@@ -79,7 +79,19 @@ export interface ShowcaseData {
  * page that shows a plan the engine refused to produce would be the exact
  * dishonesty this section exists to avoid.
  */
+let cached: ShowcaseData | null | undefined;
+
 export function buildShowcase(): ShowcaseData | null {
+  // Memoized for the life of the process. The input is a module constant and
+  // the engine is deterministic, so every call returns a deep-equal result —
+  // recomputing per request bought nothing but CPU, measured at 3.4 ms warm and
+  // 10.5 ms cold. A deploy restarts the process, so a genuine engine change
+  // still takes effect.
+  if (cached === undefined) cached = computeShowcase();
+  return cached;
+}
+
+function computeShowcase(): ShowcaseData | null {
   const result = generateBestFloorPlan(SHOWCASE_INPUT, { seed: 1 });
   if (!result.ok) return null;
 

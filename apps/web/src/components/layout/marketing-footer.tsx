@@ -58,8 +58,11 @@ export async function MarketingFooter() {
   };
 
   const columnHeading = 'text-caption font-bold tracking-wider text-ink uppercase';
+  // Footer links were 18px tall — fine for a mouse, too small for a thumb. The
+  // inline-flex + min-height gives a 40px target on touch without changing how
+  // the column reads on desktop, where the extra height collapses back.
   const columnLink =
-    'text-sm text-ink-soft transition-colors hover:text-accent-strong rounded-sm';
+    'inline-flex min-h-10 items-center rounded-sm text-sm text-ink-soft transition-colors hover:text-accent-strong sm:min-h-0 sm:py-0.5';
 
   return (
     <footer className="border-t border-line bg-paper">
@@ -76,7 +79,7 @@ export async function MarketingFooter() {
             <h2 id="footer-nav-heading" className={columnHeading}>
               {t('columns.navigation')}
             </h2>
-            <ul className="mt-4 flex flex-col gap-2.5">
+            <ul className="mt-2 flex flex-col sm:mt-4 sm:gap-2.5">
               {NAV_LINKS.map((link) => (
                 <li key={link.key}>
                   <Link href={link.href} className={columnLink}>
@@ -92,7 +95,7 @@ export async function MarketingFooter() {
             <h2 id="footer-help-heading" className={columnHeading}>
               {t('columns.help')}
             </h2>
-            <ul className="mt-4 flex flex-col gap-2.5">
+            <ul className="mt-2 flex flex-col sm:mt-4 sm:gap-2.5">
               {HELP_LINKS.map((link) => (
                 <li key={link.key}>
                   <Link href={link.href} className={columnLink}>
