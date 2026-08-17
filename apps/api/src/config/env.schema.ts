@@ -19,7 +19,15 @@ const optionalString = z
 export const envSchema = z
   .object({
     NODE_ENV: z.enum(NODE_ENVS).default('development'),
+    /** Runtime connection. Behind a pooler wherever one exists (Neon, pgbouncer). */
     DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
+    /**
+     * Unpooled connection, used only by `prisma migrate`/`db push` — the pooler
+     * cannot hold the advisory lock a migration takes. Declared here for
+     * documentation and so a typo surfaces as a validation error: the running
+     * API never reads it, the Prisma CLI does.
+     */
+    DIRECT_DATABASE_URL: optionalString,
     API_PORT: z.coerce.number().int().min(1).max(65_535).default(3001),
     WEB_ORIGIN: z.url().default('http://localhost:3000'),
     JWT_ACCESS_SECRET: z.string().min(32, 'JWT_ACCESS_SECRET must be at least 32 characters'),

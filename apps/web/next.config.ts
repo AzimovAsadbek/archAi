@@ -35,6 +35,29 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];
   },
+  /**
+   * Same-origin proxy to the API deployment.
+   *
+   * The session cookies are `SameSite=Lax`, which a browser will not send on a
+   * cross-site request — and on Vercel's shared `*.vercel.app` domain two
+   * deployments *are* cross-site, because `vercel.app` is on the Public Suffix
+   * List. Relaxing them to `SameSite=None` would work only until third-party
+   * cookie blocking caught up with it.
+   *
+   * Rewriting instead keeps the browser talking to one origin: it requests
+   * `/api/v1/...` from the web deployment, Vercel proxies to the API, and the
+   * `Set-Cookie` that comes back is first-party. The client sends relative
+   * URLs (`NEXT_PUBLIC_API_URL=""`), so no CORS preflight happens at all.
+   *
+   * Unset `API_ORIGIN` — local development — and this is a no-op: the client
+   * falls back to `http://localhost:3001` and talks to the API directly, where
+   * localhost keeps both ports same-site anyway.
+   */
+  async rewrites() {
+    const apiOrigin = process.env.API_ORIGIN?.replace(/\/$/, '');
+    if (!apiOrigin) return [];
+    return [{ source: '/api/v1/:path*', destination: `${apiOrigin}/api/v1/:path*` }];
+  },
 };
 
 export default withNextIntl(nextConfig);

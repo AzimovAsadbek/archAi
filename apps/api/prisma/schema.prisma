@@ -1,10 +1,23 @@
 generator client {
   provider = "prisma-client-js"
+  // `native` covers local dev and CI. The RHEL target is the query engine that
+  // Vercel's Node runtime needs (Amazon Linux, OpenSSL 3) — without it the
+  // deployed function builds fine and then fails on its first query.
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
+  // Pooled connection. On a serverless platform every concurrent invocation is
+  // its own process, so unpooled connections exhaust the database long before
+  // traffic does — this must point at Neon's pooler (`-pooler` in the host).
   url      = env("DATABASE_URL")
+  // Migrations and introspection need a single unpooled session: the pooler
+  // cannot hold the advisory lock a migration takes. Prisma requires this
+  // variable to exist whenever the field is declared — there is no fallback to
+  // `url` — so local and CI set it to the same value as DATABASE_URL, where
+  // there is no pooler to bypass.
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
 enum UserRole {

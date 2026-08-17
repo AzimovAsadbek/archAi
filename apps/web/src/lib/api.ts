@@ -1,6 +1,26 @@
 import { type ApiErrorShape } from '@archai/shared';
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+/**
+ * Origin the browser sends API requests to.
+ *
+ * `same-origin` (or an empty value) resolves to `''`, so every request goes out
+ * as a relative `/api/v1/...` URL and is handled by the rewrite in
+ * `next.config.ts`. That is what production uses: it keeps the session cookies
+ * first-party, skips CORS entirely, and — because nothing hardcodes a hostname
+ * — works unchanged on every preview deployment.
+ *
+ * Anything else is used verbatim as an absolute origin, which is how local
+ * development reaches the API on its own port.
+ */
+const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
+
+export const API_BASE_URL =
+  configuredApiUrl === undefined
+    ? 'http://localhost:3001'
+    : configuredApiUrl === '' || configuredApiUrl === 'same-origin'
+      ? ''
+      : configuredApiUrl.replace(/\/+$/, '');
+
 export const API_PREFIX = '/api/v1';
 
 /** Every failure surfaced by the API client — network failures included. */
