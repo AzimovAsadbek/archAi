@@ -52,7 +52,8 @@ export default async function FaqPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-5 py-16 lg:py-20">
+    <div className="page-container py-16 lg:py-20">
+      <div className="max-w-3xl">
       <header className="max-w-2xl">
         <p className="text-xs font-bold tracking-widest text-accent-strong uppercase">{t('eyebrow')}</p>
         <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-balance text-ink sm:text-4xl">
@@ -70,6 +71,7 @@ export default async function FaqPage() {
           <FaqAccordion groups={groups} />
         </div>
       )}
+    </div>
     </div>
   );
 }

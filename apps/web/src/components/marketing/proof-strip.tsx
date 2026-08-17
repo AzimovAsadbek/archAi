@@ -28,7 +28,7 @@ export async function ProofStrip() {
   const t = await getTranslations('marketing.proof');
 
   return (
-    <section className="border-b border-line">
+    <section>
       <div className="page-container py-6">
         <ul className="grid grid-cols-1 divide-y divide-line rounded-panel border border-line bg-surface sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
           {ITEMS.map(({ key, icon: Icon, tone }) => (

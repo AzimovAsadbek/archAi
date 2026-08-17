@@ -75,7 +75,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   };
 
   return (
-    <article className="mx-auto max-w-3xl px-5 py-12 lg:py-16">
+    <div className="page-container py-12 lg:py-16">
+      <article className="max-w-3xl">
       {/* Structured data: JSON.stringify of our own object, with `<` escaped so the
           content can never break out of the script element. Safe by construction. */}
       <script
@@ -143,5 +144,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </footer>
       ) : null}
     </article>
+    </div>
   );
 }
